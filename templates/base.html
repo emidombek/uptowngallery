@@ -1,0 +1,53 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap');
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>{% block header_content %}Uptown Gallery{% endblock %}</h1>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 col-sm-12">
+                <!-- Add Ir accordion menu here -->
+            </nav>
+
+            <div class="col-md-10 col-sm-12">
+                <div class="image-section">
+                    <!-- Add Ir image here -->
+                </div>
+
+                <div class="light-gray-box">
+                    <!-- Light gray box content -->
+                </div>
+
+                <div class="white-box">
+                    <!-- White box content -->
+                </div>
+
+                <div class="light-gray-box">
+                    <!-- Light gray box content -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <!-- Add Ir social media links here -->
+        <!-- Example: -->
+        <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Instagram</a>
+    </div>
+
+</body>
+</html>
+

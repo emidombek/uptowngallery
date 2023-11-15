@@ -1,0 +1,15 @@
+<!-- templates/index.html -->
+{% extends 'base.html' %}
+
+{% block header_content %}Uptown Gallery{% endblock %}
+
+{% block footer_content %}
+    <!-- Additional content for the footer if needed -->
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {# Add content specific to the index page here #}
+    <h2>Welcome to the Uptown Gallery Index Page!</h2>
+    {# I can add more content or leave this block empty #}
+{% endblock %}

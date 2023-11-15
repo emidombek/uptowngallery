@@ -1,0 +1,76 @@
+/* static/css/styles.css */
+body {
+  background-color: white;
+}
+
+.header {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-family: 'Major Mono Display', monospace;
+}
+
+.image-section {
+  height: 25vh;
+  /* Add any additional styles as needed */
+}
+
+.light-gray-box {
+  background-color: lightgray;
+  height: 10vh;
+  /* Add any additional styles as needed */
+}
+
+.white-box {
+  height: 40vh;
+  /* Add any additional styles as needed */
+}
+
+.footer {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Custom styles for the index page */
+.light-gray-box {
+  position: relative;
+}
+
+.search-bar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.search-bar input {
+  padding: 10px;
+  width: 200px;
+}
+
+.search-bar button {
+  padding: 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+  margin-top: 20px;
+}
+
+.image-grid img {
+  width: 100%;
+  height: auto;
+}
