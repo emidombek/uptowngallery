@@ -11,7 +11,7 @@ class LandingPageView(View):
         ).order_by("-create_date")[:10]
         return render(
             request,
-            "landing_page.html",
+            "index.html",
             {
                 "top_categories": top_categories,
                 "recent_artworks": recent_artworks,
