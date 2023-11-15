@@ -73,6 +73,8 @@ class Artwork(models.Model):
         default=False, verbose_name="Approved"
     )
 
+    auction_start = models.DateTimeField(null=True, blank=True)
+
     reserve_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
