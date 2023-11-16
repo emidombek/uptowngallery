@@ -8,13 +8,30 @@ body .container-fluid.no-side-spacing {
   margin-left: 0;
 }
 
+.row.main-image {
+  max-height: 50vh;
+  /* Set the maximum height as needed */
+  overflow: hidden;
+  border: 1.5em;
+}
 
+.form-control.form-control-lg.me-2 {
+  max-width: 50%;
+}
+
+.cropped-image {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
 
 .navbar .navbar-brand {
   font-family: 'Major Mono Display', monospace !important;
 }
 
-.text-center {
-  background-color: darkgrey;
-  border: 9px solid black;
+.social-icons a {
+  color: white;
+  width: 1.5em;
+  height: 1.5em;
+  font-size: 1.5em;
 }
