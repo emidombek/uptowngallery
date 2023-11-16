@@ -1,4 +1,20 @@
-/* static/css/styles.css */
-body {
-  background-color: white;
+@import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap');
+
+/* Remove side spacing on container-fluid */
+body .container-fluid.no-side-spacing {
+  padding-right: 0;
+  padding-left: 0;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+
+
+.navbar .navbar-brand {
+  font-family: 'Major Mono Display', monospace !important;
+}
+
+.text-center {
+  background-color: darkgrey;
+  border: 9px solid black;
 }
