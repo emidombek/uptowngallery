@@ -35,3 +35,11 @@ body .container-fluid.no-side-spacing {
   height: 1.5em;
   font-size: 1.5em;
 }
+
+.social-icons a:hover {
+  color: turquoise;
+}
+
+body h1 {
+  font-family: 'Major Mono Display', monospace !important;
+}
