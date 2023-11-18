@@ -31,10 +31,6 @@ body .container-fluid.no-side-spacing {
   border: 1.5em;
 }
 
-body {
-  background-color: silver;
-}
-
 .form-control.form-control-lg.me-2 {
   max-width: 50%;
 }
@@ -46,7 +42,7 @@ body {
 }
 
 .navbar .navbar-brand {
-  font-family: 'Major Mono Display', monospace !important;
+  font-family: 'Major Mono Display', monospace;
 }
 
 .nav-item,
@@ -70,22 +66,14 @@ body h1 {
 }
 
 body h5 {
-  font-family: var(--font-family);
+  font-family: Raleway, sans-serif;
   font-weight: bold;
 }
 
-.container .row .card {
+.row .card {
   transition: transform 0.3s;
 }
 
-.container .row .card:hover {
+.row .card-hover:hover {
   transform: scale(1.15);
-}
-
-.container .row .card img {
-  transition: transform 0.3s;
-}
-
-.container .row .card:hover img {
-  transform: scale(1.2);
 }
