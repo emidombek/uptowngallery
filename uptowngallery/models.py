@@ -73,11 +73,13 @@ class Artwork(models.Model):
         default=False, verbose_name="Approved"
     )
 
+    APPROVAL_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
+    ]
     approval_status = models.CharField(
-        max_length=20,
-        choices=[("pending", "Pending"), ("approved", "Approved")],
-        default="pending",
-        verbose_name="Approval Status",
+        max_length=20, choices=APPROVAL_CHOICES, default="pending"
     )
 
     auction_start = models.DateTimeField(null=True, blank=True)
@@ -103,8 +105,9 @@ def calculate_price(self):
             return highest_bid.amount
     return self.reserve_price
 
-    def __str__(self):
-        return f"Artwork #{self.id} - Artist: {self.artist}"
+
+def __str__(self):
+    return f"Artwork #{self.id} - Artist: {self.artist}"
 
 
 class Auction(models.Model):

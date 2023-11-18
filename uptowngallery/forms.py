@@ -11,7 +11,6 @@ class ArtworkForm(forms.ModelForm):
             "image",
             "category",
             "reserve_price",
-            "approval_status",
         ]
 
 
@@ -20,13 +19,11 @@ class ArtworkCreateForm(forms.ModelForm):
         model = Artwork
         exclude = ["approved", "auction_start"]
 
-    def save(self, commit=True):
-        # Get the instance of the artwork without saving it to the database
+    def save(self, commit=True, user_profile=None):
         artwork = super().save(commit=False)
 
-        # Set the artist before saving the artwork
-        artwork.artist = self.user_profile
-        # UserProfile for each user
+        if user_profile:
+            artwork.artist = user_profile
 
         if commit:
             artwork.save()

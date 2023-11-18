@@ -44,7 +44,9 @@ class CreateArtworkView(View):
 
         form = ArtworkCreateForm(request.POST, request.FILES)
         if form.is_valid():
-            artwork = form.save(commit=False)
+            artwork = form.save(
+                commit=False, user_profile=request.user.profile
+            )
             artwork.artist = (
                 request.user.profile
             )  # Assuming I have a UserProfile for each user

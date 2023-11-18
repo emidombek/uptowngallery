@@ -1,15 +1,37 @@
 {% extends 'base.html' %}
 
 {% block title %}
-  Create Artwork
+  Sell
 {% endblock %}
 
 {% block content %}
-  <h1>Create Artwork</h1>
-  <!-- Display the artwork creation form -->
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-  </form>
+  <div class="container mt-5 mb-5">
+    <h1 class="text-center mb-5">Create Artwork</h1>
+    <!-- Display the artwork creation form -->
+    <form method="post" enctype="multipart/form-data" class="custom-form">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="form-group">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+        <small class="form-text text-muted">Enter the artwork description.</small>
+      </div>
+      <div class="form-group">
+        {{ form.image.label_tag }}
+        {{ form.image }}
+        <small class="form-text text-muted">Upload the artwork image.</small>
+      </div>
+      <div class="form-group">
+        {{ form.category.label_tag }}
+        {{ form.category }}
+        <small class="form-text text-muted">Select the artwork category.</small>
+      </div>
+      <div class="form-group">
+        {{ form.reserve_price.label_tag }}
+        {{ form.reserve_price }}
+        <small class="form-text text-muted">Enter the reserve price.</small>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
 {% endblock %}

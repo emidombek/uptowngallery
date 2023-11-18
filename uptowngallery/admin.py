@@ -28,5 +28,7 @@ class ArtworkAdmin(admin.ModelAdmin):
 
     approve_artworks.short_description = "Approve selected artworks"
 
+    exclude = ["approved", "auction_start"]
+
 
 admin.site.register(Artwork, ArtworkAdmin)
