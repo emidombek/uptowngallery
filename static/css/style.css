@@ -51,7 +51,7 @@ body {
 
 .nav-item,
 .dropdown-item {
-  font-family: var(--font-family);
+  font-family: Raleway, sans-serif;
 }
 
 .social-icons a {
