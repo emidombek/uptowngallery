@@ -30,14 +30,24 @@ class ArtworkListView(View):
 
 class CreateArtworkView(View):
     def get(self, request):
+        if not request.user.is_authenticated:
+            # Redirect to the sign-in page if the user is not authenticated
+            return redirect("signin_page")
+
         form = ArtworkCreateForm()
         return render(request, "create_artwork.html", {"form": form})
 
     def post(self, request):
+        if not request.user.is_authenticated:
+            # Redirect to the sign-in page if the user is not authenticated
+            return redirect("signin_page")
+
         form = ArtworkCreateForm(request.POST, request.FILES)
         if form.is_valid():
             artwork = form.save(commit=False)
-            artwork.artist = request.user.profile
+            artwork.artist = (
+                request.user.profile
+            )  # Assuming I have a UserProfile for each user
             artwork.save()
             return redirect("artwork_detail", artwork.id)
         return render(request, "create_artwork.html", {"form": form})
