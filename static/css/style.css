@@ -62,12 +62,12 @@ body .container-fluid.no-side-spacing {
 }
 
 body h1 {
-  font-family: 'Major Mono Display', monospace !important;
+  font-family: 'Major Mono Display', monospace;
 }
 
 body h5 {
   font-family: Raleway, sans-serif;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .row .custom-card {
