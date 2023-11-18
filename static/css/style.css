@@ -1,4 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&family=Source+Serif+Pro&display=swap');
+
+:root {
+  --font-family: Raleway, sans-serif;
+  --primary-font: Raleway, sans-serif;
+  --secondary-font: 'Major Mono Display', monospace;
+  --main-color: white;
+  --background-color: white;
+  --primary-color: white;
+  --secondary-color: black;
+  --accent-color: turquoise;
+  --text-color-primary: black;
+  --text-color-secondary: white;
+  --text-color-accent: turquoise;
+  --text-color-secondary-accent: silver;
+  --line-height: 1.5;
+}
 
 /* Remove side spacing on container-fluid */
 body .container-fluid.no-side-spacing {
@@ -15,6 +32,10 @@ body .container-fluid.no-side-spacing {
   border: 1.5em;
 }
 
+body {
+  background-color: silver;
+}
+
 .form-control.form-control-lg.me-2 {
   max-width: 50%;
 }
@@ -27,6 +48,11 @@ body .container-fluid.no-side-spacing {
 
 .navbar .navbar-brand {
   font-family: 'Major Mono Display', monospace !important;
+}
+
+.nav-item,
+.dropdown-item {
+  font-family: var(--font-family);
 }
 
 .social-icons a {
@@ -42,4 +68,17 @@ body .container-fluid.no-side-spacing {
 
 body h1 {
   font-family: 'Major Mono Display', monospace !important;
+}
+
+body h5 {
+  font-family: var(--font-family);
+  font-weight: bold;
+}
+
+.container .row .card {
+  transition: transform 0.3s;
+}
+
+.container .row .card:hover {
+  transform: scale(1.15);
 }
