@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Create Artwork
+{% endblock %}
+
+{% block content %}
+  <h1>Create Artwork</h1>
+  <!-- Display the artwork creation form -->
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+  </form>
+{% endblock %}
