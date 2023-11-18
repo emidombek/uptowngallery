@@ -1,0 +1,18 @@
+<!-- pending_artworks.html -->
+{% extends 'base.html' %}
+
+{% block title %}
+  Pending Artworks
+{% endblock %}
+
+{% block content %}
+  <h1>Pending Artworks</h1>
+  <!-- Display the list of pending artworks -->
+  <ul>
+    {% for artwork in artworks %}
+      <li>
+        {{ artwork.title }} - <a href="{% url 'approve_artwork' artwork.id %}">Approve</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
