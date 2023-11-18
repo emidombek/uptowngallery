@@ -70,10 +70,10 @@ body h5 {
   font-weight: bold;
 }
 
-.row .card {
+.row .custom-card {
   transition: transform 0.3s;
 }
 
-.row .card-hover:hover {
+.row .custom-card:hover {
   transform: scale(1.15);
 }
