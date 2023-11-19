@@ -17,6 +17,11 @@
   --line-height: 1.5;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
 /* Remove side spacing on container-fluid */
 body .container-fluid.no-side-spacing {
   padding-right: 0;
@@ -28,7 +33,6 @@ body .container-fluid.no-side-spacing {
 .row.main-image {
   max-height: 50vh;
   overflow: hidden;
-  border: 1.5em;
 }
 
 .form-control.form-control-lg.me-2 {
