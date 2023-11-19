@@ -13,6 +13,16 @@ class ArtworkForm(forms.ModelForm):
             "reserve_price",
         ]
 
+        widgets = {
+            "description": forms.Textarea(
+                attrs={
+                    "rows": 4,
+                    "cols": 40,
+                    "class": "art-description-form-field",
+                }
+            ),
+        }
+
 
 class ArtworkCreateForm(forms.ModelForm):
     class Meta:

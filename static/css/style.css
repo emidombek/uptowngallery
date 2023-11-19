@@ -81,3 +81,7 @@ body h5 {
 .row .custom-card:hover {
   transform: scale(1.15);
 }
+
+.art-description-form-field {
+  resize: none;
+}
