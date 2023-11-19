@@ -13,15 +13,14 @@ class ArtworkForm(forms.ModelForm):
             "reserve_price",
         ]
 
-        widgets = {
-            "description": forms.Textarea(
-                attrs={
-                    "rows": 4,
-                    "cols": 40,
-                    "class": "art-description-form-field",
-                }
-            ),
-        }
+    def __init__(self, *args, **kwargs):
+        super(ArtworkForm, self).__init__(*args, **kwargs)
+        self.fields["description"].widget.attrs[
+            "class"
+        ] = "art-description-form-field"
+        self.fields["description"].widget.attrs["rows"] = 4
+        self.fields["description"].widget.attrs["cols"] = 40
+        self.fields["description"].widget.attrs["resize"] = "none"
 
 
 class ArtworkCreateForm(forms.ModelForm):
