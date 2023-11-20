@@ -11,36 +11,42 @@ class ArtworkCreateForm(forms.ModelForm):
     ]
 
     auction_duration = forms.ChoiceField(
-        label="Auction Duration",
+        label="Duration",
         choices=AUCTION_DURATION_CHOICES,
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.Select(
+            attrs={"class": "form-control custom-form"}
+        ),
     )
 
     class Meta:
         model = Artwork
         exclude = ["approved", "auction_start"]
-
-    def __init__(self, *args, **kwargs):
-        super(ArtworkCreateForm, self).__init__(*args, **kwargs)
-
-        self.fields["auction_duration"] = self.fields.pop(
-            "auction_duration"
-        )
-        self.fields["description"].widget.attrs.update(
-            {
-                "placeholder": "Enter artwork description.",
-                "class": "form-control no-resize",  # Add the 'no-resize' class
-            }
-        )
-        self.fields["image"].widget.attrs[
-            "placeholder"
-        ] = "Upload artwork image."
-        self.fields["category"].widget.attrs[
-            "placeholder"
-        ] = "Select artwork category."
-        self.fields["reserve_price"].widget.attrs[
-            "placeholder"
-        ] = "Enter reserve price."
+        widgets = {
+            "description": forms.Textarea(
+                attrs={
+                    "class": "form-control description-section",
+                    "placeholder": "Enter artwork description.",
+                }
+            ),
+            "image": forms.FileInput(
+                attrs={
+                    "class": "form-control image-section",
+                    "placeholder": "Upload artwork image.",
+                }
+            ),
+            "category": forms.Select(
+                attrs={
+                    "class": "form-control category-section",
+                    "placeholder": "Select artwork category.",
+                }
+            ),
+            "reserve_price": forms.NumberInput(
+                attrs={
+                    "class": "form-control reserve-price-section",
+                    "placeholder": "Enter reserve price.",
+                }
+            ),
+        }
 
     def save(self, commit=True, user_profile=None):
         artwork = super().save(commit=False)
