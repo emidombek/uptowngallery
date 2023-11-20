@@ -1,6 +1,7 @@
 # forms.py
 from django import forms
 from .models import Artwork, Auction
+import cloudinary.uploader
 
 
 class ArtworkCreateForm(forms.ModelForm):
@@ -13,40 +14,12 @@ class ArtworkCreateForm(forms.ModelForm):
     auction_duration = forms.ChoiceField(
         label="Duration",
         choices=AUCTION_DURATION_CHOICES,
-        widget=forms.Select(
-            attrs={"class": "form-control custom-form"}
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     class Meta:
         model = Artwork
         exclude = ["approved", "auction_start"]
-        widgets = {
-            "description": forms.Textarea(
-                attrs={
-                    "class": "form-control description-section",
-                    "placeholder": "Enter artwork description.",
-                }
-            ),
-            "image": forms.FileInput(
-                attrs={
-                    "class": "form-control image-section",
-                    "placeholder": "Upload artwork image.",
-                }
-            ),
-            "category": forms.Select(
-                attrs={
-                    "class": "form-control category-section",
-                    "placeholder": "Select artwork category.",
-                }
-            ),
-            "reserve_price": forms.NumberInput(
-                attrs={
-                    "class": "form-control reserve-price-section",
-                    "placeholder": "Enter reserve price.",
-                }
-            ),
-        }
 
     def save(self, commit=True, user_profile=None):
         artwork = super().save(commit=False)
@@ -56,6 +29,12 @@ class ArtworkCreateForm(forms.ModelForm):
 
         if commit:
             artwork.save()
+
+            # Upload image to Cloudinary
+            image = self.cleaned_data.get("image")
+            if image:
+                upload_result = cloudinary.uploader.upload(image)
+                artwork.image_url = upload_result.get("url")
 
             # Get the selected auction duration
             duration = int(self.cleaned_data.get("auction_duration"))

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "cloudinary",
     "uptowngallery",
+    "widget_tweaks",
 ]
 
 MIDDLEWARE = [
