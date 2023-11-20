@@ -23,7 +23,7 @@ body {
 }
 
 /* Remove side spacing on container-fluid */
-body .container-fluid.no-side-spacing {
+body .container-flu.no-side-spacing {
   padding-right: 0;
   padding-left: 0;
   margin-right: 0;
@@ -35,11 +35,11 @@ body .container-fluid.no-side-spacing {
   overflow: hidden;
 }
 
-.form-control.form-control-lg.me-2 {
+.form-control.form-control-sm.me-2 {
   max-width: 50%;
 }
 
-.cropped-image {
+.cropped-image img {
   object-fit: cover;
   height: 100%;
   width: 100%;
@@ -82,6 +82,7 @@ body h5 {
   transform: scale(1.15);
 }
 
-form.custom-form #id_description.form-control.no-resize {
-  resize: none;
+.custom-form-create-artwork * {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
 }

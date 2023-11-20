@@ -8,10 +8,10 @@
   <div class="container mt-5 mb-5">
     <h1 class="text-center mb-5">Create Artwork Listing</h1>
     <!-- Display the artwork creation form -->
-    <div class="row justify-content-center">
+    <div class="row justify-content-center custom-row-create-artwork">
       <div class="col-md-6">
         <!-- Ir HTML template -->
-        <form method="post" enctype="multipart/form-data" class="custom-form">
+        <form method="post" enctype="multipart/form-data" class="custom-form-create-artwork">
           {% csrf_token %}
           {{ form.non_field_errors }}
 
