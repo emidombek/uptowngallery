@@ -1,29 +1,21 @@
 # forms.py
 from django import forms
-from .models import Artwork
-
-
-class ArtworkForm(forms.ModelForm):
-    class Meta:
-        model = Artwork
-        fields = [
-            "description",
-            "image",
-            "category",
-            "reserve_price",
-        ]
-
-    def __init__(self, *args, **kwargs):
-        super(ArtworkForm, self).__init__(*args, **kwargs)
-        self.fields["description"].widget.attrs[
-            "class"
-        ] = "art-description-form-field"
-        self.fields["description"].widget.attrs["rows"] = 4
-        self.fields["description"].widget.attrs["cols"] = 40
-        self.fields["description"].widget.attrs["resize"] = "none"
+from .models import Artwork, Auction
 
 
 class ArtworkCreateForm(forms.ModelForm):
+    AUCTION_DURATION_CHOICES = [
+        (3, "3 days"),
+        (5, "5 days"),
+        (7, "7 days"),
+    ]
+
+    auction_duration = forms.ChoiceField(
+        label="Auction Duration",
+        choices=AUCTION_DURATION_CHOICES,
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+
     class Meta:
         model = Artwork
         exclude = ["approved", "auction_start"]
@@ -31,9 +23,15 @@ class ArtworkCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArtworkCreateForm, self).__init__(*args, **kwargs)
 
-        self.fields["description"].widget.attrs[
-            "placeholder"
-        ] = "Enter artwork description."
+        self.fields["auction_duration"] = self.fields.pop(
+            "auction_duration"
+        )
+        self.fields["description"].widget.attrs.update(
+            {
+                "placeholder": "Enter artwork description.",
+                "class": "form-control no-resize",  # Add the 'no-resize' class
+            }
+        )
         self.fields["image"].widget.attrs[
             "placeholder"
         ] = "Upload artwork image."
@@ -52,5 +50,13 @@ class ArtworkCreateForm(forms.ModelForm):
 
         if commit:
             artwork.save()
+
+            # Get the selected auction duration
+            duration = int(self.cleaned_data.get("auction_duration"))
+
+            # Start an auction for the artwork with the selected duration
+            Auction.objects.create(
+                artwork=artwork, status="pending", duration=duration
+            )
 
         return artwork

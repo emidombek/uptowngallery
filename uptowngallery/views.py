@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.views import View
 from .models import Artwork, Category, Auction
 from .forms import ArtworkCreateForm
@@ -47,10 +48,19 @@ class CreateArtworkView(View):
             artwork = form.save(
                 commit=False, user_profile=request.user.profile
             )
-            artwork.artist = (
-                request.user.profile
-            )  # Assuming I have a UserProfile for each user
+            artwork.artist = request.user.profile
+
+            # Save the artwork with auction duration
             artwork.save()
+
+            # Get the selected auction duration
+            duration = int(form.cleaned_data.get("auction_duration"))
+
+            # Start an auction for the artwork with the selected duration
+            auction = Auction.objects.create(
+                artwork=artwork, status="active", duration=duration
+            )
+
             return redirect("artwork_detail", artwork.id)
         return render(request, "create_artwork.html", {"form": form})
 
@@ -68,7 +78,19 @@ class ApproveArtworkView(View):
         artwork = Artwork.objects.get(pk=artwork_id)
         artwork.approved = True
         artwork.save()
-        return redirect("start_auction", artwork_id)
+
+        # Start the auction for the approved artwork
+        auction = Auction.objects.create(
+            artwork=artwork,
+            status="active",
+            duration=artwork.auction_duration,
+        )
+
+        messages.success(
+            request,
+            f"The artwork '{artwork.title}' has been approved and the auction started.",
+        )
+        return redirect("artwork_detail", artwork_id)
 
 
 class StartAuctionView(View):

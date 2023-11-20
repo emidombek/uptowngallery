@@ -82,6 +82,6 @@ body h5 {
   transform: scale(1.15);
 }
 
-.art-description-form-field {
+form.custom-form #id_description.form-control.no-resize {
   resize: none;
 }

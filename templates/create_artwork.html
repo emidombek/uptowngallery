@@ -6,10 +6,11 @@
 
 {% block content %}
   <div class="container mt-5 mb-5">
-    <h1 class="text-center mb-5">Create Artwork Auction Listing</h1>
+    <h1 class="text-center mb-5">Create Artwork Listing</h1>
     <!-- Display the artwork creation form -->
     <div class="row justify-content-center">
       <div class="col-md-6">
+        <!-- Ir HTML template -->
         <form method="post" enctype="multipart/form-data" class="custom-form">
           {% csrf_token %}
           {{ form.non_field_errors }}
@@ -23,19 +24,25 @@
           <div class="form-group">
             <label for="{{ form.image.id_for_label }}" class="col-sm-2 col-form-label">{{ form.image.label_tag }}</label>
             {{ form.image }}
-            <small class="form-text text-muted">{{ form.description.widget.attrs.placeholder }}</small>
+            <small class="form-text text-muted">{{ form.image.widget.attrs.placeholder }}</small>
           </div>
 
           <div class="form-group">
             <label for="{{ form.category.id_for_label }}" class="col-sm-2 col-form-label">{{ form.category.label_tag }}</label>
             {{ form.category }}
-            <small class="form-text text-muted">{{ form.description.widget.attrs.placeholder }}</small>
+            <small class="form-text text-muted">{{ form.category.widget.attrs.placeholder }}</small>
           </div>
 
           <div class="form-group">
             <label for="{{ form.reserve_price.id_for_label }}" class="col-sm-2 col-form-label">{{ form.reserve_price.label_tag }}</label>
             {{ form.reserve_price }}
-            <small class="form-text text-muted">{{ form.description.widget.attrs.placeholder }}</small>
+            <small class="form-text text-muted">{{ form.reserve_price.widget.attrs.placeholder }}</small>
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.auction_duration.id_for_label }}" class="col-sm-2 col-form-label">{{ form.auction_duration.label_tag }}</label>
+            {{ form.auction_duration }}
+            <small class="form-text text-muted">{{ form.auction_duration.widget.attrs.placeholder }}</small>
           </div>
 
           <div class="form-group">
