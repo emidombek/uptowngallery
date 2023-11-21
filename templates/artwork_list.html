@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="text-center mb-5">m Artwork List</h1>
+  <h1 class="text-center mb-5">Artwork List</h1>
 
   <div class="row">
     {% for artwork in artworks %}
@@ -29,7 +29,7 @@
         <a href="?page={{ artworks.previous_page_number }}">previous</a>
       {% endif %}
 
-      <span class="current">Page {{ artworks.number }} of {{ artworks.paginator.num_pages }}.</span>
+      <span class="current">Page {{ artworks.number }} of {{ artworks.paginator.num_pages }}</span>
 
       {% if artworks.has_next %}
         <a href="?page={{ artworks.next_page_number }}">next</a>
