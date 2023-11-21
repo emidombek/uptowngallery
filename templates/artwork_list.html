@@ -6,5 +6,35 @@
 
 {% block content %}
   <h1 class="text-center mb-5">m Artwork List</h1>
-  <!-- Display the list of artworks -->
+
+  <div class="row">
+    {% for artwork in artworks %}
+      <div class="col-md-4 mb-4">
+        <!-- Display artwork information here -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ artwork.title }}</h5>
+            <!-- Add other artwork details as needed -->
+          </div>
+        </div>
+      </div>
+      {% cycle '' '' '' '</div><div class="row">' %}
+    {% endfor %}
+  </div>
+
+  <div class="pagination mt-4">
+    <span class="step-links">
+      {% if artworks.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ artworks.previous_page_number }}">previous</a>
+      {% endif %}
+
+      <span class="current">Page {{ artworks.number }} of {{ artworks.paginator.num_pages }}.</span>
+
+      {% if artworks.has_next %}
+        <a href="?page={{ artworks.next_page_number }}">next</a>
+        <a href="?page={{ artworks.paginator.num_pages }}">last &raquo;</a>
+      {% endif %}
+    </span>
+  </div>
 {% endblock %}

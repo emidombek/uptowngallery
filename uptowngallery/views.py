@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views import View
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Artwork, Category, Auction
 from .forms import ArtworkCreateForm
 
@@ -24,6 +25,28 @@ class LandingPageView(View):
 class ArtworkListView(View):
     def get(self, request):
         artworks = Artwork.objects.all()
+        # Number of artworks to display per page
+        items_per_page = 12
+
+        # Create a Paginator object
+        paginator = Paginator(artworks, items_per_page)
+
+        # Get the current page number from the request's GET parameters
+        page = request.GET.get("page")
+
+        try:
+            # Get the Page object for the requested page
+            artworks = paginator.page(page)
+        except PageNotAnInteger:
+            # If the page parameter is not an integer, display the first page
+            artworks = paginator.page(1)
+        except EmptyPage:
+            # If the page is out of range (e.g., 9999), deliver the last page of results
+            artworks = paginator.page(paginator.num_pages)
+
+        return render(
+            request, "artwork_list.html", {"artworks": artworks}
+        )
         return render(
             request, "artwork_list.html", {"artworks": artworks}
         )
