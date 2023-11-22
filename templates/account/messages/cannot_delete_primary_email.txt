@@ -1,0 +1,2 @@
+{% load i18n %}
+{% blocktrans %}I cannot remove Ir primary email address ({{email}}).{% endblocktrans %}

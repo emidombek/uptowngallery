@@ -1,0 +1,12 @@
+{% extends "account/email/base_message.txt" %}
+{% load i18n %}
+
+{% block content %}{% autoescape off %}{% blocktrans %}I are receiving this email because I or someone else has requested a
+password for Ir user account. However, we do not have any record of a user
+with email {{ email }} in our database.
+
+This mail can be safely ignored if I did not request a password reset.
+
+If it was I, I can sign up for an account using the link below.{% endblocktrans %}
+
+{{ signup_url }}{% endautoescape %}{% endblock content %}
