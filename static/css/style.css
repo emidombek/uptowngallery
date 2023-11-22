@@ -36,7 +36,7 @@ body .container-fluid.no-side-spacing {
   overflow: hidden;
 }
 
-.form-control.form-control-sm.me-2.custom-search {
+.form-control.form-control-lg.me-2 {
   max-width: 50%;
 }
 
