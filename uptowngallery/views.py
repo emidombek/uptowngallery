@@ -47,16 +47,13 @@ class ArtworkListView(View):
         return render(
             request, "artwork_list.html", {"artworks": artworks}
         )
-        return render(
-            request, "artwork_list.html", {"artworks": artworks}
-        )
 
 
 class CreateArtworkView(View):
     def get(self, request):
         if not request.user.is_authenticated:
             # Redirect to the sign-in page if the user is not authenticated
-            return redirect("signin_page")
+            return redirect("account_login")
 
         form = ArtworkCreateForm()
         return render(request, "create_artwork.html", {"form": form})
@@ -64,7 +61,7 @@ class CreateArtworkView(View):
     def post(self, request):
         if not request.user.is_authenticated:
             # Redirect to the sign-in page if the user is not authenticated
-            return redirect("signin_page")
+            return redirect("account_login")
 
         form = ArtworkCreateForm(request.POST, request.FILES)
         if form.is_valid():
