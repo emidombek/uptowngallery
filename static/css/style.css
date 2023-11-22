@@ -24,7 +24,7 @@ body * {
 }
 
 /* Remove side spacing on container-fluid */
-body .container-flu.no-side-spacing {
+body .container-fluid.no-side-spacing {
   padding-right: 0;
   padding-left: 0;
   margin-right: 0;
@@ -36,7 +36,7 @@ body .container-flu.no-side-spacing {
   overflow: hidden;
 }
 
-.form-control.form-control-sm.me-2 {
+.form-control.form-control-sm.me-2.custom-search {
   max-width: 50%;
 }
 
