@@ -85,9 +85,18 @@
               </li>
             </ul>
             <ul class="navbar-nav ms-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="bi bi-box-arrow-in-right"></i> Login</a>
-              </li>
+              {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'account_logout' %}"><i class="bi bi-box-arrow-left"></i> Logout</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'account_signup' %}"><i class="bi bi-pencil-square"></i> Register</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                </li>
+              {% endif %}
             </ul>
           </div>
         </div>
