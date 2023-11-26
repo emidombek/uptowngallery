@@ -1,32 +1,58 @@
-{% extends "base.html" %}
-{% load allauth i18n socialaccount %}
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
 {% block head_title %}
-    {% trans "Signup" %}
-{% endblock head_title %}
+  {% trans 'Signup' %}
+{% endblock %}
+
 {% block content %}
-    {% element h1 %}
-        {% trans "Sign Up" %}
-    {% endelement %}
-    <p>
-        {% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}
-    </p>
-    {% url 'account_signup' as action_url %}
-    {% element form form=form method="post" action=action_url tags="entrance,signup" %}
-        {% slot body %}
-            {% csrf_token %}
-            {% element fields form=form unlabeled=True %}
-            {% endelement %}
-            {% if redirect_field_value %}
-                <input type="hidden"
-                       name="{{ redirect_field_name }}"
-                       value="{{ redirect_field_value }}" />
-            {% endif %}
-        {% endslot %}
-        {% slot actions %}
-            {% element button tags="prominent,signup" type="submit" %}
-                {% trans "Sign Up" %}
-            {% endelement %}
-        {% endslot %}
-    {% endelement %}
-    {% include "socialaccount/snippets/login.html" with page_laIt="entrance" %}
-{% endblock content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 mt-3">
+        <h1 class="text-center mb-5">{% trans 'Sign Up' %}</h1>
+
+        <p class="text-right mt-3 mb-3" style="margin-bottom: 0;">
+          {% blocktrans %}Complete the below form to signup and start bidding on auctions or selling Ir artwork!{% endblocktrans %}
+        </p>
+      </div>
+    </div>|<div class="row justify-content-center">
+      <div class="col-md-6 mt-3 mt-b border rounded p-3">
+        <form method="post" action="{{ action_url }}" tags="entrance,signup">
+          {% csrf_token %}
+
+          {# Email #}
+          <div class="form-group row mt-2">
+            <label for="{{ form.email.id_for_label }}" class="col-form-label offset-md-3 col-md-6 text-md-center">Email:</label>
+            <div class="col-md-8">{{ form.email }}
+              {{ form.email.errors }}</div>
+          </div>
+
+          {# Password #}
+          <div class="form-group row mt-2">
+            <label for="{{ form.password1.id_for_label }}" class="col-form-label offset-md-3 col-md-6 text-md-center">Password:</label>
+            <div class="col-md-8">
+              {{ form.password1 }}
+              {{ form.password1.errors }}
+              <small class="form-text text-muted">Password must meet Allauth requirements.</small>
+            </div>
+          </div>
+
+          {# Confirm Password #}
+          <div class="form-group row mt-2">
+            <label for="{{ form.password2.id_for_label }}" class="col-form-label offset-md-3 col-md-6 text-md-center">Confirm Password:</label>
+            <div class="col-md-8">{{ form.password2 }}
+              {{ form.password2.errors }}</div>
+          </div>
+
+          <div class="form-group row mt-3">
+            <div class="col-md-12 text-center">
+              <input type="submit" class="btn btn-info" value="{% trans 'Sign Up' %}" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

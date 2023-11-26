@@ -9,43 +9,25 @@
 
 {% block content %}
   <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-8 mt-3">
-        <h1 class="text-center mb-5">{% trans 'Sign In' %}</h1>
+    <div class="row">
+      <div class="col-md-8 mt-3 offset-md-2">
+        <h1 class"text-center mb-5">{% trans 'Sign In' %}</h1>
 
-        <p class="text-center">
-          {% blocktrans %}Welcome back to the Uptown Gallery Website. To place a bid or list an item, <a class="link" href="{{ signup_url }}">sign up</a>
+        <p>
+          {% blocktrans %}Welcome back to the Uptown Gallery Website to place a bid or list an item <a class="link" href="{{ signup_url }}">sign up</a>
           first.{% endblocktrans %}
         </p>
-      </div>
+      </div
     </div>
-    <div class="row justify-content-center">
-      <div class="col-md-6 text-center mt-3 mt-b" {{ form.errors }}>
-        <form class="login form-control mt-3 mb-3" method="POST" action="{% url 'account_login' %}">
+    <div class="row">
+      <div class="col-md-8 mt-3 offset-md-2">
+        <form class="login" method="POST" action="{% url 'account_login' %}">
           {% csrf_token %}
-
-          <div class="form-group mt-3">
-            <label for="id_login">Username:</label>
-            <input type="text" name="login" placeholder="Username" autocomplete="username" maxlength="150" required id="id_login" />
-          </div>
-
-          <div class="form-group mt-3">
-            <label for="id_password">Password :</label>
-            <input type="password" name="password" placeholder="Password" autocomplete="current-password" required id="id_password" />
-            <br />
-            <span class="helptext"><a href="/accounts/password/reset/">Forgot Ir password?</a></span>
-          </div>
-
-          <div class="form-group mt-3 mb-3">
-            <label for="id_remember">Remember Me:</label>
-            <input type="checkbox" name="remember" id="id_remember" />
-          </div>
-
+          {{ form.as_p }}
           {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
           {% endif %}
-
-          <button class="btn btn-info mb-3" type="submit">{% trans 'Sign In' %}</button>
+          <button class="btn btn-signup right" type="submit">{% trans 'Sign In' %}</button>
         </form>
       </div>
     </div>
