@@ -20,6 +20,12 @@ class UserProfile(models.Model):
         verbose_name="User",
         help_text="Format: Required, Unique",
     )
+    name = models.CharField(
+        max_length=255,
+        null=True,
+        verbose_name="Name",
+        help_text="The name of the user.",
+    )
     shipping_address = models.CharField(
         max_length=255,
         null=True,
@@ -33,7 +39,7 @@ class UserProfile(models.Model):
     )
 
     def __str__(self):
-        return f"User Profile for {self.user.username} - Shipping Address: {self.shipping_address} - Created on: {self.create_date}"
+        return f"User Profile for {self.user.username} - Name: {self.name} - Shipping Address: {self.shipping_address} - Created on: {self.create_date}"
 
 
 class Artwork(models.Model):
