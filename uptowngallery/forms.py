@@ -2,6 +2,9 @@
 from django import forms
 from .models import Artwork, Auction
 import cloudinary.uploader
+from allauth.account.forms import SignupForm
+from django import forms
+from .models import UserProfile
 
 
 class ArtworkCreateForm(forms.ModelForm):
@@ -45,3 +48,13 @@ class ArtworkCreateForm(forms.ModelForm):
             )
 
         return artwork
+
+
+class CustomSignupForm(SignupForm):
+    shipping_address = forms.CharField(
+        max_length=255, required=True, label="Shipping Address"
+    )
+
+    class Meta:
+        model = UserProfile
+        fields = ["shipping_address"]

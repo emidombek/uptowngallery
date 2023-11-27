@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
     "uptowngallery-c4ad28352563.herokuapp.com",
     "localhost",
     "127.0.0.1",
+    "127.0.0.1:8000",
 ]
 
 
@@ -64,7 +65,6 @@ SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = (
     app_settings.EmailVerificationMethod.MANDATORY
 )
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
 LOGIN_REDIRECT_URL = "/"
@@ -72,13 +72,6 @@ LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Ir Site Name] "
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
