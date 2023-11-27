@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from allauth.account import app_settings
 
 if os.path.isfile("env.py"):
     import env
@@ -35,7 +36,6 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "uptowngallery-c4ad28352563.herokuapp.com",
     "localhost",
-    "127.0.0.1:8000",
     "127.0.0.1",
 ]
 
@@ -61,8 +61,15 @@ INSTALLED_APPS = [
 
 SITE_ID = 1
 
+ACCOUNT_EMAIL_VERIFICATION = (
+    app_settings.EmailVerificationMethod.MANDATORY
+)
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
+
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Ir Site Name] "
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -108,13 +115,6 @@ WSGI_APPLICATION = "gallery_site.wsgi.application"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
-DATABASES = {
     "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
@@ -134,6 +134,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+]
+
+AUTHENTICATION_BACKENDS = [
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 
