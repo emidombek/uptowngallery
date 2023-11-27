@@ -61,6 +61,7 @@ class CustomSignupForm(SignupForm):
         choices=[("US", "United States"), ("CA", "Canada")],
         label="Country",
     )
+    zipcode = forms.CharField(max_length=20, label="Zipcode")
 
     class Meta:
         model = get_user_model()
@@ -73,6 +74,7 @@ class CustomSignupForm(SignupForm):
             "city",
             "state",
             "country",
+            "zipcode",
         ]
 
     def save(self, request):
@@ -84,10 +86,11 @@ class CustomSignupForm(SignupForm):
         city = self.cleaned_data.get("city")
         state = self.cleaned_data.get("state")
         country = self.cleaned_data.get("country")
+        zipcode = self.cleaned_data.get("zipcode")
 
         # Concatenate the address fields into a single string
         shipping_address = (
-            f"{street_address}, {city}, {state}, {country}"
+            f"{street_address}, {city}, {state}, {country}, {zipcode}"
         )
 
         # Create or update the user's profile with the shipping address
