@@ -4,6 +4,8 @@ from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Artwork, Category, Auction
 from .forms import ArtworkCreateForm
+from .forms import CustomSignupForm
+from .adapters import CustomAccountAdapter  # Import Ir custom adapter
 
 
 class LandingPageView(View):
@@ -120,3 +122,25 @@ class StartAuctionView(View):
             artwork=artwork, status="active"
         )
         return redirect("auction_detail", auction.id)
+
+
+def signup_view(request):
+    if request.method == "POST":
+        form = CustomSignupForm(request.POST)
+        if form.is_valid():
+            # Process the form data (create user, save additional data, etc.)
+            user = (
+                form.save()
+            )  # This saves the user and triggers the adapter
+
+            # Custom account adapter
+            adapter = CustomAccountAdapter()
+            adapter.save_user(request, user, form, commit=True)
+
+            return redirect(
+                "success_page"
+            )  # Redirect after successful signup
+    else:
+        form = CustomSignupForm()
+
+    return render(request, "signup_template.html", {"form": form})

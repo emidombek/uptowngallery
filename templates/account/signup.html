@@ -49,11 +49,36 @@
               {{ form.password2.errors }}</div>
           </div>
 
-          {# Shipping Address #}
+          {# Name #}
           <div class="form-group row mt-2">
-            <label for="{{ form.shipping_address.id_for_label }}" class="col-form-label col-md-4">Shipping Address:</label>
-            <div class="col-md-8">{{ form.shipping_address }}
-              {{ form.shipping_address.errors }}</div>
+            <label for="{{ form.name.id_for_label }}" class="col-form-label col-md-4">Name:</label>
+            <div class="col-md-8">{{ form.name }}
+              {{ form.name.errors }}</div>
+          </div>
+
+          {# Address Fields #}
+          <div class="form-group row mt-2">
+            <label class="col-form-label col-md-4">Street Address:</label>
+            <div class="col-md-8">{{ form.street_address }}
+              {{ form.street_address.errors }}</div>
+          </div>
+
+          <div class="form-group row mt-2">
+            <label class="col-form-label col-md-4">City:</label>
+            <div class="col-md-8">{{ form.city }}
+              {{ form.city.errors }}</div>
+          </div>
+
+          <div class="form-group row mt-2">
+            <label class="col-form-label col-md-4">State:</label>
+            <div class="col-md-8">{{ form.state }}
+              {{ form.state.errors }}</div>
+          </div>
+
+          <div class="form-group row mt-2">
+            <label class="col-form-label col-md-4">Country:</label>
+            <div class="col-md-8">{{ form.country }}
+              {{ form.country.errors }}</div>
           </div>
 
           <div class="form-group row">

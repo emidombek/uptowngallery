@@ -7,6 +7,7 @@ from .views import (
     ApproveArtworkView,
     StartAuctionView,
 )
+from .views import signup_view
 from django.urls import path
 
 urlpatterns = [
@@ -28,4 +29,5 @@ urlpatterns = [
         StartAuctionView.as_view(),
         name="start_auction",
     ),
+    path("signup/", signup_view, name="account_signup"),
 ]

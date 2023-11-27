@@ -5,7 +5,7 @@ from .forms import CustomSignupForm  # Import Ir custom form
 
 class CustomAccountAdapter(DefaultAccountAdapter):
     def get_signup_form(self, request):
-        return CustomSignupForm  # Provide Ir custom signup form
+        return CustomSignupForm
 
     def save_user(self, request, user, form, commit=True):
         user = super().save_user(request, user, form, commit=False)

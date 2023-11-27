@@ -71,6 +71,10 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Ir Site Name] "
 
+ACCOUNT_FORMS = {
+    "signup": "uptowngallery.forms.CustomSignupForm",
+}
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -111,7 +115,7 @@ DATABASES = {
     "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
-ACCOUNT_ADAPTER = "uptowngallery.adapter.CustomAccountAdapter"
+ACCOUNT_ADAPTER = "uptowngallery.adapters.CustomAccountAdapter"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

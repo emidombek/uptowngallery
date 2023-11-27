@@ -4,6 +4,7 @@ from .models import Artwork, Auction
 import cloudinary.uploader
 from allauth.account.forms import SignupForm
 from django.contrib.auth import get_user_model
+from .models import UserProfile
 
 
 class ArtworkCreateForm(forms.ModelForm):
@@ -51,6 +52,15 @@ class ArtworkCreateForm(forms.ModelForm):
 
 class CustomSignupForm(SignupForm):
     name = forms.CharField(max_length=255, required=True, label="Name")
+    street_address = forms.CharField(
+        max_length=255, label="Street Address"
+    )
+    city = forms.CharField(max_length=255, label="City")
+    state = forms.CharField(max_length=255, label="State")
+    country = forms.ChoiceField(
+        choices=[("US", "United States"), ("CA", "Canada")],
+        label="Country",
+    )
 
     class Meta:
         model = get_user_model()
@@ -59,5 +69,30 @@ class CustomSignupForm(SignupForm):
             "password1",
             "password2",
             "name",
-            "shipping_address",
+            "street_address",
+            "city",
+            "state",
+            "country",
         ]
+
+    def save(self, request):
+        # Get the user instance from the parent class's save method
+        user = super(CustomSignupForm, self).save(request)
+
+        # Get the address fields from the form
+        street_address = self.cleaned_data.get("street_address")
+        city = self.cleaned_data.get("city")
+        state = self.cleaned_data.get("state")
+        country = self.cleaned_data.get("country")
+
+        # Concatenate the address fields into a single string
+        shipping_address = (
+            f"{street_address}, {city}, {state}, {country}"
+        )
+
+        # Create or update the user's profile with the shipping address
+        UserProfile.objects.update_or_create(
+            user=user, defaults={"shipping_address": shipping_address}
+        )
+
+        return user
