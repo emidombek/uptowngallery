@@ -65,6 +65,7 @@ SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = (
     app_settings.EmailVerificationMethod.MANDATORY
 )
+
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
 LOGIN_REDIRECT_URL = "/"
@@ -74,6 +75,8 @@ ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Ir Site Name] "
 ACCOUNT_FORMS = {
     "signup": "uptowngallery.forms.CustomSignupForm",
 }
+
+ACCOUNT_ADAPTER = "allauth.account.adapter.DefaultAccountAdapter"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -114,8 +117,6 @@ WSGI_APPLICATION = "gallery_site.wsgi.application"
 DATABASES = {
     "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
-
-ACCOUNT_ADAPTER = "uptowngallery.adapters.CustomAccountAdapter"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
