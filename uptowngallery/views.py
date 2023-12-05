@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views import View
@@ -5,6 +6,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Artwork, Category, Auction
 from .forms import ArtworkCreateForm
 from .forms import CustomSignupForm
+
+logger = logging.getLogger(__name__)
 
 
 class LandingPageView(View):
@@ -124,18 +127,20 @@ class StartAuctionView(View):
 
 
 def signup_view(request):
-    print("Entering signup_view function")
+    logger.info("Entering signup_view function")
+
     if request.method == "POST":
         form = CustomSignupForm(request.POST)
-        print(f"Form data: {form.data}")
-        print(f"Form is valid: {form.is_valid()}")
+        logger.info(f"Form data: {form.data}")
+        logger.info(f"Form is valid: {form.is_valid()}")
+
         if form.is_valid():
-            print("Form is valid. Proceeding to save.")
-            user = form.save()
-            print(f"User saved: {user}")
+            logger.info("Form is valid. Proceeding to save.")
+            user = form.save(request)
+            logger.info(f"User saved: {user}")
             return redirect("verification_sent")
     else:
         form = CustomSignupForm()
 
-    print("Rendering signup template.")
+    logger.info("Rendering signup template.")
     return render(request, "signup_template.html", {"form": form})

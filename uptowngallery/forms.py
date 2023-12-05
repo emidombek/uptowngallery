@@ -1,5 +1,6 @@
 # forms.py
 from django import forms
+from django.utils import timezone
 from .models import Artwork, Auction
 import cloudinary.uploader
 from allauth.account.forms import SignupForm
@@ -81,6 +82,14 @@ class CustomSignupForm(SignupForm):
         # Get the user instance from the parent class's save method
         user = super(CustomSignupForm, self).save(request)
 
+        # Get the user profile or create a new one
+        user_profile, created = UserProfile.objects.get_or_create(
+            user=user
+        )
+
+        # Update the user profile fields
+        user_profile.name = self.cleaned_data.get("name")
+
         # Get the address fields from the form
         street_address = self.cleaned_data.get("street_address")
         city = self.cleaned_data.get("city")
@@ -92,10 +101,12 @@ class CustomSignupForm(SignupForm):
         shipping_address = (
             f"{street_address}, {city}, {state}, {country}, {zipcode}"
         )
+        user_profile.shipping_address = shipping_address
 
-        # Create or update the user's profile with the shipping address
-        UserProfile.objects.update_or_create(
-            user=user, defaults={"shipping_address": shipping_address}
-        )
+        # Set the create_date field to the current date and time
+        user_profile.create_date = timezone.now()
+
+        # Save the user profile
+        user_profile.save()
 
         return user
