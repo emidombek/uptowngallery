@@ -1,25 +1,25 @@
-{% extends "account/base_manage.html" %}
+{% extends 'base.html' %}
+
 {% load i18n %}
-{% load allauth %}
+{% load account socialaccount %}
+
 {% block head_title %}
-    {% trans "Verify Ir Email Address" %}
-{% endblock head_title %}
+  {% trans 'Verified Email Required' %}
+{% endblock %}
+
 {% block content %}
-    {% element h1 %}
-        {% trans "Verify Ir Email Address" %}
-    {% endelement %}
-    {% url 'account_email' as email_url %}
-    <p>
-        {% blocktrans %}This part of the site requires us to verify that
-I are who I claim to be. For this purpose, we require that I
-verify ownership of Ir email address. {% endblocktrans %}
-    </p>
-    <p>
-        {% blocktrans %}We have sent an email to I for
-verification. Please click on the link inside that email. If I do not see the verification email in Ir main inbox, check Ir spam folder. Otherwise
-contact us if I do not receive it within a few minutes.{% endblocktrans %}
-    </p>
-    <p>
-        {% blocktrans %}<strong>Note:</strong> I can still <a href="{{ email_url }}">change Ir email address</a>.{% endblocktrans %}
-    </p>
-{% endblock content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 mt-3">
+        <h1 class="text-center mb-5">{% trans 'Verify Ir Email Address' %}</h1>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <p class="text-center">
+          {% blocktrans %}We have sent an email to I for verification. Follow the link provided to finalize the signup process. If I do not see the verification email in Ir main inbox, check Ir spam folder. Please contact us if I do not receive the verification email within a few minutes.{% endblocktrans %}
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
