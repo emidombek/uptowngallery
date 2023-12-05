@@ -131,7 +131,7 @@ def signup_view(request):
             user = form.save()
 
             # Redirect after successful signup
-            return redirect("success_page")
+            return redirect("verification_sent")
     else:
         form = CustomSignupForm()
 
