@@ -124,15 +124,18 @@ class StartAuctionView(View):
 
 
 def signup_view(request):
+    print("Entering signup_view function")
     if request.method == "POST":
         form = CustomSignupForm(request.POST)
+        print(f"Form data: {form.data}")
+        print(f"Form is valid: {form.is_valid()}")
         if form.is_valid():
-            # Process the form data (create user, save additional data, etc.)
+            print("Form is valid. Proceeding to save.")
             user = form.save()
-
-            # Redirect after successful signup
+            print(f"User saved: {user}")
             return redirect("verification_sent")
     else:
         form = CustomSignupForm()
 
+    print("Rendering signup template.")
     return render(request, "signup_template.html", {"form": form})

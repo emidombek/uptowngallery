@@ -23,6 +23,17 @@
         <form method="post" action="{{ action_url }}" tags="entrance,signup">
           {% csrf_token %}
 
+          {# Display Form Errors #}
+          {% if form.errors %}
+            <ul>
+              {% for field in form %}
+                {% for error in field.errors %}
+                  <li>{{ field.label_tag }}: {{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+
           {# Email #}
           <div class="form-group row mt-2">
             <label for="{{ form.email.id_for_label }}" class="col-form-label col-md-4">Email:</label>
