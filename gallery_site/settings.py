@@ -56,8 +56,8 @@ INSTALLED_APPS = [
     "cloudinary_storage",
     "django.contrib.staticfiles",
     "cloudinary",
-    "uptowngallery",
     "widget_tweaks",
+    "uptowngallery",
 ]
 
 SITE_ID = 1
