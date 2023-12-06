@@ -14,7 +14,11 @@
           <p class="text-center mt-3 mb-3">
             {% trans 'Are I sure I want to sign out?' %}
           </p>
-          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+
+          {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+
           <div class="text-center mb-5">
             <button type="submit" class="btn btn-info">{% trans 'Sign Out' %}</button>
           </div>
