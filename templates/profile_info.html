@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="container">
+    <h1>{{ user_profile.name }}'s Profile</h1>
+    <p>
+      <strong>Name:</strong> {{ user_profile.name }}
+    </p>
+    <p>
+      <strong>Shipping Address:</strong> {{ user_profile.shipping_address }}
+    </p>
+
+    <h2>Auctions Won</h2>
+    {% if auctions_won %}
+      <ul>
+        {% for auction in auctions_won %}
+          <li>
+            <strong>Auction:</strong> {{ auction.id }}<br />
+            <strong>Artwork:</strong> {{ auction.artwork.description }}<br />
+            <strong>Winning Bid Amount:</strong> {{ auction.bids.filter(bidder = user_profile).first.amount }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No auctions won yet.</p>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,4 +1,5 @@
-from . import views
+# uptown_gallery/urls.py
+from django.urls import path
 from .views import (
     LandingPageView,
     ArtworkListView,
@@ -6,12 +7,12 @@ from .views import (
     PendingArtworksView,
     ApproveArtworkView,
     StartAuctionView,
+    ProfileInfoView,
+    signup_view,
 )
-from .views import signup_view
-from django.urls import path
 
 urlpatterns = [
-    path("", views.LandingPageView.as_view(), name="home"),
+    path("", LandingPageView.as_view(), name="home"),
     path("artworks/", ArtworkListView.as_view(), name="artwork_list"),
     path("create/", CreateArtworkView.as_view(), name="create_artwork"),
     path(
@@ -30,4 +31,5 @@ urlpatterns = [
         name="start_auction",
     ),
     path("signup/", signup_view, name="account_signup"),
+    path("profile/", ProfileInfoView.as_view(), name="profile_info"),
 ]

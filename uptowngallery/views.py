@@ -1,11 +1,20 @@
 import logging
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Artwork, Category, Auction
+from .models import (
+    Artwork,
+    Category,
+    Auction,
+    UserProfile,
+    Bids,
+)
 from .forms import ArtworkCreateForm
 from .forms import CustomSignupForm
+from django.utils.decorators import method_decorator
+from django.db.models import F
 
 logger = logging.getLogger(__name__)
 
@@ -144,3 +153,23 @@ def signup_view(request):
 
     logger.info("Rendering signup template.")
     return render(request, "signup_template.html", {"form": form})
+
+
+@method_decorator(login_required, name="dispatch")
+class ProfileInfoView(View):
+    template_name = "profile_info.html"
+
+    def get(self, request, *args, **kwargs):
+        user_profile = UserProfile.objects.get(user=request.user)
+        auctions_won = Auction.objects.filter(
+            status="closed",
+            bids__bidder=user_profile,
+            bids__amount=F("artwork__reserve_price"),
+        ).distinct()
+
+        context = {
+            "user_profile": user_profile,
+            "auctions_won": auctions_won,
+        }
+
+        return render(request, self.template_name, context)
