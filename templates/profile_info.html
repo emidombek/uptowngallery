@@ -1,27 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
   <div class="container">
-    <h1>{{ user_profile.name }}'s Profile</h1>
-    <p>
-      <strong>Name:</strong> {{ user_profile.name }}
-    </p>
-    <p>
-      <strong>Shipping Address:</strong> {{ user_profile.shipping_address }}
-    </p>
+    <div class="row justify-content-center">
+      <div class="col-md-8 mt-3">
+        <h1 class="text-center mb-3">Profile</h1>
 
-    <h2>Auctions Won</h2>
-    {% if auctions_won %}
-      <ul>
-        {% for auction in auctions_won %}
-          <li>
-            <strong>Auction:</strong> {{ auction.id }}<br />
-            <strong>Artwork:</strong> {{ auction.artwork.description }}<br />
-            <strong>Winning Bid Amount:</strong> {{ auction.bids.filter(bidder = user_profile).first.amount }}
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>No auctions won yet.</p>
-    {% endif %}
+        <div class="row">
+          <!-- Left column for Profile Information -->
+          <div class="col-md-6">
+            <h2 class="text-center mb-3">Profile Information</h2>
+            <p class="text-center mb-3">
+              <strong>Name:</strong> {% if user.profile.name %}
+                {{ user.profile.name }}
+              {% else %}
+                N/A
+              {% endif %}
+              <br />
+              <strong>Shipping Address:</strong>
+              <br /> {% if user.profile.shipping_address %}
+                {{ user.profile.shipping_address }}
+              {% else %}
+                N/A
+              {% endif %}
+            </p>
+          </div>
+
+          <!-- Right column for Auctions Won -->
+          <div class="col-md-6">
+            <h2 class="text-center mb-3">Auctions Won</h2>
+            {% if auctions_won %}
+              <ul>
+                {% for auction in auctions_won %}
+                  <li>
+                    <strong>Auction:</strong> {{ auction.id }}<br />
+                    <strong>Artwork:</strong> {{ auction.artwork.description }}<br />
+                    <strong>Winning Bid Amount:</strong> {{ winning_bid_amount }}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-center">No auctions won yet.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}

@@ -101,19 +101,17 @@ class Artwork(models.Model):
     class Meta:
         ordering = ["-create_date"]
 
+    def calculate_price(self):
+        related_auctions = self.auction_set.all()
+        if related_auctions:
+            bids = Bids.objects.filter(auction__in=related_auctions)
+            if bids:
+                highest_bid = max(bids, key=lambda bid: bid.amount)
+                return highest_bid.amount
+        return self.reserve_price
 
-def calculate_price(self):
-    related_auctions = self.auction_set.all()
-    if related_auctions:
-        bids = Bids.objects.filter(auction__in=related_auctions)
-        if bids:
-            highest_bid = max(bids, key=lambda bid: bid.amount)
-            return highest_bid.amount
-    return self.reserve_price
-
-
-def __str__(self):
-    return f"Artwork #{self.id} - Artist: {self.artist}"
+    def __str__(self):
+        return f"Artwork #{self.id} - Artist: {self.artist}"
 
 
 class Auction(models.Model):

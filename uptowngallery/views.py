@@ -159,17 +159,30 @@ def signup_view(request):
 class ProfileInfoView(View):
     template_name = "profile_info.html"
 
+    def get_context_data(self, **kwargs):
+        context = {}
+
+        # Add Ir logic to fetch the winning bid amount here
+        user_profile = (
+            self.request.user.profile
+        )  # Assuming I have a one-to-one relationship between User and Profile
+        winning_bid = (
+            Bids.objects.filter(
+                bidder=user_profile, auction__artwork__approved=True
+            )
+            .order_by("-amount")
+            .first()
+        )
+
+        if winning_bid:
+            winning_bid_amount = winning_bid.amount
+        else:
+            winning_bid_amount = None
+
+        # Add other context data as needed
+        context["winning_bid_amount"] = winning_bid_amount
+        return context
+
     def get(self, request, *args, **kwargs):
-        user_profile = UserProfile.objects.get(user=request.user)
-        auctions_won = Auction.objects.filter(
-            status="closed",
-            bids__bidder=user_profile,
-            bids__amount=F("artwork__reserve_price"),
-        ).distinct()
-
-        context = {
-            "user_profile": user_profile,
-            "auctions_won": auctions_won,
-        }
-
+        context = self.get_context_data()
         return render(request, self.template_name, context)
