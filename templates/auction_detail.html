@@ -1,11 +1,50 @@
 <!-- auction_detail.html -->
-{% extends 'base.html' %}
 
-{% block title %}
-  Auction Detail
-{% endblock %}
+{% extends 'base_generic.html' %}
 
 {% block content %}
-  <h2>Auction Detail</h2>
-  <!-- Display auction details -->
+  <h1>{{ auction.artwork }}</h1>
+
+  <!-- Display Artwork Image -->
+  <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork }}" style="max-width: 100%; height: auto;" />
+
+  <!-- Display Artwork Details -->
+  <p>
+    <strong>Description:</strong> {{ auction.artwork.description }}
+  </p>
+  <p>
+    <strong>Auction Start:</strong> {{ auction.artwork.auction_start }}
+  </p>
+  <p>
+    <strong>Category:</strong> {{ auction.artwork.get_category_display }}
+  </p>
+  <p>
+    <strong>Artist:</strong> {{ auction.artwork.artist.name }}
+  </p>
+
+  <!-- Display Auction Details -->
+  <p>
+    <strong>Number of Bids:</strong> {{ auction.bids.count }}
+  </p>
+  <p>
+    <strong>Current Price:</strong>
+    {% if auction.bids %}
+      {{ auction.bids.all|dictsort:'amount'|last.amount }}
+    {% else %}
+      {{ auction.artwork.calculate_price }}
+    {% endif %}
+  </p>
+
+  <!-- Additional Auction Information -->
+  <p>
+    <strong>Status:</strong> {{ auction.get_status_display }}
+  </p>
+  <p>
+    <strong>Auction End Date:</strong> {{ auction.end_date }}
+  </p>
+  <p>
+    <strong>Reserve Price:</strong> {{ auction.reserve_price }}
+  </p>
+
+  <!-- Add any other details I want to display -->
 {% endblock %}
