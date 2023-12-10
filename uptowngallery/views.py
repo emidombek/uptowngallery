@@ -98,12 +98,24 @@ class CreateArtworkView(LoginRequiredMixin, CreateView):
         return super().post(request, *args, **kwargs)
 
 
-class PendingArtworksView(LoginRequiredMixin, View):
+class PendingArtworksView(View):
     def get(self, request):
         # Filter artworks to show only pending artworks of the current user
         artworks = Artwork.objects.filter(
             artist=request.user.profile, approved=False
         )
+
+        # Paginate the artworks
+        paginator = Paginator(artworks, 10)  # Show 10 artworks per page
+        page = request.GET.get("page")
+
+        try:
+            artworks = paginator.page(page)
+        except PageNotAnInteger:
+            artworks = paginator.page(1)
+        except EmptyPage:
+            artworks = paginator.page(paginator.num_pages)
+
         return render(
             request, "pending_artworks.html", {"artworks": artworks}
         )
