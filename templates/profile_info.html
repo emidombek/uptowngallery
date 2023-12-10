@@ -3,46 +3,41 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-8 mt-3">
-        <h1 class="text-center mb-3">Profile</h1>
+        <h1 class="text-center mb-5">Profile</h1>
 
-        <img src="https://res.cloudinary.com/dh4ck00n3/image/upload/v1701895696/u8e3mzqahxlnyrxzuz8h.jpg" alt="Default Profile" class="img-fluid mx-auto d-block mb-4" />
+        <div class="card bg-dark text-light mb-5">
+          <div class="row no-gutters">
+            <!-- Profile Image Column -->
+            <div class="col-md-4">
+              <img src="https://res.cloudinary.com/dh4ck00n3/image/upload/v1701895696/u8e3mzqahxlnyrxzuz8h.jpg" alt="Default Profile" class="card-img" />
+            </div>
 
-        <div class="row">
-          <!-- Profile Information -->
-          <div class="bg-dark text-light p-3 mb-4">
-            <h2 class="text-center mb-3">Profile Info</h2>
-            <p class="text-center mb-3">
-              <strong>Name:</strong> {% if user.profile.name %}
-                {{ user.profile.name }}
-              {% else %}
-                N/A
-              {% endif %}
-              <br />
-              <strong>Shipping Address:</strong>
-              <br /> {% if user.profile.shipping_address %}
-                {{ user.profile.shipping_address }}
-              {% else %}
-                N/A
-              {% endif %}
-            </p>
-          </div>
-
-          <!-- Auctions Won -->
-          <div class="bg-dark text-light p-3 mb-4">
-            <h2 class="text-center mb-3">Auctions Won</h2>
-            {% if auctions_won %}
-              <ul>
-                {% for auction in auctions_won %}
-                  <li>
-                    <strong>Auction:</strong> {{ auction.id }}<br />
-                    <strong>Artwork:</strong> {{ auction.artwork.description }}<br />
-                    <strong>Winning Bid Amount:</strong> {{ winning_bid_amount }}
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-center">No auctions won yet.</p>
-            {% endif %}
+            <!-- Profile Information Column -->
+            <div class="col-md-8">
+              <div class="card-body">
+                <!-- Profile Information -->
+                <h2 class="card-title text-center mt-3 mb-3">Profile Info</h2>
+                <p class="card-text mb-3">
+                  <strong>Name:</strong> {% if user.profile.name %}
+                    {{ user.profile.name }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                  <br /><br />
+                  <strong>Shipping Address:</strong> {% if user.profile.shipping_address %}
+                    {{ user.profile.shipping_address }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                  <br /><br />
+                  <strong>Account Create Date:</strong> {% if user.date_joined %}
+                    {{ user.date_joined|date:'F j, Y' }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
