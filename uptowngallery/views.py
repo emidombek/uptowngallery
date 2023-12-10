@@ -11,7 +11,6 @@ from .models import (
     Artwork,
     Category,
     Auction,
-    UserProfile,
     Bids,
 )
 from .forms import ArtworkCreateForm
@@ -138,15 +137,6 @@ class ApproveArtworkView(View):
         return redirect("artwork_detail", artwork_id)
 
 
-class StartAuctionView(View):
-    def get(self, request, artwork_id):
-        artwork = Artwork.objects.get(pk=artwork_id)
-        auction = Auction.objects.create(
-            artwork=artwork, status="active"
-        )
-        return redirect("auction_detail", auction.id)
-
-
 def signup_view(request):
     logger.info("Entering signup_view function")
 
@@ -168,6 +158,21 @@ def signup_view(request):
 
 
 @method_decorator(login_required, name="dispatch")
+class AuctionDetailView(View):
+    def get(self, request, auction_id):
+        auction = Auction.objects.get(pk=auction_id)
+
+        # Ensure that the auction is active
+        if auction.status == "active":
+            # I may want to fetch related information and pass it to the template
+            return render(
+                request, "auction_detail.html", {"auction": auction}
+            )
+        else:
+            messages.error(request, "This auction is not active.")
+            return redirect("some_redirect_view")
+
+
 class ProfileInfoView(View):
     template_name = "profile_info.html"
 

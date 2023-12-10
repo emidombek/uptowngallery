@@ -6,7 +6,7 @@ from .views import (
     CreateArtworkView,
     PendingArtworksView,
     ApproveArtworkView,
-    StartAuctionView,
+    AuctionDetailView,
     ProfileInfoView,
     signup_view,
 )
@@ -16,7 +16,7 @@ urlpatterns = [
     path("artworks/", ArtworkListView.as_view(), name="artwork_list"),
     path("create/", CreateArtworkView.as_view(), name="create_artwork"),
     path(
-        "admin/pending/",
+        "pending_artworks/",
         PendingArtworksView.as_view(),
         name="pending_artworks",
     ),
@@ -26,9 +26,9 @@ urlpatterns = [
         name="approve_artwork",
     ),
     path(
-        "admin/start-auction/<int:artwork_id>/",
-        StartAuctionView.as_view(),
-        name="start_auction",
+        "auction_detail/<int:auction_id>/",
+        AuctionDetailView.as_view(),
+        name="auction_detail",
     ),
     path("signup/", signup_view, name="account_signup"),
     path("profile/", ProfileInfoView.as_view(), name="profile_info"),
