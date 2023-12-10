@@ -1,6 +1,5 @@
 # forms.py
 from django import forms
-from django.utils import timezone
 from .models import Artwork, Auction
 import cloudinary.uploader
 from allauth.account.forms import SignupForm
@@ -24,6 +23,19 @@ class ArtworkCreateForm(forms.ModelForm):
     class Meta:
         model = Artwork
         exclude = ["approved", "auction_start"]
+        fields = [
+            "description",
+            "image",
+            "category",
+            "reserve_price",
+            "auction_duration",
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        image = cleaned_data.get("image")
+        # I can add additional validation checks here if needed
+        print("Clean method executed")
 
     def save(self, commit=True, user_profile=None):
         artwork = super().save(commit=False)
@@ -32,21 +44,27 @@ class ArtworkCreateForm(forms.ModelForm):
             artwork.artist = user_profile
 
         if commit:
-            artwork.save()
+            try:
+                artwork.save()
 
-            # Upload image to Cloudinary
-            image = self.cleaned_data.get("image")
-            if image:
-                upload_result = cloudinary.uploader.upload(image)
-                artwork.image_url = upload_result.get("url")
+                # Upload image to Cloudinary
+                image = self.cleaned_data.get("image")
+                if image:
+                    upload_result = cloudinary.uploader.upload(image)
+                    artwork.image_url = upload_result.get("url")
 
-            # Get the selected auction duration
-            duration = int(self.cleaned_data.get("auction_duration"))
+                # Get the selected auction duration
+                duration = int(
+                    self.cleaned_data.get("auction_duration")
+                )
 
-            # Start an auction for the artwork with the selected duration
-            Auction.objects.create(
-                artwork=artwork, status="pending", duration=duration
-            )
+                # Start an auction for the artwork with the selected duration
+                Auction.objects.create(
+                    artwork=artwork, status="pending", duration=duration
+                )
+
+            except Exception as e:
+                print(f"Error saving artwork: {e}")
 
         return artwork
 
@@ -82,14 +100,6 @@ class CustomSignupForm(SignupForm):
         # Get the user instance from the parent class's save method
         user = super(CustomSignupForm, self).save(request)
 
-        # Get the user profile or create a new one
-        user_profile, created = UserProfile.objects.get_or_create(
-            user=user
-        )
-
-        # Update the user profile fields
-        user_profile.name = self.cleaned_data.get("name")
-
         # Get the address fields from the form
         street_address = self.cleaned_data.get("street_address")
         city = self.cleaned_data.get("city")
@@ -101,12 +111,10 @@ class CustomSignupForm(SignupForm):
         shipping_address = (
             f"{street_address}, {city}, {state}, {country}, {zipcode}"
         )
-        user_profile.shipping_address = shipping_address
 
-        # Set the create_date field to the current date and time
-        user_profile.create_date = timezone.now()
-
-        # Save the user profile
-        user_profile.save()
+        # Create or update the user's profile with the shipping address
+        UserProfile.objects.update_or_create(
+            user=user, defaults={"shipping_address": shipping_address}
+        )
 
         return user

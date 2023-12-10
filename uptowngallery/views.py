@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 from .models import (
     Artwork,
     Category,
@@ -62,45 +65,46 @@ class ArtworkListView(View):
         )
 
 
-class CreateArtworkView(View):
+class CreateArtworkView(LoginRequiredMixin, CreateView):
+    template_name = "create_artwork.html"
+    form_class = ArtworkCreateForm
+    success_url = reverse_lazy("artwork_list")
+
+    def form_valid(self, form):
+        form.instance.artist = self.request.user.profile
+        response = super().form_valid(form)
+
+        # Additional processing after form validation
+        duration = form.cleaned_data.get("auction_duration")
+        Auction.objects.create(artwork=self.object, status="pending")
+
+        return response
+
+    def form_invalid(self, form):
+        print("Form is invalid")
+        print(form.errors)  # Print the form errors
+        messages.error(
+            self.request,
+            "Artwork creation failed. Please check the form.",
+        )
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print("Context data:", context)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        print("POST request data:", request.POST)
+        return super().post(request, *args, **kwargs)
+
+
+class PendingArtworksView(LoginRequiredMixin, View):
     def get(self, request):
-        if not request.user.is_authenticated:
-            # Redirect to the sign-in page if the user is not authenticated
-            return redirect("account_login")
-
-        form = ArtworkCreateForm()
-        return render(request, "create_artwork.html", {"form": form})
-
-    def post(self, request):
-        if not request.user.is_authenticated:
-            # Redirect to the sign-in page if the user is not authenticated
-            return redirect("account_login")
-
-        form = ArtworkCreateForm(request.POST, request.FILES)
-        if form.is_valid():
-            artwork = form.save(
-                commit=False, user_profile=request.user.profile
-            )
-            artwork.artist = request.user.profile
-
-            # Save the artwork with auction duration
-            artwork.save()
-
-            # Get the selected auction duration
-            duration = int(form.cleaned_data.get("auction_duration"))
-
-            # Start an auction for the artwork with the selected duration
-            auction = Auction.objects.create(
-                artwork=artwork, status="active", duration=duration
-            )
-
-            return redirect("artwork_detail", artwork.id)
-        return render(request, "create_artwork.html", {"form": form})
-
-
-class PendingArtworksView(View):
-    def get(self, request):
-        artworks = Artwork.objects.filter(approved=False)
+        # Filter artworks to show only pending artworks of the current user
+        artworks = Artwork.objects.filter(
+            artist=request.user.profile, approved=False
+        )
         return render(
             request, "pending_artworks.html", {"artworks": artworks}
         )
@@ -109,20 +113,20 @@ class PendingArtworksView(View):
 class ApproveArtworkView(View):
     def get(self, request, artwork_id):
         artwork = Artwork.objects.get(pk=artwork_id)
-        artwork.approved = True
-        artwork.save()
 
-        # Start the auction for the approved artwork
-        auction = Auction.objects.create(
-            artwork=artwork,
-            status="active",
-            duration=artwork.auction_duration,
-        )
+        # Check if the artwork is pending approval
+        if artwork.approval_status == "pending":
+            artwork.approve_and_start_auction()
+            messages.success(
+                request,
+                f"The artwork '{artwork.title}' has been approved, and the auction started.",
+            )
+        else:
+            messages.error(
+                request,
+                f"The artwork '{artwork.title}' is not pending approval.",
+            )
 
-        messages.success(
-            request,
-            f"The artwork '{artwork.title}' has been approved and the auction started.",
-        )
         return redirect("artwork_detail", artwork_id)
 
 
@@ -163,9 +167,7 @@ class ProfileInfoView(View):
         context = {}
 
         # Add Ir logic to fetch the winning bid amount here
-        user_profile = (
-            self.request.user.profile
-        )  # Assuming I have a one-to-one relationship between User and Profile
+        user_profile = self.request.user.profile
         winning_bid = (
             Bids.objects.filter(
                 bidder=user_profile, auction__artwork__approved=True
@@ -186,3 +188,18 @@ class ProfileInfoView(View):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
         return render(request, self.template_name, context)
+
+
+class AdminApproveArtworkView(LoginRequiredMixin, View):
+    def get(self, request, artwork_id):
+        artwork = Artwork.objects.get(pk=artwork_id)
+
+        # Check if the current user is an admin
+        if not request.user.is_staff:
+            return redirect(
+                "access_denied"
+            )  # Redirect to a page indicating access denied
+
+        # Approve the artwork and start the auction
+        artwork.approve_and_start_auction()
+        return redirect("artwork_detail", artwork_id)
