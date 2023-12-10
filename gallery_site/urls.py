@@ -22,6 +22,11 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("uptowngallery.urls"), name="uptowngallery_urls"),
     path("accounts/", include("allauth.urls")),
+    path(
+        "pending_artworks/",
+        PendingArtworksView.as_view(),
+        name="pending_artworks",
+    ),
 ]
 
 if settings.DEBUG:

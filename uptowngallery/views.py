@@ -116,11 +116,19 @@ class ApproveArtworkView(View):
 
         # Check if the artwork is pending approval
         if artwork.approval_status == "pending":
-            artwork.approve_and_start_auction()
-            messages.success(
-                request,
-                f"The artwork '{artwork.title}' has been approved, and the auction started.",
-            )
+            # Additional admin-specific check
+            if request.user.is_staff:
+                artwork.approve_and_start_auction()
+                messages.success(
+                    request,
+                    f"The artwork '{artwork.title}' has been approved, and the auction started.",
+                )
+            else:
+                # Handle non-admin case, e.g., redirect to access denied page
+                messages.error(
+                    request,
+                    f"Only admins can approve artworks.",
+                )
         else:
             messages.error(
                 request,
@@ -188,18 +196,3 @@ class ProfileInfoView(View):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
         return render(request, self.template_name, context)
-
-
-class AdminApproveArtworkView(LoginRequiredMixin, View):
-    def get(self, request, artwork_id):
-        artwork = Artwork.objects.get(pk=artwork_id)
-
-        # Check if the current user is an admin
-        if not request.user.is_staff:
-            return redirect(
-                "access_denied"
-            )  # Redirect to a page indicating access denied
-
-        # Approve the artwork and start the auction
-        artwork.approve_and_start_auction()
-        return redirect("artwork_detail", artwork_id)
