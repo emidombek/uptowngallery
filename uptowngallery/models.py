@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from cloudinary.models import CloudinaryField
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -122,6 +123,25 @@ class Artwork(models.Model):
     def __str__(self):
         return f"Artwork #{self.id} - Title: {self.title} - Artist: {self.artist}"
 
+    def approve_and_start_auction(self):
+        # Check if the artwork is already approved
+        if self.approval_status != "approved":
+            # Additional logic to start the auction
+            Auction.objects.create(
+                artwork=self,
+                status="active",
+                end_date=self.calculate_auction_end_date(),
+            )
+
+            # Optionally, I may want to trigger other actions here
+
+            # Set approval_status to "approved"
+            self.approval_status = "approved"
+            self.auction_start = (
+                timezone.now()
+            )  # Set the auction start time
+            self.save()
+
 
 class Auction(models.Model):
     STATUS_CHOICES = [
@@ -186,7 +206,7 @@ class Bids(models.Model):
         help_text="The amount of the bid.",
     )
     bid_time = models.DateTimeField(
-        auto_now_add=True,
+        default=timezone.now,
         verbose_name="Bid Time",
         help_text="The date and time when the bid was placed.",
     )
