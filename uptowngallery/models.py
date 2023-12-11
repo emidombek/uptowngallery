@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -118,29 +119,37 @@ class Artwork(models.Model):
             if bids:
                 highest_bid = max(bids, key=lambda bid: bid.amount)
                 return highest_bid.amount
+            return self.reserve_price
         return self.reserve_price
 
     def __str__(self):
         return f"Artwork #{self.id} - Title: {self.title} - Artist: {self.artist}"
 
+    def calculate_auction_end_date(self):
+        if self.auction_duration == "3_days":
+            duration = timedelta(days=3)
+        elif self.auction_duration == "5_days":
+            duration = timedelta(days=5)
+        elif self.auction_duration == "7_days":
+            duration = timedelta(days=7)
+        else:
+            duration = timedelta(days=3)
+
+        return self.auction_start + duration
+
     def approve_and_start_auction(self):
-        # Check if the artwork is already approved
-        if self.approval_status != "approved":
-            # Additional logic to start the auction
-            Auction.objects.create(
-                artwork=self,
-                status="active",
-                end_date=self.calculate_auction_end_date(),
-            )
+        # Additional logic to start the auction
+        auction = Auction.objects.create(
+            artwork=self,
+            status="active",
+            end_date=self.calculate_auction_end_date(),
+        )
 
-            # Optionally, I may want to trigger other actions here
+        # Optionally, I may want to trigger other actions here
 
-            # Set approval_status to "approved"
-            self.approval_status = "approved"
-            self.auction_start = (
-                timezone.now()
-            )  # Set the auction start time
-            self.save()
+        # Set approval_status to "approved"
+        self.approval_status = "approved"
+        self.save()
 
 
 class Auction(models.Model):
@@ -165,7 +174,7 @@ class Auction(models.Model):
     status = models.CharField(
         max_length=255,
         choices=STATUS_CHOICES,
-        default="active",
+        default="pending",
         null=True,
         verbose_name="Status",
         help_text="The current status of the auction.",

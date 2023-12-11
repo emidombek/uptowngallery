@@ -133,16 +133,22 @@ class ApproveArtworkView(View):
         if artwork.approval_status == "pending":
             # Additional admin-specific check
             if request.user.is_staff:
-                # Set approval_status to "approved"
-                artwork.approval_status = "approved"
-                artwork.save()
+                # Check if the auction is already started
+                if artwork.auction_start is None:
+                    # Start the auction and update approval status
+                    artwork.approve_and_start_auction()
 
-                # Optionally, I may want to trigger other actions here
+                    # Optionally, I may want to trigger other actions here
 
-                messages.success(
-                    request,
-                    f"The artwork '{artwork.title}' has been approved, and the auction started.",
-                )
+                    messages.success(
+                        request,
+                        f"The artwork '{artwork.title}' has been approved, and the auction started.",
+                    )
+                else:
+                    messages.error(
+                        request,
+                        f"The artwork '{artwork.title}' already has an active auction.",
+                    )
             else:
                 # Handle non-admin case, e.g., redirect to access denied page
                 messages.error(
