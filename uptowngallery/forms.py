@@ -24,6 +24,7 @@ class ArtworkCreateForm(forms.ModelForm):
         model = Artwork
         exclude = ["approved", "auction_start"]
         fields = [
+            "title",
             "description",
             "image",
             "category",

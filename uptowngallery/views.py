@@ -39,7 +39,11 @@ class LandingPageView(View):
 
 class ArtworkListView(View):
     def get(self, request):
-        artworks = Artwork.objects.all()
+        # Filter artworks to include only approved artworks with active auctions
+        artworks = Artwork.objects.filter(
+            approval_status=True, auction__status="active"
+        )
+
         # Number of artworks to display per page
         items_per_page = 12
 
@@ -67,7 +71,7 @@ class ArtworkListView(View):
 class CreateArtworkView(LoginRequiredMixin, CreateView):
     template_name = "create_artwork.html"
     form_class = ArtworkCreateForm
-    success_url = reverse_lazy("artwork_list")
+    success_url = reverse_lazy("pending_artworks")
 
     def form_valid(self, form):
         form.instance.artist = self.request.user.profile

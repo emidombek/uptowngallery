@@ -55,6 +55,14 @@ class Artwork(models.Model):
         verbose_name="Create Date",
         help_text="The date when the artwork was created.",
     )
+
+    title = models.CharField(
+        max_length=255,
+        null=True,
+        verbose_name="Title",
+        help_text="The title of the artwork.",
+    )
+
     description = models.TextField(
         null=True, verbose_name="Description"
     )
@@ -111,7 +119,7 @@ class Artwork(models.Model):
         return self.reserve_price
 
     def __str__(self):
-        return f"Artwork #{self.id} - Artist: {self.artist}"
+        return f"Artwork #{self.id} - Title: {self.title} - Artist: {self.artist}"
 
 
 class Auction(models.Model):
