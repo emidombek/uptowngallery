@@ -133,7 +133,12 @@ class ApproveArtworkView(View):
         if artwork.approval_status == "pending":
             # Additional admin-specific check
             if request.user.is_staff:
-                artwork.approve_and_start_auction()
+                # Set approval_status to "approved"
+                artwork.approval_status = "approved"
+                artwork.save()
+
+                # Optionally, I may want to trigger other actions here
+
                 messages.success(
                     request,
                     f"The artwork '{artwork.title}' has been approved, and the auction started.",
@@ -217,3 +222,48 @@ class ProfileInfoView(View):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
         return render(request, self.template_name, context)
+
+
+class PlaceBidView(CreateView):
+    model = Bids
+    template_name = "place_bid.html"
+    fields = ["amount"]
+    success_url = reverse_lazy(
+        "auction_list"
+    )  # Redirect to the auction list after successful bid
+
+    def form_valid(self, form):
+        # Retrieve auction and other necessary data
+        auction_id = self.kwargs["auction_id"]
+        auction = Auction.objects.get(pk=auction_id)
+
+        # Get bid amount from the form
+        bid_amount = form.cleaned_data["amount"]
+
+        # Validate bid amount against the reserve price
+        if bid_amount < auction.reserve_price:
+            messages.error(
+                self.request,
+                "Bid amount cannot be lower than the reserve price.",
+            )
+            return self.form_invalid(form)
+
+        # Check if the bid is higher than the current highest bid (if any)
+        current_highest_bid = auction.bids.order_by("-amount").first()
+
+        if (
+            current_highest_bid is None
+            or bid_amount > current_highest_bid.amount
+        ):
+            # Proceed with creating the bid
+            form.instance.bidder = self.request.user.profile
+            form.instance.auction = auction
+            form.instance.amount = bid_amount
+            messages.success(self.request, "Bid placed successfully!")
+            return super().form_valid(form)
+        else:
+            messages.error(
+                self.request,
+                "Ir bid is not higher than the current highest bid.",
+            )
+            return self.form_invalid(form)

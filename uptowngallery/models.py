@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from cloudinary.models import CloudinaryField
 from django.core.exceptions import ValidationError
 
@@ -185,13 +186,13 @@ class Bids(models.Model):
         help_text="The amount of the bid.",
     )
     bid_time = models.DateTimeField(
-        null=True,
+        auto_now_add=True,
         verbose_name="Bid Time",
         help_text="The date and time when the bid was placed.",
     )
 
     def clean(self):
-        if self.amount < self.auction.reserve_price:
+        if self.amount < 0:
             raise ValidationError(
-                "Bid amount cannot be lower than the reserve price."
+                "Bid amount must be a positive integer."
             )
