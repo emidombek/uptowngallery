@@ -104,6 +104,18 @@ class Artwork(models.Model):
 
     auction_start = models.DateTimeField(null=True, blank=True)
 
+    AUCTION_DURATION_CHOICES = (
+        ("3_days", "3 Days"),
+        ("7_days", "7 Days"),
+        ("10_days", "10 Days"),
+    )
+
+    auction_duration = models.CharField(
+        max_length=8,
+        choices=AUCTION_DURATION_CHOICES,
+        default="3_days",  # Set Ir default duration if needed
+    )
+
     reserve_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -175,12 +187,15 @@ class Auction(models.Model):
         ("pending", "Pending"),
     ]
     id = models.AutoField(primary_key=True)
+
     artwork = models.ForeignKey(
-        Artwork,
+        "Artwork",
         on_delete=models.CASCADE,
+        related_name="auctions",
         null=True,
         verbose_name="Artwork",
     )
+
     create_date = models.DateTimeField(
         null=True,
         verbose_name="Create Date",
