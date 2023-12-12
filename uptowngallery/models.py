@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from cloudinary.models import CloudinaryField
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Category(models.Model):
@@ -53,6 +55,7 @@ class Artwork(models.Model):
         null=True,
         verbose_name="Artist",
     )
+
     create_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Create Date",
@@ -125,7 +128,33 @@ class Artwork(models.Model):
     def __str__(self):
         return f"Artwork #{self.id} - Title: {self.title} - Artist: {self.artist}"
 
-    def calculate_auction_end_date(self):
+    def approve_and_start_auction(self):
+        if not self.approved:
+            return  # Auction cannot be started for unapproved artworks
+
+        auction_start = timezone.now()
+        auction_end = self.calculate_auction_end_date(auction_start)
+
+        auction, created = Auction.objects.get_or_create(
+            artwork=self,
+            defaults={
+                "create_date": auction_start,
+                "end_date": auction_end,
+                "reserve_price": self.reserve_price,
+                "status": "active",  # Change status to active
+                "is_active": 1,  # Set is_active to 1
+            },
+        )
+
+        if not created:
+            auction.create_date = auction_start
+            auction.end_date = auction_end
+            auction.reserve_price = self.reserve_price
+            auction.status = "active"  # Change status to active
+            auction.is_active = 1  # Set is_active to 1
+            auction.save()
+
+    def calculate_auction_end_date(self, auction_start):
         if self.auction_duration == "3_days":
             duration = timedelta(days=3)
         elif self.auction_duration == "5_days":
@@ -135,21 +164,7 @@ class Artwork(models.Model):
         else:
             duration = timedelta(days=3)
 
-        return self.auction_start + duration
-
-    def approve_and_start_auction(self):
-        # Additional logic to start the auction
-        auction = Auction.objects.create(
-            artwork=self,
-            status="active",
-            end_date=self.calculate_auction_end_date(),
-        )
-
-        # Optionally, I may want to trigger other actions here
-
-        # Set approval_status to "approved"
-        self.approval_status = "approved"
-        self.save()
+        return auction_start + duration
 
 
 class Auction(models.Model):
@@ -193,6 +208,28 @@ class Auction(models.Model):
 
     def __str__(self):
         return f"Auction #{self.id} - {self.status} - Artwork: {self.artwork}"
+
+    def close_auction(self):
+        if self.status == "active" and self.end_date <= timezone.now():
+            self.status = "closed"  # Change status to closed
+            self.is_active = 0  # Set is_active to 0
+            self.save()
+
+
+@receiver(post_save, sender=Artwork)
+def artwork_approval_handler(sender, instance, created, **kwargs):
+    if created:
+        # Automatically approve and start the auction when an artwork is created
+        instance.approve_and_start_auction()
+    else:
+        # If the artwork is updated (e.g., approval status changes), handle it here
+        if instance.approval_status == "approved":
+            instance.approve_and_start_auction()
+        elif instance.approval_status == "rejected":
+            # Handle rejection logic here (e.g., cancel the auction)
+            instance.auction.status = "cancelled"
+            instance.auction.is_active = 0
+            instance.auction.save()
 
 
 class Bids(models.Model):

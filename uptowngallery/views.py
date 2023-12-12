@@ -161,6 +161,14 @@ class ApproveArtworkView(View):
                 f"The artwork '{artwork.title}' is not pending approval.",
             )
 
+        # Add some print statements for debugging
+        print(
+            f"Artwork #{artwork.id} approval status: {artwork.approval_status}"
+        )
+        print(
+            f"Artwork #{artwork.id} auction start time: {artwork.auction_start}"
+        )
+
         return redirect("artwork_detail", artwork_id)
 
 
