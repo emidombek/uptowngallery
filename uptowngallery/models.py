@@ -105,9 +105,9 @@ class Artwork(models.Model):
     auction_start = models.DateTimeField(null=True, blank=True)
 
     AUCTION_DURATION_CHOICES = (
-        ("3_days", "3 Days"),
-        ("7_days", "7 Days"),
-        ("10_days", "10 Days"),
+        ("3", "3 days"),
+        ("5", "5 days"),
+        ("7", "7 days"),
     )
 
     auction_duration = models.CharField(
