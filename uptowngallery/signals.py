@@ -43,14 +43,15 @@ def update_or_create_auction(sender, instance, created, **kwargs):
             )
             instance.auction = auction
         else:
-            # Update an existing auction
-            auction = instance.auction
-            auction.end_date = instance.calculate_auction_end_date(
-                instance.create_date
-            )  # Adjust this logic
-            auction.reserve_price = (
-                instance.reserve_price
-            )  # Adjust this logic
-            auction.status = "active"
-            auction.is_active = 1
-            auction.save()
+            # Update an existing auction if it exists
+            if hasattr(instance, "auction"):
+                auction = instance.auction
+                auction.end_date = instance.calculate_auction_end_date(
+                    instance.create_date
+                )  # Adjust this logic
+                auction.reserve_price = (
+                    instance.reserve_price
+                )  # Adjust this logic
+                auction.status = "active"
+                auction.is_active = 1
+                auction.save()

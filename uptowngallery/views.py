@@ -40,9 +40,8 @@ class LandingPageView(View):
 class ArtworkListView(View):
     def get(self, request):
         # Filter artworks to include only approved artworks with active auctions
-        artworks = Artwork.objects.filter(
-            approval_status=True, auction__status="active"
-        )
+
+        artworks = Artwork.objects.filter(approval_status="approved")
 
         # Number of artworks to display per page
         items_per_page = 12

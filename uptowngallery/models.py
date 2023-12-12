@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db import IntegrityError
 
 
 class Category(models.Model):
@@ -113,7 +114,7 @@ class Artwork(models.Model):
     auction_duration = models.CharField(
         max_length=8,
         choices=AUCTION_DURATION_CHOICES,
-        default="3_days",  # Set Ir default duration if needed
+        default="3",
     )
 
     reserve_price = models.DecimalField(
@@ -147,23 +148,25 @@ class Artwork(models.Model):
         auction_start = timezone.now()
         auction_end = self.calculate_auction_end_date(auction_start)
 
-        auction, created = Auction.objects.get_or_create(
-            artwork=self,
-            defaults={
-                "create_date": auction_start,
-                "end_date": auction_end,
-                "reserve_price": self.reserve_price,
-                "status": "active",  # Change status to active
-                "is_active": 1,  # Set is_active to 1
-            },
-        )
-
-        if not created:
+        try:
+            # Attempt to create a new auction
+            auction = Auction.objects.create(
+                artwork=self,
+                create_date=auction_start,
+                end_date=auction_end,
+                reserve_price=self.reserve_price,
+                status="active",
+                is_active=1,
+            )
+        except IntegrityError:
+            # An IntegrityError is raised if an auction with the same artwork already exists
+            auction = Auction.objects.get(artwork=self)
+            # Update the existing auction's fields if needed
             auction.create_date = auction_start
             auction.end_date = auction_end
             auction.reserve_price = self.reserve_price
-            auction.status = "active"  # Change status to active
-            auction.is_active = 1  # Set is_active to 1
+            auction.status = "active"
+            auction.is_active = 1
             auction.save()
 
     def calculate_auction_end_date(self, auction_start):
