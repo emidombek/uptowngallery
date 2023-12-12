@@ -12,10 +12,15 @@
       <div class="col-md-4 mb-4">
         <!-- Display artwork information here -->
         <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">{{ artwork.title }}</h5>
-            <!-- Add other artwork details as needed -->
-          </div>
+          <a href="#" class="card-link" data-bs-toggle="modal" data-bs-target="#auctionModal" data-artwork-id="{{ artwork.id }}">
+            {% if artwork.image %}
+              <img src="{{ artwork.image.url }}" class="card-img-top" alt="{{ artwork.title }}" />
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ artwork.title }}</h5>
+              <!-- Add other artwork details as needed -->
+            </div>
+          </a>
         </div>
       </div>
       {% cycle '' '' '' '</div><div class="row">' %}
@@ -37,4 +42,43 @@
       {% endif %}
     </span>
   </div>
+
+  <!-- Add this modal at the end of Ir template -->
+  <div class="modal fade" id="auctionModal" tabindex="-1" aria-labelledby="auctionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="auctionModalLabel">Auction Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Content from auction_detail.html will be loaded here -->
+          <div id="auction-detail-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      // Listen for the modal show event
+      $('#auctionModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var artworkId = button.data('artwork-id') // Extract the artwork ID from data-* attributes
+    
+        // Load the auction details using AJAX
+        $.ajax({
+          url: '/get_auction_detail/' + artworkId + '/', // Replace with Ir Django URL
+          type: 'GET',
+          success: function (data) {
+            // Update the modal content with the retrieved auction details
+            $('#auction-detail-content').html(data)
+          },
+          error: function () {
+            console.error('Error loading auction details.')
+          }
+        })
+      })
+    })
+  </script>
 {% endblock %}
