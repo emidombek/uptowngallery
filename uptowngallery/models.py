@@ -42,7 +42,7 @@ class UserProfile(models.Model):
         help_text="The shipping address of the user.",
     )
     create_date = models.DateTimeField(
-        null=True,
+        default=timezone.now,
         verbose_name="Create Date",
         help_text="The date when the user profile was created.",
     )
@@ -61,7 +61,7 @@ class Artwork(models.Model):
     )
 
     create_date = models.DateTimeField(
-        auto_now_add=True,
+        default=timezone.now,
         verbose_name="Create Date",
         help_text="The date when the artwork was created.",
     )
@@ -189,6 +189,7 @@ class Artwork(models.Model):
             )
 
     def calculate_auction_end_date(self, auction_start):
+        auction_start = timezone.now()
         if self.auction_duration == "3_days":
             duration = timedelta(days=3)
         elif self.auction_duration == "5_days":
@@ -219,7 +220,7 @@ class Auction(models.Model):
     )
 
     create_date = models.DateTimeField(
-        null=True,
+        default=timezone.now,
         verbose_name="Create Date",
         help_text="The date when the auction was created.",
     )

@@ -7,6 +7,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.db import transaction
+from django.shortcuts import get_object_or_404
 from .models import (
     Artwork,
     Category,
@@ -15,8 +18,7 @@ from .models import (
 )
 from .forms import ArtworkCreateForm
 from .forms import CustomSignupForm
-from django.utils.decorators import method_decorator
-from django.db.models import F
+
 
 logger = logging.getLogger(__name__)
 
@@ -126,47 +128,30 @@ class PendingArtworksView(View):
 
 class ApproveArtworkView(View):
     def get(self, request, artwork_id):
-        artwork = Artwork.objects.get(pk=artwork_id)
+        artwork = get_object_or_404(Artwork, pk=artwork_id)
 
-        # Check if the artwork is pending approval
-        if artwork.approval_status == "pending":
-            # Additional admin-specific check
-            if request.user.is_staff:
-                # Check if the auction is already started
-                if artwork.auction_start is None:
-                    # Start the auction and update approval status
-                    artwork.approve_and_start_auction()
+        if (
+            artwork.approval_status == "pending"
+            and request.user.is_staff
+        ):
 
-                    # Optionally, I may want to trigger other actions here
+            def on_approval_commit():
+                artwork.approve_and_start_auction()
 
-                    messages.success(
-                        request,
-                        f"The artwork '{artwork.title}' has been approved, and the auction started.",
-                    )
-                else:
-                    messages.error(
-                        request,
-                        f"The artwork '{artwork.title}' already has an active auction.",
-                    )
-            else:
-                # Handle non-admin case, e.g., redirect to access denied page
-                messages.error(
-                    request,
-                    f"Only admins can approve artworks.",
-                )
+            with transaction.atomic():
+                artwork.approval_status = "approved"
+                artwork.save()
+                transaction.on_commit(on_approval_commit)
+
+            messages.success(
+                request,
+                f"The artwork '{artwork.title}' has been approved, and the auction started.",
+            )
         else:
             messages.error(
                 request,
-                f"The artwork '{artwork.title}' is not pending approval.",
+                f"The artwork '{artwork.title}' cannot be approved. Check if it's pending approval or if I have the right permissions.",
             )
-
-        # Add some print statements for debugging
-        print(
-            f"Artwork #{artwork.id} approval status: {artwork.approval_status}"
-        )
-        print(
-            f"Artwork #{artwork.id} auction start time: {artwork.auction_start}"
-        )
 
         return redirect("artwork_detail", artwork_id)
 
