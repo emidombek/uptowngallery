@@ -5,16 +5,16 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="text-center mb-5">Artwork List</h1>
+  <h1 class="text-center mt-3 mb-5">Artwork List</h1>
 
   <div class="row">
     {% for artwork in artworks %}
       <div class="col-md-4 mb-4">
         <!-- Display artwork information here -->
-        <div class="card">
+        <div class="card art-list">
           <a href="#" class="card-link" data-bs-toggle="modal" data-bs-target="#auctionModal" data-artwork-id="{{ artwork.id }}">
             {% if artwork.image %}
-              <img src="{{ artwork.image.url }}" class="card-img-top" alt="{{ artwork.title }}" />
+              <img src="{{ artwork.image.url }}" class="card-img-top img-fluid" alt="{{ artwork.title }}" />
             {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ artwork.title }}</h5>
@@ -42,8 +42,6 @@
       {% endif %}
     </span>
   </div>
-
-  <!-- Add this modal at the end of Ir template -->
   <div class="modal fade" id="auctionModal" tabindex="-1" aria-labelledby="auctionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -52,7 +50,6 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <!-- Content from auction_detail.html will be loaded here -->
           <div id="auction-detail-content"></div>
         </div>
       </div>

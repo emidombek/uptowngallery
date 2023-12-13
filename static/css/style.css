@@ -87,3 +87,13 @@ body h5 {
   font-family: Raleway, sans-serif;
   font-weight: 600;
 }
+
+.row .card.art-list {
+  height: 200px;
+}
+
+.img.card-img-top.img-fluid {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
