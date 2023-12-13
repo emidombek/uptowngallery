@@ -31,27 +31,30 @@ def update_or_create_auction(sender, instance, created, **kwargs):
     if instance.approval_status == "approved":
         if created:
             # Create a new auction
+            auction_start = timezone.now()
+            auction_end = instance.calculate_auction_end_date(
+                auction_start
+            )
+
             auction = Auction.objects.create(
                 artwork=instance,
-                create_date=instance.create_date,  # Set to Ir preferred field
-                end_date=instance.calculate_auction_end_date(
-                    instance.create_date
-                ),  # Adjust this logic
-                reserve_price=instance.reserve_price,  # Adjust this logic
+                create_date=auction_start,
+                end_date=auction_end,
+                reserve_price=instance.reserve_price,
                 status="active",
-                is_active=1,
+                is_active=True,
             )
             instance.auction = auction
         else:
             # Update an existing auction if it exists
             if hasattr(instance, "auction"):
                 auction = instance.auction
-                auction.end_date = instance.calculate_auction_end_date(
-                    instance.create_date
-                )  # Adjust this logic
-                auction.reserve_price = (
-                    instance.reserve_price
-                )  # Adjust this logic
+                auction_end = instance.calculate_auction_end_date(
+                    auction.create_date
+                )
+
+                auction.end_date = auction_end
+                auction.reserve_price = instance.reserve_price
                 auction.status = "active"
-                auction.is_active = 1
+                auction.is_active = True
                 auction.save()
