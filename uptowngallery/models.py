@@ -8,6 +8,9 @@ from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import IntegrityError
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Category(models.Model):
@@ -141,33 +144,36 @@ class Artwork(models.Model):
     def __str__(self):
         return f"Artwork #{self.id} - Title: {self.title} - Artist: {self.artist}"
 
-    def approve_and_start_auction(self):
-        if not self.approved:
-            return  # Auction cannot be started for unapproved artworks
 
-        auction_start = timezone.now()
-        auction_end = self.calculate_auction_end_date(auction_start)
+def approve_and_start_auction(self):
+    logger.info(f"Starting auction approval for Artwork: {self.id}")
 
-        try:
-            # Attempt to create a new auction
-            auction = Auction.objects.create(
-                artwork=self,
-                create_date=auction_start,
-                end_date=auction_end,
-                reserve_price=self.reserve_price,
-                status="active",
-                is_active=1,
-            )
-        except IntegrityError:
-            # An IntegrityError is raised if an auction with the same artwork already exists
-            auction = Auction.objects.get(artwork=self)
-            # Update the existing auction's fields if needed
-            auction.create_date = auction_start
-            auction.end_date = auction_end
-            auction.reserve_price = self.reserve_price
-            auction.status = "active"
-            auction.is_active = 1
-            auction.save()
+    if not self.approved:
+        logger.warning(
+            f"Auction cannot be started for unapproved Artwork: {self.id}"
+        )
+        return  # Auction cannot be started for unapproved artworks
+
+    auction_start = timezone.now()
+    auction_end = self.calculate_auction_end_date(auction_start)
+
+    try:
+        # Attempt to create a new auction
+        auction = Auction.objects.create(
+            artwork=self,
+            create_date=auction_start,
+            end_date=auction_end,
+            reserve_price=self.reserve_price,
+            status="active",
+            is_active=True,
+        )
+        logger.info(
+            f"Auction successfully created for Artwork: {self.id}"
+        )
+    except IntegrityError as e:
+        logger.error(
+            f"IntegrityError while creating auction for Artwork: {self.id}, Error: {e}"
+        )
 
     def calculate_auction_end_date(self, auction_start):
         if self.auction_duration == "3_days":
@@ -228,10 +234,16 @@ class Auction(models.Model):
         return f"Auction #{self.id} - {self.status} - Artwork: {self.artwork}"
 
     def close_auction(self):
+        logger.info(f"Closing auction for Auction: {self.id}")
         if self.status == "active" and self.end_date <= timezone.now():
             self.status = "closed"  # Change status to closed
             self.is_active = 0  # Set is_active to 0
             self.save()
+            logger.info(f"Auction closed for Auction: {self.id}")
+        else:
+            logger.warning(
+                f"Auction not closed for Auction: {self.id}, Status: {self.status}, End Date: {self.end_date}"
+            )
 
 
 @receiver(post_save, sender=Artwork)

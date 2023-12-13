@@ -6,9 +6,11 @@ from allauth.account.signals import user_signed_up
 from django.contrib.auth import get_user_model
 from uptowngallery.models import UserProfile, Artwork, Auction
 from django.utils import timezone
-
+import logging
 
 User = get_user_model()
+
+logger = logging.getLogger(__name__)
 
 
 # Signal handler to create or update UserProfile
@@ -28,6 +30,9 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Artwork)
 def update_or_create_auction(sender, instance, created, **kwargs):
+    logger.info(
+        f"Artwork post_save signal triggered for Artwork: {instance.id}, Created: {created}"
+    )
     if instance.approval_status == "approved":
         if created:
             # Create a new auction

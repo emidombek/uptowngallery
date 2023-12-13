@@ -191,3 +191,19 @@ INTERNAL_IPS = [
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
 }
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "uptowngallery": {  # Replace 'myapp' with the name of Ir Django app
+            "handlers": ["console"],
+            "level": "INFO",  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+        },
+    },
+}
