@@ -76,13 +76,13 @@ class CreateArtworkView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.artist = self.request.user.profile
-        response = super().form_valid(form)
-
-        # Additional processing after form validation
-        duration = form.cleaned_data.get("auction_duration")
-        Auction.objects.create(artwork=self.object, status="pending")
-
-        return response
+        # Set initial auction-related fields in the Artwork instance
+        form.instance.auction_start = (
+            None  # Auction will start upon approval
+        )
+        form.instance.approval_status = "pending"  # Initial status
+        # Save the Artwork instance
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         print("Form is invalid")
