@@ -144,36 +144,49 @@ class Artwork(models.Model):
     def __str__(self):
         return f"Artwork #{self.id} - Title: {self.title} - Artist: {self.artist}"
 
+    def approve_and_start_auction(self):
+        logger.info(f"Starting auction approval for Artwork: {self.id}")
 
-def approve_and_start_auction(self):
-    logger.info(f"Starting auction approval for Artwork: {self.id}")
+        if not self.approved:
+            logger.warning(
+                f"Auction cannot be started for unapproved Artwork: {self.id}"
+            )
+            return  # Auction cannot be started for unapproved artworks
 
-    if not self.approved:
-        logger.warning(
-            f"Auction cannot be started for unapproved Artwork: {self.id}"
-        )
-        return  # Auction cannot be started for unapproved artworks
+        auction_start = timezone.now()
+        auction_end = self.calculate_auction_end_date(auction_start)
 
-    auction_start = timezone.now()
-    auction_end = self.calculate_auction_end_date(auction_start)
+        try:
+            auction, created = Auction.objects.get_or_create(
+                artwork=self,
+                defaults={
+                    "create_date": auction_start,
+                    "end_date": auction_end,
+                    "reserve_price": self.reserve_price,
+                    "status": "active",
+                    "is_active": True,
+                },
+            )
 
-    try:
-        # Attempt to create a new auction
-        auction = Auction.objects.create(
-            artwork=self,
-            create_date=auction_start,
-            end_date=auction_end,
-            reserve_price=self.reserve_price,
-            status="active",
-            is_active=True,
-        )
-        logger.info(
-            f"Auction successfully created for Artwork: {self.id}"
-        )
-    except IntegrityError as e:
-        logger.error(
-            f"IntegrityError while creating auction for Artwork: {self.id}, Error: {e}"
-        )
+            if not created:
+                # Update the existing auction if necessary
+                auction.end_date = auction_end
+                auction.reserve_price = self.reserve_price
+                auction.save()
+                logger.info(f"Auction updated for Artwork: {self.id}")
+
+            logger.info(
+                f"Auction {'created' if created else 'updated'} for Artwork: {self.id}"
+            )
+
+        except IntegrityError as e:
+            logger.error(
+                f"IntegrityError while creating/updating auction for Artwork: {self.id}, Error: {e}"
+            )
+        except Exception as e:
+            logger.error(
+                f"Unexpected error in approve_and_start_auction for Artwork: {self.id}, Error: {e}"
+            )
 
     def calculate_auction_end_date(self, auction_start):
         if self.auction_duration == "3_days":
@@ -245,21 +258,20 @@ class Auction(models.Model):
                 f"Auction not closed for Auction: {self.id}, Status: {self.status}, End Date: {self.end_date}"
             )
 
-
-@receiver(post_save, sender=Artwork)
-def artwork_approval_handler(sender, instance, created, **kwargs):
-    if created:
-        # Automatically approve and start the auction when an artwork is created
-        instance.approve_and_start_auction()
-    else:
-        # If the artwork is updated (e.g., approval status changes), handle it here
-        if instance.approval_status == "approved":
+    @receiver(post_save, sender=Artwork)
+    def artwork_approval_handler(sender, instance, created, **kwargs):
+        if created:
+            # Automatically approve and start the auction when an artwork is created
             instance.approve_and_start_auction()
-        elif instance.approval_status == "rejected":
-            # Handle rejection logic here (e.g., cancel the auction)
-            instance.auction.status = "cancelled"
-            instance.auction.is_active = 0
-            instance.auction.save()
+        else:
+            # If the artwork is updated (e.g., approval status changes), handle it here
+            if instance.approval_status == "approved":
+                instance.approve_and_start_auction()
+            elif instance.approval_status == "rejected":
+                # Handle rejection logic here (e.g., cancel the auction)
+                instance.auction.status = "cancelled"
+                instance.auction.is_active = 0
+                instance.auction.save()
 
 
 class Bids(models.Model):
