@@ -90,10 +90,15 @@ body h5 {
 
 .row .card.art-list {
   height: 200px;
+  width: 200px;
 }
 
 .img.card-img-top.img-fluid {
   object-fit: cover;
   height: 100%;
   width: 100%;
+}
+
+.a.card-link {
+  text-decoration: none;
 }
