@@ -176,20 +176,20 @@ def signup_view(request):
     return render(request, "signup_template.html", {"form": form})
 
 
-@method_decorator(login_required, name="dispatch")
 class AuctionDetailView(View):
-    def get(self, request, auction_id):
-        auction = Auction.objects.get(pk=auction_id)
+    def get(self, request, artwork_id, auction_id):
+        artwork = get_object_or_404(Artwork, pk=artwork_id)
+        auction = get_object_or_404(
+            Auction, pk=auction_id, artwork=artwork
+        )
+        latest_bid = auction.bids.order_by("-amount").first()
 
-        # Ensure that the auction is active
-        if auction.status == "active":
-            # I may want to fetch related information and pass it to the template
-            return render(
-                request, "auction_detail.html", {"auction": auction}
-            )
-        else:
-            messages.error(request, "This auction is not active.")
-            return redirect("some_redirect_view")
+        context = {
+            "auction": auction,
+            "artwork": artwork,
+            "latest_bid": latest_bid,
+        }
+        return render(request, "auction_detail.html", context)
 
 
 class ProfileInfoView(View):

@@ -26,7 +26,7 @@ urlpatterns = [
         name="approve_artwork",
     ),
     path(
-        "auction_detail/<int:auction_id>/",
+        "auction_detail/<int:artwork_id>/<int:auction_id>/",
         AuctionDetailView.as_view(),
         name="auction_detail",
     ),

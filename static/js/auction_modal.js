@@ -3,17 +3,18 @@ $(document).ready(function () {
   $('#auctionModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget); // Button that triggered the modal
     var artworkId = button.data('artwork-id'); // Extract the artwork ID from data-* attributes
+    var auctionId = button.data('auction-id'); // Extract the auction ID from data-* attributes
 
-    // Load the auction details using AJAX
+    // Load the auction and artwork details using AJAX
     $.ajax({
-      url: '/get_auction_detail/' + artworkId + '/', // Replace with Ir Django URL
+      url: '/auction_detail/' + artworkId + '/' + auctionId + '/', // Updated URL format
       type: 'GET',
       success: function (data) {
-        // Update the modal content with the retrieved auction details
+        // Update the modal content
         $('#auction-detail-content').html(data);
       },
       error: function () {
-        console.error('Error loading auction details.');
+        console.error('Error loading details.');
       },
     });
   });
