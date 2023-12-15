@@ -7,26 +7,28 @@
 {% block content %}
   <h1 class="text-center mt-3 mb-5">Artwork List</h1>
 
-  <div class="row">
-    {% for artwork in artworks %}
-      <div class="col-md-4 mb-4">
-        <!-- Display artwork information here -->
-        <div class="card art-list">
-          <a href="#" class="card-link" data-bs-toggle="modal" data-bs-target="#auctionModal" data-artwork-id="{{ artwork.id }}">
-            {% if artwork.image %}
-              <img src="{{ artwork.image.url }}" class="card-img-top img-fluid" alt="{{ artwork.title }}" />
-            {% endif %}
+  <div class="container mt-5 mb-5">
+    <div class="row justify-content-center mt-5 mb-5">
+      <!-- First Row -->
+      {% for artwork in artworks %}
+        <div class="col-md-3">
+          <div class="card mx-auto custom-card" style="width: 17.5rem;">
+            <a href="#link{{ artwork.id }}" data-bs-toggle="modal" data-bs-target="#auctionModal" data-artwork-id="{{ artwork.id }}" data-auction-id="{{ artwork.auction.id }}">
+              <div class="image-container" style="width: 100%; height: 200px; overflow: hidden;">
+                <img src="{{ artwork.image.url }}" class="card-img-top img-fluid" alt="{{ artwork.title }}" style="object-fit: cover; width: 100%; height: 100%;" />
+              </div>
+            </a>
             <div class="card-body">
-              <h5 class="card-title" style="text-decoration: none;">{{ artwork.title }}</h5>
-              <!-- Add other artwork details as needed -->
+              <h5 class="card-title text-center">{{ artwork.title }}</h5>
             </div>
-          </a>
+          </div>
         </div>
-      </div>
-      {% cycle '' '' '' '</div><div class="row">' %}
-    {% endfor %}
+        {% cycle '' '' '' '</div><div class="row justify-content-center mt-5 mb-5">' %}
+      {% endfor %}
+    </div>
   </div>
 
+  <!-- Pagination and Modal -->
   <div class="pagination mt-4">
     <span class="step-links">
       {% if artworks.has_previous %}
@@ -42,40 +44,60 @@
       {% endif %}
     </span>
   </div>
+  <!-- Auction Details Modal -->
   <div class="modal fade" id="auctionModal" tabindex="-1" aria-labelledby="auctionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="auctionModalLabel">Auction Details</h5>
+          <h5 class="modal-title" id="auctionModalLabel">{{ auction.artwork }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div id="auction-detail-content"></div>
+          <h1>{{ auction.artwork.title }}</h1>
+          <!-- Display Artwork Image -->
+          <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork }}" style="max-width: 100%; height: auto;" />
+
+          <!-- Display Artwork and Auction Details -->
+          <p>
+            <strong>Description:</strong> {{ auction.artwork.description }}
+          </p>
+          <p>
+            <strong>Auction Start:</strong> {{ auction.artwork.auction_start }}
+          </p>
+          <p>
+            <strong>Category:</strong> {{ auction.artwork.get_category_display }}
+          </p>
+          <p>
+            <strong>Artist:</strong> {{ auction.artwork.artist.name }}
+          </p>
+
+          <!-- Display Auction Details -->
+          <p>
+            <strong>Number of Bids:</strong> {{ auction.bids.count }}
+          </p>
+          <p>
+            <strong>Current Price:</strong>
+            {% if latest_bid %}
+              {{ latest_bid.amount }}
+            {% else %}
+              {{ auction.artwork.calculate_price }}
+            {% endif %}
+          </p>
+
+          <!-- Additional Auction Information -->
+          <p>
+            <strong>Status:</strong> {{ auction.get_status_display }}
+          </p>
+          <p>
+            <strong>Auction End Date:</strong> {{ auction.end_date }}
+          </p>
+          <p>
+            <strong>Reserve Price:</strong> {{ auction.reserve_price }}
+          </p>
+
+          <!-- Add any other details you want to display -->
         </div>
       </div>
     </div>
   </div>
-
-  <script>
-    $(document).ready(function () {
-      // Listen for the modal show event
-      $('#auctionModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var artworkId = button.data('artwork-id') // Extract the artwork ID from data-* attributes
-    
-        // Load the auction details using AJAX
-        $.ajax({
-          url: '/get_auction_detail/' + artworkId + '/', // Replace with Ir Django URL
-          type: 'GET',
-          success: function (data) {
-            // Update the modal content with the retrieved auction details
-            $('#auction-detail-content').html(data)
-          },
-          error: function () {
-            console.error('Error loading auction details.')
-          }
-        })
-      })
-    })
-  </script>
 {% endblock %}
