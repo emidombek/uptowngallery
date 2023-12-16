@@ -3,13 +3,10 @@
 {% block title %}
   Artwork List
 {% endblock %}
-
 {% block content %}
   <h1 class="text-center mt-3 mb-5">Artwork List</h1>
-
   <div class="container mt-5 mb-5">
     <div class="row justify-content-center mt-5 mb-5">
-      <!-- First Row -->
       {% for artwork in artworks %}
         <div class="col-md-3">
           <div class="card mx-auto custom-card" style="width: 17.5rem;">
