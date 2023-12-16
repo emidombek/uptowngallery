@@ -275,12 +275,11 @@ class Bids(models.Model):
         null=True,
         verbose_name="Bidder",
     )
+
     auction = models.ForeignKey(
-        Auction,
-        on_delete=models.CASCADE,
-        null=True,
-        verbose_name="Auction",
+        Auction, on_delete=models.CASCADE, related_name="bids"
     )
+
     amount = models.IntegerField(
         null=True,
         verbose_name="Amount",
