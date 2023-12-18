@@ -45,46 +45,13 @@
   <div class="modal fade" id="auctionModal" tabindex="-1" aria-labelledby="auctionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header bg-dark text-light">
+          <!-- Added bg-dark and text-light classes -->
           <h5 class="modal-title" id="auctionModalLabel">{{ auction.artwork }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button> <!-- Added btn-close-white for better visibility -->
         </div>
-        <div class="modal-body">
-          <h1>{{ auction.artwork.title }}</h1>
-          <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork }}" style="max-width: 500px; height: auto;" />
-
-          <!-- Display Artwork Details -->
-          <p>
-            <strong>Description:</strong> {{ auction.artwork.description }}
-          </p>
-          <p>
-            <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'Y-m-d H:i' }}
-          </p>
-          <p>
-            <strong>Category:</strong> {{ auction.artwork.get_category_display }}
-          </p>
-          <p>
-            <strong>Artist:</strong> {{ auction.artwork.artist.name }}
-          </p>
-
-          <!-- Display Auction Details -->
-          <p>
-            <strong>Number of Bids:</strong> {{ auction.bids.count }}
-          </p>
-          <p>
-            <strong>Current Price:</strong> {{ current_price }}
-          </p>
-
-          <!-- Additional Auction Information -->
-          <p>
-            <strong>Current Price:</strong> {{ current_price }}
-          </p>
-          <p>
-            <strong>Auction End Date:</strong> {{ auction.end_date|date:'Y-m-d H:i' }}
-          </p>
-          <p>
-            <strong>Reserve Price:</strong> {{ auction.reserve_price }}
-          </p>
+        <div class="modal-body" id="auction-detail-content">
+          <!-- AJAX content will be loaded here -->
         </div>
       </div>
     </div>

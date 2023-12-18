@@ -1,0 +1,33 @@
+<!-- auction_detail_partial.html -->
+
+<h1>{{ auction.artwork.title }}</h1>
+
+<!-- Display Artwork Image -->
+<br />
+<img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" style="max-width: 300px; height: auto;" />
+<br />
+<!-- Display Artwork and Auction Details -->
+<br />
+<div class="border border-dark p-3 mt-3">
+  <p>
+    <strong>Description:</strong> {{ auction.artwork.description }}
+  </p>
+  <p>
+    <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'Y-m-d H:i' }}
+  </p>
+  <p>
+    <strong>Category:</strong> {{ auction.artwork.get_category_display }}
+  </p>
+  <p>
+    <strong>Artist:</strong> {{ auction.artwork.artist.name }}
+  </p>
+
+  <!-- Display Auction Details -->
+  <p>
+    <strong>Number of Bids:</strong> {{ auction.bids.count }}
+  </p>
+  <p>
+    <strong>Current Price:</strong> {{ current_price }}
+  </p>
+</div>
+<br />

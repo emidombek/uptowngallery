@@ -16,11 +16,16 @@ $(function () {
       url: '/auction_detail/' + artworkId + '/' + auctionId + '/',
       type: 'GET',
       success: function (data) {
-        console.log("AJAX Response:", data);
+        // Update the modal content
         $('#auction-detail-content').html(data);
+
+        // Extract the title from the loaded content and set it as the modal title
+        var title = $('#auction-detail-content').find('h1').first().text();
+        $('#auctionModalLabel').text(title);
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.error('AJAX error:', textStatus, errorThrown);
+        $('#auction-detail-content').html('<p>An error occurred while loading the details. Please try again later.</p>');
       }
     });
   });
