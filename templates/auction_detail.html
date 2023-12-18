@@ -1,45 +1,51 @@
-<!-- auction_detail.html -->
-
 {% extends 'base.html' %}
-
 {% block content %}
-  <h1>{{ auction.artwork.title }}</h1>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 mt-3">
+        <h1 class="text-center mb-5">Auction Detail</h1>
 
-  <!-- Display Artwork Image -->
-  <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork }}" style="max-width: 500px; height: auto;" />
+        <div class="card border-dark mb-5">
+          <div class="row no-gutters">
+            <!-- Auction Artwork Image Column -->
+            <div class="col-md-4 d-flex align-items-center justify-content-center">
+              <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ms-5" style="max-height: 500px; object-fit: contain;" />
+            </div>
 
-  <!-- Display Artwork Details -->
-  <p>
-    <strong>Description:</strong> {{ auction.artwork.description }}
-  </p>
-  <p>
-    <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'Y-m-d H:i' }}
-  </p>
-  <p>
-    <strong>Category:</strong> {{ auction.artwork.get_category_display }}
-  </p>
-  <p>
-    <strong>Artist:</strong> {{ auction.artwork.artist.name }}
-  </p>
+            <!-- Auction Information Column -->
+            <div class="col-md-8">
+              <div class="card-body">
+                <!-- Auction Information -->
+                <h2 class="card-title ms-5 mt-3 mb-5">{{ auction.artwork.title }}</h2>
+                <p class="card-text mb-3 ms-5">
+                  <strong>Description:</strong> {{ auction.artwork.description }}<br /><br />
+                  <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'F j, Y H:i' }}<br /><br />
+                  <strong>Auction End Date:</strong> {{ auction.end_date|date:'F j, Y H:i' }}<br /><br />
+                  <strong>Category:</strong> {{ auction.artwork.get_category_display }}<br /><br />
+                  <strong>Artist:</strong> {{ auction.artwork.artist.name }}<br /><br />
+                  <strong>Number of Bids:</strong> {{ auction.bids.count }}<br /><br />
+                  <strong>Current Price:</strong> {{ current_price }}<br /><br />
+                </p>
 
-  <!-- Display Auction Details -->
-  <p>
-    <strong>Number of Bids:</strong> {{ auction.bids.count }}
-  </p>
-  <p>
-    <strong>Current Price:</strong> {{ current_price }}
-  </p>
-
-  <!-- Additional Auction Information -->
-  <p>
-    <strong>Current Price:</strong> {{ current_price }}
-  </p>
-  <p>
-    <strong>Auction End Date:</strong> {{ auction.end_date|date:'Y-m-d H:i' }}
-  </p>
-  <p>
-    <strong>Reserve Price:</strong> {{ auction.reserve_price }}
-  </p>
-
-  <!-- Add any other details I want to display -->
+                <!-- Bid Form -->
+                {% if user.is_authenticated and auction.artwork.artist.user != user %}
+                  <h3 class="text-center">Place My Bid</h3>
+                  <form method="post" action="{% url 'place_bid' auction.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="bidAmount" class="form-label">Bid Amount</label>
+                      <input type="number" class="form-control" id="bidAmount" name="bid_amount" />
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Submit Bid</button>
+                    </div>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

@@ -1,33 +1,30 @@
 <!-- auction_detail_partial.html -->
+<div class="container">
+  <h1 class="text-center mb-5">Auction Detail</h1>
+  <div class="row justify-content-center">
+    <div class="col-md-12 mt-3">
+      <div class="card border-dark mb-5">
+        <!-- Auction Artwork Image -->
+        <div class="row no-gutters">
+          <div class="col-12 d-flex justify-content-center mt-3">
+            <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img mb-3" style="max-height: 300px; object-fit: contain;" />
+          </div>
+        </div>
 
-<h1>{{ auction.artwork.title }}</h1>
-
-<!-- Display Artwork Image -->
-<br />
-<img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" style="max-width: 300px; height: auto;" />
-<br />
-<!-- Display Artwork and Auction Details -->
-<br />
-<div class="border border-dark p-3 mt-3">
-  <p>
-    <strong>Description:</strong> {{ auction.artwork.description }}
-  </p>
-  <p>
-    <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'Y-m-d H:i' }}
-  </p>
-  <p>
-    <strong>Category:</strong> {{ auction.artwork.get_category_display }}
-  </p>
-  <p>
-    <strong>Artist:</strong> {{ auction.artwork.artist.name }}
-  </p>
-
-  <!-- Display Auction Details -->
-  <p>
-    <strong>Number of Bids:</strong> {{ auction.bids.count }}
-  </p>
-  <p>
-    <strong>Current Price:</strong> {{ current_price }}
-  </p>
+        <!-- Auction Information -->
+        <div class="card-body">
+          <h2 class="card-title text-center mt-3 mb-3">{{ auction.artwork.title }}</h2>
+          <p class="card-text text-center">
+            <strong>Category:</strong> {{ auction.artwork.get_category_display }}<br />
+            <strong>Artist:</strong> {{ auction.artwork.artist.name }}<br />
+            <strong>Number of Bids:</strong> {{ auction.bids.count }}<br />
+            <strong>Current Price:</strong> {{ current_price }}<br />
+          </p>
+          <div class="text-center mt-3 mb-3">
+            <a href="{% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info">View Auction</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<br />
