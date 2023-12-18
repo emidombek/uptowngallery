@@ -204,7 +204,14 @@ class AuctionDetailView(View):
             "artwork": artwork,
             "current_price": current_price,  # Pass current price to the template
         }
-        return render(request, "auction_detail.html", context)
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            # Return the partial template for AJAX requests
+            return render(
+                request, "auction_detail_partial.html", context
+            )
+        else:
+            # Return the full page for regular requests
+            return render(request, "auction_detail.html", context)
 
 
 class ProfileInfoView(View):
