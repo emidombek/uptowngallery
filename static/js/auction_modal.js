@@ -1,22 +1,27 @@
-$(function () {
-  // Listen for the modal show event
-  $('#auctionModal').on('show.bs.modal', function (event) {
-    let button = $(event.relatedTarget); // Button that triggered the modal
-    let artworkId = button.data('artwork-id'); // Extract the artwork ID from data-* attributes
-    let auctionId = button.data('auction-id'); // Extract the auction ID from data-* attributes
+console.log('Script loaded');
 
-    // Load the auction and artwork details using AJAX
+$(function () {
+  console.log('Modal script loaded');
+
+  $('#auctionModal').on('show.bs.modal', function (event) {
+    console.log('Modal event triggered');
+
+    let button = $(event.relatedTarget);
+    let artworkId = button.data('artwork-id');
+    let auctionId = button.data('auction-id');
+
+    console.log('Artwork ID:', artworkId, 'Auction ID:', auctionId);
+
     $.ajax({
       url: '/auction_detail/' + artworkId + '/' + auctionId + '/',
       type: 'GET',
       success: function (data) {
-        // Update the modal content
+        console.log("AJAX Response:", data);
         $('#auction-detail-content').html(data);
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.error('AJAX error: ' + textStatus + ' : ' + errorThrown);
-        $('#auction-detail-content').html('<p>An error occurred while loading the details. Please try again later.</p>');
-      },
+        console.error('AJAX error:', textStatus, errorThrown);
+      }
     });
   });
 });

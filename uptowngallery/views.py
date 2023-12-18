@@ -190,12 +190,19 @@ class AuctionDetailView(View):
         auction = get_object_or_404(
             Auction, pk=auction_id, artwork=artwork
         )
-        latest_bid = auction.bids.order_by("-amount").first()
+
+        # Calculate the current price
+        bids = Bids.objects.filter(auction=auction).order_by("-amount")
+        current_price = (
+            bids.first().amount
+            if bids.exists()
+            else auction.reserve_price
+        )
 
         context = {
             "auction": auction,
             "artwork": artwork,
-            "latest_bid": latest_bid,
+            "current_price": current_price,  # Pass current price to the template
         }
         return render(request, "auction_detail.html", context)
 
