@@ -9,6 +9,7 @@ from .views import (
     AuctionDetailView,
     ProfileInfoView,
     signup_view,
+    RejectArtworkView,
 )
 
 urlpatterns = [
@@ -24,6 +25,11 @@ urlpatterns = [
         "admin/approve/<int:artwork_id>/",
         ApproveArtworkView.as_view(),
         name="approve_artwork",
+    ),
+    path(
+        "admin/reject/<int:artwork_id>/",
+        RejectArtworkView.as_view(),
+        name="reject_artwork",
     ),
     path(
         "auction_detail/<int:artwork_id>/<int:auction_id>/",

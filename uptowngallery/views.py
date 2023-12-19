@@ -164,6 +164,35 @@ class ApproveArtworkView(View):
         return redirect("artwork_detail", artwork_id)
 
 
+class RejectArtworkView(View):
+    def get(self, request, artwork_id):
+        artwork = get_object_or_404(Artwork, pk=artwork_id)
+
+        if (
+            artwork.approval_status == "pending"
+            and request.user.is_staff
+        ):
+            artwork.approval_status = "rejected"
+            artwork.save()
+
+            # Update any related auctions, if necessary
+            Auction.objects.filter(artwork=artwork).update(
+                status="cancelled", is_active=False
+            )
+
+            messages.success(
+                request,
+                f"The artwork '{artwork.title}' has been rejected.",
+            )
+        else:
+            messages.error(
+                request,
+                f"The artwork '{artwork.title}' cannot be rejected. Check if it's pending approval or if you have the right permissions.",
+            )
+
+        return redirect("artwork_detail", artwork_id)
+
+
 def signup_view(request):
     logger.info("Entering signup_view function")
 
