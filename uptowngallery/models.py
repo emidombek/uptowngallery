@@ -237,33 +237,23 @@ class Auction(models.Model):
     def __str__(self):
         return f"Auction #{self.id} - {self.status} - Artwork: {self.artwork}"
 
-    def check_and_close_auctions():
-        now = timezone.now()
-        active_auctions = Auction.objects.filter(
-            end_date__lte=now, is_active=True
-        )
-        for auction in active_auctions:
-            auction.status = "closed"
-            auction.is_active = False
-            auction.save()
-
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
     @receiver(post_save, sender=Artwork)
     def artwork_approval_handler(sender, instance, created, **kwargs):
         if created:
-            # Automatically approve and start the auction when an artwork is created
+            # If a new artwork is created, call approve_and_start_auction
             instance.approve_and_start_auction()
         else:
-            # If the artwork is updated (e.g., approval status changes), handle it here
+            # If the artwork is updated
             if instance.approval_status == "approved":
+                # If the artwork is approved, call approve_and_start_auction
                 instance.approve_and_start_auction()
             elif instance.approval_status == "rejected":
-                # Handle rejection logic here (e.g., cancel the auction)
-                instance.auction.status = "cancelled"
-                instance.auction.is_active = 0
-                instance.auction.save()
+                # If the artwork is rejected, no auction instance is created
+                # Handle any other necessary logic for rejected artwork here
+                pass
 
 
 class Bids(models.Model):
