@@ -1,15 +1,13 @@
-from background_task import background
 from django.utils import timezone
-from .models import Auction  # Replace with your actual model import
+from .models import Auction
 
 
-@background(schedule=60)
-def update_auction_status():
+def check_and_close_auctions():
     now = timezone.now()
-    ended_auctions = Auction.objects.filter(
+    active_auctions = Auction.objects.filter(
         end_date__lte=now, is_active=True
     )
-    for auction in ended_auctions:
+    for auction in active_auctions:
         auction.status = "closed"
         auction.is_active = False
         auction.save()

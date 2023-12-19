@@ -7,7 +7,6 @@ from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import logging
-from background_task import background
 
 logger = logging.getLogger(__name__)
 
@@ -238,9 +237,6 @@ class Auction(models.Model):
     def __str__(self):
         return f"Auction #{self.id} - {self.status} - Artwork: {self.artwork}"
 
-        # Background task to check and close auctions
-
-    @background(schedule=60)
     def check_and_close_auctions():
         now = timezone.now()
         active_auctions = Auction.objects.filter(
@@ -253,10 +249,6 @@ class Auction(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        # Schedule the task to check and close auctions
-        Auction.check_and_close_auctions(
-            repeat=3600
-        )  # Repeat every hour
 
     @receiver(post_save, sender=Artwork)
     def artwork_approval_handler(sender, instance, created, **kwargs):
