@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}{% autoescape off %}{% blocktrans %}I are receiving this email because I or someone else has requested a
-password for Ir user account. However, we do not have any record of a user
+password for my user account. However, we do not have any record of a user
 with email {{ email }} in our database.
 
 This mail can be safely ignored if I did not request a password reset.
