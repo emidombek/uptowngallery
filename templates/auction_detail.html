@@ -26,18 +26,17 @@
                   <strong>Number of Bids:</strong> {{ auction.bids.count }}<br /><br />
                   <strong>Current Price:</strong> {{ current_price }}<br /><br />
                 </p>
-
                 <!-- Bid Form -->
                 {% if user.is_authenticated and auction.artwork.artist.user != user %}
                   <h3 class="text-center">Place Your Bid</h3>
-                  <form method="post" action="{% url 'place_bid' auction.id %}">
+                  <form method="post" action="{% url 'auction_detail' artwork.id auction.id %}">
                     {% csrf_token %}
                     <div class="mb-3">
                       <label for="bidAmount" class="form-label">Bid Amount</label>
-                      <input type="number" class="form-control" id="bidAmount" name="bid_amount" />
+                      <input type="number" class="form-control" id="bidAmount" name="bid_amount" required />
                     </div>
                     <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Submit Bid</button>
+                      <button type="submit" class="btn btn-info">Submit Bid</button>
                     </div>
                   </form>
                 {% endif %}
