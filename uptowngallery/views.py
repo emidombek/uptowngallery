@@ -233,6 +233,7 @@ class AuctionDetailView(View):
             "artwork": artwork,
             "current_price": current_price,  # Pass current price to the template
         }
+
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             # Return the partial template for AJAX requests
             return render(
@@ -241,6 +242,47 @@ class AuctionDetailView(View):
         else:
             # Return the full page for regular requests
             return render(request, "auction_detail.html", context)
+
+    def post(self, request, artwork_id, auction_id):
+        artwork = get_object_or_404(Artwork, pk=artwork_id)
+        auction = get_object_or_404(
+            Auction, pk=auction_id, artwork=artwork
+        )
+
+        bid_amount = request.POST.get("bid_amount")
+        # Convert bid_amount to an integer or handle potential conversion errors
+        try:
+            bid_amount = int(bid_amount)
+        except ValueError:
+            # Handle the case where bid_amount is not a valid integer
+            messages.error(request, "Invalid bid amount.")
+            return redirect(
+                "auction_detail",
+                artwork_id=artwork_id,
+                auction_id=auction_id,
+            )
+
+        # Perform further validation, like checking if the bid amount is higher than current highest bid
+        if bid_amount > auction.reserve_price:
+            Bids.objects.create(
+                bidder=request.user.profile,
+                auction=auction,
+                amount=bid_amount,
+                bid_time=timezone.now(),
+            )
+            messages.success(request, "Bid placed successfully!")
+        else:
+            messages.error(
+                request,
+                "Bid amount must be higher than the reserve price.",
+            )
+
+        # Redirect back to the auction detail page
+        return redirect(
+            "auction_detail",
+            artwork_id=artwork_id,
+            auction_id=auction_id,
+        )
 
 
 class ProfileInfoView(View):
