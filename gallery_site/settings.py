@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.sites",
     "django_q",
+    "uptowngallery.apps.UptowngalleryConfig",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -58,7 +59,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "cloudinary",
     "widget_tweaks",
-    "uptowngallery.apps.UptowngalleryConfig",
 ]
 
 SITE_ID = 1
