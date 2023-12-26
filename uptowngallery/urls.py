@@ -10,6 +10,7 @@ from .views import (
     ProfileInfoView,
     signup_view,
     RejectArtworkView,
+    UpdateProfileView,
 )
 
 urlpatterns = [

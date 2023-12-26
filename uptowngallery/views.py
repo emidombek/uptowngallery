@@ -2,7 +2,7 @@ import logging
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.views.decorators.csrf import csrf_protect
+from django.middleware.csrf import get_token
 from django.db.models import Q, Max, Prefetch
 from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -298,47 +298,26 @@ class ProfileInfoView(LoginRequiredMixin, View):
     template_name = "profile_info.html"
 
     def get(self, request, *args, **kwargs):
-        # Existing code to fetch profile data
-        return render(request, self.template_name, context)
-
-
-@csrf_protect  # Ensures CSRF protection is in place
-def update_profile(request):
-    if request.method == "POST":
-        # Handling POST request from AJAX call
-        field = request.POST.get("field")
-        value = request.POST.get("value")
         user_profile = request.user.profile
+        winning_bid = (
+            Bids.objects.filter(
+                bidder=user_profile, auction__artwork__approved=True
+            )
+            .order_by("-amount")
+            .first()
+        )
 
-        # Define a mapping of field names to model fields
-        field_mapping = {
-            "name": "name",
-            "shippingAddress": "shipping_address",
-            # Add more fields as necessary
+        context = {
+            "profile": user_profile,
+            "winning_bid_amount": winning_bid.amount
+            if winning_bid
+            else None,
+            "csrf_token": get_token(
+                request
+            ),  # Retrieves the CSRF token
         }
 
-        # Update the appropriate field
-        if field in field_mapping:
-            setattr(user_profile, field_mapping[field], value)
-            user_profile.save()
-            return JsonResponse(
-                {
-                    "status": "success",
-                    "field": field,
-                    "new_value": value,
-                }
-            )
-        else:
-            return JsonResponse(
-                {"status": "error", "message": "Invalid field"},
-                status=400,
-            )
-
-    # Handle non-POST methods if necessary
-    return JsonResponse(
-        {"status": "error", "message": "Invalid request method"},
-        status=405,
-    )
+        return render(request, self.template_name, context)
 
 
 class UpdateProfileView(LoginRequiredMixin, View):
