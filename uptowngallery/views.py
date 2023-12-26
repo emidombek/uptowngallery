@@ -322,7 +322,6 @@ class ProfileInfoView(LoginRequiredMixin, View):
 
 class UpdateProfileView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
-        # Assuming I're sending 'field' and 'value' in the AJAX data
         field = request.POST.get("field")
         value = request.POST.get("value")
         user_profile = request.user.profile
@@ -330,11 +329,9 @@ class UpdateProfileView(LoginRequiredMixin, View):
         # Define a mapping of field names to model fields
         field_mapping = {
             "name": "name",
-            "shipping_address": "shipping_address",
-            # add more fields as necessary
+            "shipping_address": "shipping_address",  # Backend field name
         }
 
-        # Update the appropriate field
         if field in field_mapping:
             setattr(user_profile, field_mapping[field], value)
             user_profile.save()

@@ -1,15 +1,26 @@
+// Function to toggle between view and edit mode
+function toggleEdit(field) {
+  let textId = `${field}Text`;
+  let inputId = `${field}Input`;
+  let editIconId = `edit${field.charAt(0).toUpperCase() + field.slice(1)}Icon`;
+  let saveIconId = `save${field.charAt(0).toUpperCase() + field.slice(1)}Icon`;
+
+  document.getElementById(textId).style.display = 'none';
+  document.getElementById(inputId).style.display = 'inline';
+  document.getElementById(editIconId).style.display = 'none';
+  document.getElementById(saveIconId).style.display = 'inline';
+}
+
 function saveEdit(field) {
   let inputId = `${field}Input`;
   let newValue = document.getElementById(inputId).value;
 
-  // Construct the data to send in the AJAX request
   let data = {
     'field': field,
     'value': newValue,
-    'csrfmiddlewaretoken': getCookie('csrftoken') // Getting the CSRF token
+    'csrfmiddlewaretoken': getCookie('csrftoken') // Make sure this token is correctly retrieved
   };
 
-  // Perform the AJAX request to the server
   fetch('/update_profile/', {
       method: 'POST',
       headers: {
@@ -18,17 +29,29 @@ function saveEdit(field) {
       },
       body: new URLSearchParams(data)
     })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok: ' + response.statusText);
+      }
+      return response.json();
+    })
     .then(data => {
-      // Check the server response
       if (data.status === 'success') {
-        // Successfully updated the profile
         toggleBackToText(field, newValue);
       } else {
-        // Handle failure
-        console.error('Failed to update:', data.error);
+        console.error('Failed to update:', data.error || 'Unknown error occurred');
       }
-    });
+    })
+    .catch(error => console.error('Fetch error:', error));
+}
+
+function getBackendFieldName(field) {
+  const fieldMapping = {
+    'name': 'name',
+    'shippingAddress': 'shipping_address' // Map the frontend name to the backend name
+    // Add more fields if necessary
+  };
+  return fieldMapping[field] || field; // Return the mapped name, or default to the original if not found
 }
 
 // Helper function to get CSRF token from cookies
