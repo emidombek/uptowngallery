@@ -38,4 +38,9 @@ urlpatterns = [
     ),
     path("signup/", signup_view, name="account_signup"),
     path("profile/", ProfileInfoView.as_view(), name="profile_info"),
+    path(
+        "update_profile/",
+        UpdateProfileView.as_view(),
+        name="update_profile",
+    ),
 ]
