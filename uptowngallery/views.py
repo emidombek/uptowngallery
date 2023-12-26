@@ -1,14 +1,14 @@
 import logging
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q, Max, Prefetch
 from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -294,34 +294,83 @@ class AuctionDetailView(View):
         # return redirect("art_list")
 
 
-class ProfileInfoView(View):
+class ProfileInfoView(LoginRequiredMixin, View):
     template_name = "profile_info.html"
 
-    def get_context_data(self, **kwargs):
-        context = {}
-
-        # Add Ir logic to fetch the winning bid amount here
-        user_profile = self.request.user.profile
-        winning_bid = (
-            Bids.objects.filter(
-                bidder=user_profile, auction__artwork__approved=True
-            )
-            .order_by("-amount")
-            .first()
-        )
-
-        if winning_bid:
-            winning_bid_amount = winning_bid.amount
-        else:
-            winning_bid_amount = None
-
-        # Add other context data as needed
-        context["winning_bid_amount"] = winning_bid_amount
-        return context
-
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data()
+        # Existing code to fetch profile data
         return render(request, self.template_name, context)
+
+
+@csrf_protect  # Ensures CSRF protection is in place
+def update_profile(request):
+    if request.method == "POST":
+        # Handling POST request from AJAX call
+        field = request.POST.get("field")
+        value = request.POST.get("value")
+        user_profile = request.user.profile
+
+        # Define a mapping of field names to model fields
+        field_mapping = {
+            "name": "name",
+            "shippingAddress": "shipping_address",
+            # Add more fields as necessary
+        }
+
+        # Update the appropriate field
+        if field in field_mapping:
+            setattr(user_profile, field_mapping[field], value)
+            user_profile.save()
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "field": field,
+                    "new_value": value,
+                }
+            )
+        else:
+            return JsonResponse(
+                {"status": "error", "message": "Invalid field"},
+                status=400,
+            )
+
+    # Handle non-POST methods if necessary
+    return JsonResponse(
+        {"status": "error", "message": "Invalid request method"},
+        status=405,
+    )
+
+
+class UpdateProfileView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        # Assuming you're sending 'field' and 'value' in the AJAX data
+        field = request.POST.get("field")
+        value = request.POST.get("value")
+        user_profile = request.user.profile
+
+        # Define a mapping of field names to model fields
+        field_mapping = {
+            "name": "name",
+            "shipping_address": "shipping_address",
+            # add more fields as necessary
+        }
+
+        # Update the appropriate field
+        if field in field_mapping:
+            setattr(user_profile, field_mapping[field], value)
+            user_profile.save()
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "field": field,
+                    "new_value": value,
+                }
+            )
+        else:
+            return JsonResponse(
+                {"status": "error", "message": "Invalid field"},
+                status=400,
+            )
 
 
 class PlaceBidView(CreateView):
