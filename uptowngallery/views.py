@@ -250,10 +250,31 @@ class AuctionDetailView(View):
             Auction, pk=auction_id, artwork=artwork
         )
 
-        bid_amount = request.POST.get("bid_amount")
-        # Convert bid_amount to an integer or handle potential conversion errors
         try:
-            bid_amount = int(bid_amount)
+            bid_amount = int(request.POST.get("bid_amount"))
+
+            if bid_amount <= auction.reserve_price:
+                messages.error(
+                    request,
+                    "Bid amount must be higher than the reserve price.",
+                )
+                return redirect(
+                    "auction_detail",
+                    artwork_id=artwork_id,
+                    auction_id=auction_id,
+                )
+
+            # Assuming bid amount is valid and higher than current highest bid
+            Bids.objects.create(
+                bidder=request.user.profile,
+                auction=auction,
+                amount=bid_amount,
+                bid_time=timezone.now(),
+            )
+            messages.success(
+                request, "Your bid was submitted successfully!"
+            )
+
         except ValueError:
             # Handle the case where bid_amount is not a valid integer
             messages.error(request, "Invalid bid amount.")
@@ -263,27 +284,14 @@ class AuctionDetailView(View):
                 auction_id=auction_id,
             )
 
-        # Perform further validation, like checking if the bid amount is higher than current highest bid
-        if bid_amount > auction.reserve_price:
-            Bids.objects.create(
-                bidder=request.user.profile,
-                auction=auction,
-                amount=bid_amount,
-                bid_time=timezone.now(),
-            )
-            messages.success(request, "Bid placed successfully!")
-        else:
-            messages.error(
-                request,
-                "Bid amount must be higher than the reserve price.",
-            )
-
-        # Redirect back to the auction detail page
+        # Redirect back to the auction detail page or to any specific page you want after successful bid submission
         return redirect(
             "auction_detail",
             artwork_id=artwork_id,
             auction_id=auction_id,
         )
+        # Or redirect to art_list or any other page you prefer
+        # return redirect("art_list")
 
 
 class ProfileInfoView(View):
