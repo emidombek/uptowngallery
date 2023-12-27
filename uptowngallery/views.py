@@ -43,11 +43,17 @@ class LandingPageView(View):
 
 class ArtworkListView(View):
     def get(self, request):
-        # Fetch artworks that have at least one active auction
+        category = request.GET.get(
+            "category"
+        )  # Get the category from the request
+
         artworks = Artwork.objects.filter(
-            approval_status="approved",
-            auctions__status="active",  # Ensure the artwork has active auctions
-        ).distinct()  # Use distinct to avoid duplicate artworks
+            approval_status="approved", auctions__status="active"
+        ).distinct()
+
+        # Filter by category if it's provided
+        if category:
+            artworks = artworks.filter(category=category)
 
         # Annotate each artwork with the ID of its most recent active auction
         artworks = artworks.annotate(
@@ -71,10 +77,13 @@ class ArtworkListView(View):
             )
         )
 
-        # ... (rest of your pagination logic) ...
+        # Implement Pagination
+        paginator = Paginator(artworks, 10)  # Show 10 artworks per page
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
 
         return render(
-            request, "artwork_list.html", {"artworks": artworks}
+            request, "artwork_list.html", {"page_obj": page_obj}
         )
 
 
