@@ -2,6 +2,7 @@
 from django import forms
 from .models import Artwork, Auction
 import cloudinary.uploader
+from decimal import Decimal, InvalidOperation
 from allauth.account.forms import SignupForm
 from django.contrib.auth import get_user_model
 from .models import UserProfile
@@ -37,6 +38,40 @@ class ArtworkCreateForm(forms.ModelForm):
         image = cleaned_data.get("image")
         # I can add additional validation checks here if needed
         print("Clean method executed")
+
+    def __init__(self, *args, **kwargs):
+        super(ArtworkCreateForm, self).__init__(*args, **kwargs)
+        # Setting the pattern for reserve_price field
+        self.fields["reserve_price"].widget.attrs.update(
+            {
+                "pattern": r"\d+(\.\d{2})?",
+                "title": "Enter a number with up to two decimal places. e.g., 300 or 300.00",
+            }
+        )
+
+    def clean_reserve_price(self):
+        reserve_price = self.cleaned_data.get("reserve_price")
+        if reserve_price:
+            try:
+                # Convert to Decimal and format to two decimal places
+                reserve_price = Decimal(reserve_price).quantize(
+                    Decimal("0.00")
+                )
+            except (InvalidOperation, ValueError, TypeError):
+                raise forms.ValidationError(
+                    "Please enter a valid reserve price in the format XXX.XX."
+                )
+
+            # Additional validation: Check if positive
+            if reserve_price < Decimal("0.00"):
+                raise forms.ValidationError(
+                    "Reserve price must be positive."
+                )
+
+            return reserve_price
+
+        else:
+            raise forms.ValidationError("This field is required.")
 
     def save(self, commit=True, user_profile=None):
         artwork = super().save(commit=False)
