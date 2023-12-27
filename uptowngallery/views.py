@@ -51,6 +51,8 @@ class ArtworkListView(View):
             approval_status="approved", auctions__status="active"
         ).distinct()
 
+        artworks = artworks.order_by("-create_date")
+
         # Filter by category if it's provided
         if category:
             artworks = artworks.filter(category=category)
