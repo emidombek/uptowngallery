@@ -11,12 +11,22 @@ function toggleEdit(field) {
   document.getElementById(saveIconId).style.display = 'inline';
 }
 
+function getBackendFieldName(field) {
+  const fieldMapping = {
+    'name': 'name',
+    'shippingAddress': 'shipping_address' // Ensure this mapping is correct
+  };
+  return fieldMapping[field] || field; // Return the backend field name
+}
+
+
 function saveEdit(field) {
+  let backendField = getBackendFieldName(field); // Use this function to get the backend field name
   let inputId = `${field}Input`;
   let newValue = document.getElementById(inputId).value;
 
   let data = {
-    'field': field,
+    'field': backendField, // Use the backend field name here
     'value': newValue,
     'csrfmiddlewaretoken': getCookie('csrftoken') // Make sure this token is correctly retrieved
   };
