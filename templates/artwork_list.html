@@ -7,7 +7,7 @@
   <h1 class="text-center mt-3 mb-5">Artwork List</h1>
   <div class="container mt-5 mb-5">
     <div class="row justify-content-center mt-5 mb-5">
-      {% for artwork in artworks %}
+      {% for artwork in page_obj %}
         <div class="col-md-3">
           <div class="card mx-auto custom-card" style="width: 17.5rem;">
             <a href="#link{{ artwork.id }}" data-bs-toggle="modal" data-bs-target="#auctionModal" data-artwork-id="{{ artwork.id }}" data-auction-id="{{ artwork.recent_auction_id }}">
@@ -28,16 +28,16 @@
   <!-- Pagination and Modal -->
   <div class="pagination mt-4">
     <span class="step-links">
-      {% if artworks.has_previous %}
+      {% if page_obj.has_previous %}
         <a href="?page=1">&laquo; first</a>
-        <a href="?page={{ artworks.previous_page_number }}">previous</a>
+        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
       {% endif %}
 
-      <span class="current">Page {{ artworks.number }} of {{ artworks.paginator.num_pages }}</span>
+      <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
 
-      {% if artworks.has_next %}
-        <a href="?page={{ artworks.next_page_number }}">next</a>
-        <a href="?page={{ artworks.paginator.num_pages }}">last &raquo;</a>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
       {% endif %}
     </span>
   </div>
