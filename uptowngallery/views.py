@@ -403,3 +403,31 @@ class PlaceBidView(CreateView):
                 "Ir bid is not higher than the current highest bid.",
             )
             return self.form_invalid(form)
+
+
+class ActivityDashboardView(View):
+    def get(self, request):
+        # Fetch bidding activity
+        bidding_activity = Bid.objects.filter(
+            bidder=request.user
+        ).select_related("auction")
+        # Determine if the user is the current highest bidder in each auction
+
+        # Fetch selling activity
+        selling_activity = Artwork.objects.filter(artist=request.user)
+
+        # Fetch active and closed auctions
+        active_auctions = Auction.objects.filter(
+            seller=request.user, status="active"
+        )
+        closed_auctions = Auction.objects.filter(
+            seller=request.user, status="closed"
+        )
+
+        context = {
+            "bidding_activity": bidding_activity,
+            "selling_activity": selling_activity,
+            "active_auctions": active_auctions,
+            "closed_auctions": closed_auctions,
+        }
+        return render(request, "dashboard.html", context)

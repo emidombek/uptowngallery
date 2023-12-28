@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2 class="mb-4">Your Activity Dashboard</h2>
+
+    <!-- Bidding Activity -->
+    <section class="mb-5">
+      <h3>Bidding Activity</h3>
+      <div class="list-group">
+        {% for bid in bidding_activity %}
+          <a href="{% url 'auction_detail' bid.auction.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            Auction for {{ bid.auction.artwork.title }}
+            <span class="badge {% if bid.is_highest %}
+
+              {% endif %}">
+              {{ bid.amount }} (You are{% if bid.is_highest %}
+                winning
+              {% else %}
+                outbid
+              {% endif %})
+            </span>
+          </a>
+          {% empty %}
+          <p>No bids placed yet.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Selling Activity -->
+    <section class="mb-5">
+      <h3>Selling Activity</h3>
+      <div class="list-group">
+        {% for artwork in selling_activity %}
+          <a href="{% url 'artwork_detail' artwork.id %}" class="list-group-item list-group-item-action">{{ artwork.title }} ({{ artwork.auctions.first.status|title }})</a>
+          {% empty %}
+          <p>No artworks listed yet.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Pending Artwork -->
+    <section class="mb-5">
+      <h3>Pending Artwork</h3>
+      <div class="list-group">
+        {% for artwork in pending_artwork %}
+          <a href="{% url 'artwork_detail' artwork.id %}" class="list-group-item list-group-item-action">{{ artwork.title }} (Pending Approval)</a>
+          {% empty %}
+          <p>No pending artworks.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Active Auctions -->
+    <section class="mb-5">
+      <h3>Active Auctions</h3>
+      <div class="list-group">
+        {% for auction in active_auctions %}
+          <a href="{% url 'auction_detail' auction.id %}" class="list-group-item list-group-item-action">{{ auction.artwork.title }} - Ends at {{ auction.end_time }}</a>
+          {% empty %}
+          <p>No active auctions.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Closed Auctions -->
+    <section>
+      <h3>Closed Auctions</h3>
+      <div class="list-group">
+        {% for auction in closed_auctions %}
+          <a href="{% url 'auction_detail' auction.id %}" class="list-group-item list-group-item-action">{{ auction.artwork.title }} - Sold for {{ auction.final_bid_amount }}</a>
+          {% empty %}
+          <p>No closed auctions.</p>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+{% endblock %}

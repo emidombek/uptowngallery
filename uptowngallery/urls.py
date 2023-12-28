@@ -11,6 +11,7 @@ from .views import (
     signup_view,
     RejectArtworkView,
     UpdateProfileView,
+    ActivityDashboardView,
 )
 
 urlpatterns = [
@@ -43,5 +44,10 @@ urlpatterns = [
         "update_profile/",
         UpdateProfileView.as_view(),
         name="update_profile",
+    ),
+    path(
+        "dashboard/",
+        ActivityDashboardView.as_view(),
+        name="activity-dashboard",
     ),
 ]
