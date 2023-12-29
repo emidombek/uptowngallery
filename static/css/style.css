@@ -103,3 +103,29 @@ a.card-link {
   width: 100%;
   height: 100%;
 }
+
+body .accordion-button {
+  background-color: black;
+  color: white;
+}
+
+body .accordion-button.collapsed {
+  background-color: black;
+  color: white;
+}
+
+body .accordion-header .accordion-button:not(.collapsed) {
+  color: white;
+  background-color: black;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .125);
+}
+
+body .accordion-item {
+  background-color: black;
+  border-color: #2c2c2c;
+}
+
+body .accordion-body {
+  background-color: black;
+  color: white;
+}

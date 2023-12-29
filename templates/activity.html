@@ -2,77 +2,76 @@
 
 {% block content %}
   <div class="container mt-5">
-    <h2 class="mb-4">My Activity Dashboard</h2>
-
-    <!-- Bidding Activity -->
-    <section class="mb-5">
-      <h3>Bidding Activity</h3>
-      <div class="list-group">
-        {% for bid in bidding_activity %}
-          <a href="{% url 'auction_detail' bid.auction.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-            Auction for {{ bid.auction.artwork.title }}
-            <span class="badge {% if bid.is_highest %}
-
-              {% endif %}">
-              {{ bid.amount }} (I are{% if bid.is_highest %}
-                winning
-              {% else %}
-                outbid
-              {% endif %})
-            </span>
-          </a>
-          {% empty %}
-          <p>No bids placed yet.</p>
-        {% endfor %}
+    <h1 class="text-center mb-5">Activity Dashboard</h1>
+    <div class="accordion mb-5" id="activityAccordion">
+      <!-- Bidding Activity Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingBidding"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding">Bidding Activity</button></h2>
+        <div id="collapseBidding" class="accordion-collapse collapse" aria-labelledby="headingBidding" data-bs-parent="#activityAccordion">
+          <div class="accordion-body">
+            {% for bid in bidding_activity %}
+              <div class="mb-3">
+                <h5 class="mb-1">Bid on: {{ bid.auction.artwork.title }}</h5>
+                <p>Bid Amount: {{ bid.amount }}</p>
+                <p>Auction Status: {{ bid.auction.status }}</p>
+              </div>
+              {% empty %}
+              <p>No bidding activity found.</p>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-    </section>
 
-    <!-- Selling Activity -->
-    <section class="mb-5">
-      <h3>Selling Activity</h3>
-      <div class="list-group">
-        {% for artwork in selling_activity %}
-          <a href="{% url 'artwork_detail' artwork.id %}" class="list-group-item list-group-item-action">{{ artwork.title }} ({{ artwork.auctions.first.status|title }})</a>
-          {% empty %}
-          <p>No artworks listed yet.</p>
-        {% endfor %}
+      <!-- Selling Activity Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingSelling"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSelling" aria-expanded="false" aria-controls="collapseSelling">Selling Activity</button></h2>
+        <div id="collapseSelling" class="accordion-collapse collapse" aria-labelledby="headingSelling" data-bs-parent="#activityAccordion">
+          <div class="accordion-body">
+            {% for artwork in selling_activity %}
+              <div class="mb-3">
+                <h5 class="mb-1">{{ artwork.title }}</h5>
+                <p>Status: {{ artwork.approval_status }}</p>
+              </div>
+              {% empty %}
+              <p>No selling activity found.</p>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-    </section>
 
-    <!-- Pending Artwork -->
-    <section class="mb-5">
-      <h3>Pending Artwork</h3>
-      <div class="list-group">
-        {% for artwork in pending_artwork %}
-          <a href="{% url 'artwork_detail' artwork.id %}" class="list-group-item list-group-item-action">{{ artwork.title }} (Pending Approval)</a>
-          {% empty %}
-          <p>No pending artworks.</p>
-        {% endfor %}
+      <!-- Active Auctions Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingActive"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseActive" aria-expanded="false" aria-controls="collapseActive">Active Auctions</button></h2>
+        <div id="collapseActive" class="accordion-collapse collapse" aria-labelledby="headingActive" data-bs-parent="#activityAccordion">
+          <div class="accordion-body">
+            {% for auction in active_auctions %}
+              <div class="mb-3">
+                <h5 class="mb-1">Artwork: {{ auction.artwork.title }}</h5>
+                <p>End Date: {{ auction.end_date|date:'F j, Y H:i' }}</p>
+              </div>
+              {% empty %}
+              <p>No active auctions.</p>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-    </section>
 
-    <!-- Active Auctions -->
-    <section class="mb-5">
-      <h3>Active Auctions</h3>
-      <div class="list-group">
-        {% for auction in active_auctions %}
-          <a href="{% url 'auction_detail' auction.id %}" class="list-group-item list-group-item-action">{{ auction.artwork.title }} - Ends at {{ auction.end_time }}</a>
-          {% empty %}
-          <p>No active auctions.</p>
-        {% endfor %}
+      <!-- Closed Auctions Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingClosed"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClosed" aria-expanded="false" aria-controls="collapseClosed">Closed Auctions</button></h2>
+        <div id="collapseClosed" class="accordion-collapse collapse" aria-labelledby="headingClosed" data-bs-parent="#activityAccordion">
+          <div class="accordion-body">
+            {% for auction in closed_auctions %}
+              <div class="mb-3">
+                <h5 class="mb-1">Artwork: {{ auction.artwork.title }}</h5>
+                <p>Final Price: {{ auction.final_price }}</p>
+              </div>
+              {% empty %}
+              <p>No closed auctions found.</p>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-    </section>
-
-    <!-- Closed Auctions -->
-    <section>
-      <h3>Closed Auctions</h3>
-      <div class="list-group">
-        {% for auction in closed_auctions %}
-          <a href="{% url 'auction_detail' auction.id %}" class="list-group-item list-group-item-action">{{ auction.artwork.title }} - Sold for {{ auction.final_bid_amount }}</a>
-          {% empty %}
-          <p>No closed auctions.</p>
-        {% endfor %}
-      </div>
-    </section>
+    </div>
   </div>
 {% endblock %}

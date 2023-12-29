@@ -46,8 +46,8 @@ urlpatterns = [
         name="update_profile",
     ),
     path(
-        "dashboard/",
+        "activity/",
         ActivityDashboardView.as_view(),
-        name="activity-dashboard",
+        name="activity",
     ),
 ]

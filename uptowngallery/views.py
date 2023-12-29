@@ -405,29 +405,50 @@ class PlaceBidView(CreateView):
             return self.form_invalid(form)
 
 
-class ActivityDashboardView(View):
+from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Bids, Artwork, Auction
+
+
+class ActivityDashboardView(LoginRequiredMixin, View):
     def get(self, request):
+        user_profile = (
+            request.user.profile
+        )  # Retrieve the UserProfile instance
+
         # Fetch bidding activity
-        bidding_activity = Bid.objects.filter(
-            bidder=request.user
+        bidding_activity = Bids.objects.filter(
+            bidder=user_profile
         ).select_related("auction")
-        # Determine if the user is the current highest bidder in each auction
 
         # Fetch selling activity
-        selling_activity = Artwork.objects.filter(artist=request.user)
+        selling_activity = Artwork.objects.filter(artist=user_profile)
 
-        # Fetch active and closed auctions
+        # Fetch active auctions
         active_auctions = Auction.objects.filter(
-            seller=request.user, status="active"
-        )
-        closed_auctions = Auction.objects.filter(
-            seller=request.user, status="closed"
+            artwork__artist=user_profile, status="active"
         )
 
+        # Fetch closed auctions and enhance with final price
+        closed_auctions = Auction.objects.filter(
+            artwork__artist=user_profile, status="closed"
+        ).select_related("artwork")
+        for auction in closed_auctions:
+            final_bid = (
+                Bids.objects.filter(auction=auction)
+                .order_by("-amount")
+                .first()
+            )
+            auction.final_price = (
+                final_bid.amount if final_bid else auction.reserve_price
+            )
+
+        # Consolidate all context data
         context = {
             "bidding_activity": bidding_activity,
             "selling_activity": selling_activity,
             "active_auctions": active_auctions,
             "closed_auctions": closed_auctions,
         }
-        return render(request, "dashboard.html", context)
+
+        return render(request, "activity.html", context)
