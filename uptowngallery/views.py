@@ -405,11 +405,6 @@ class PlaceBidView(CreateView):
             return self.form_invalid(form)
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Bids, Artwork, Auction
-
-
 class ActivityDashboardView(LoginRequiredMixin, View):
     def get(self, request):
         user_profile = (
