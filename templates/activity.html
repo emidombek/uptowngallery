@@ -11,7 +11,10 @@
           <div class="accordion-body">
             {% for bid in bidding_activity %}
               <div class="mb-3">
-                <h5 class="mb-1">Bid on: {{ bid.auction.artwork.title }}</h5>
+                <h5 class="mb-1">
+                  Bid on:
+                  <a href="{% url 'auction_detail' bid.auction.artwork.id bid.auction.id %}" class="text-dark hover-link">{{ bid.auction.artwork.title }}</a>
+                </h5>
                 <p>Bid Amount: {{ bid.amount }}</p>
                 <p>Auction Status: {{ bid.auction.status }}</p>
               </div>
@@ -46,7 +49,7 @@
           <div class="accordion-body">
             {% for auction in active_auctions %}
               <div class="mb-3">
-                <h5 class="mb-1">Artwork: {{ auction.artwork.title }}</h5>
+                <h5 class="mb-1">Artwork: <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-dark hover-link">{{ auction.artwork.title }}</a></h5>
                 <p>End Date: {{ auction.end_date|date:'F j, Y H:i' }}</p>
               </div>
               {% empty %}
@@ -63,7 +66,7 @@
           <div class="accordion-body">
             {% for auction in closed_auctions %}
               <div class="mb-3">
-                <h5 class="mb-1">Artwork: {{ auction.artwork.title }}</h5>
+                <h5 class="mb-1"><a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-dark hover-link">{{ auction.artwork.title }}</a></h5>
                 <p>Final Price: {{ auction.final_price }}</p>
               </div>
               {% empty %}

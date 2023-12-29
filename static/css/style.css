@@ -129,3 +129,8 @@ body .accordion-body {
   background-color: black;
   color: white;
 }
+
+body .hover-link:hover {
+  color: turquoise;
+  text-decoration: none;
+}
