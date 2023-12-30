@@ -116,7 +116,7 @@ body .accordion-button.collapsed {
 
 body .accordion-header .accordion-button:not(.collapsed) {
   color: white;
-  background-color: 212529;
+  background-color: #212529;
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .125);
 }
 

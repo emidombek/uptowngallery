@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.middleware.csrf import get_token
 from django.db.models import Q, Max, Prefetch
 from django.views import View
+from django.views.generic import TemplateView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
@@ -449,3 +450,15 @@ class ActivityDashboardView(LoginRequiredMixin, View):
         }
 
         return render(request, "activity.html", context)
+
+
+class AboutView(TemplateView):
+    template_name = "about.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add your context/data here, e.g.,
+        context[
+            "some_variable"
+        ] = "This is some information for the about page."
+        return context
