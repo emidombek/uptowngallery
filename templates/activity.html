@@ -6,7 +6,7 @@
     <div class="accordion mb-5" id="activityAccordion">
       <!-- Bidding Activity Section -->
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingBidding"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding">Bidding Activity</button></h2>
+        <h5 class="accordion-header" id="headingBidding"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding"><i class="bi bi-person-raised-hand">Bidding Activity</i></button></h5>
         <div id="collapseBidding" class="accordion-collapse collapse" aria-labelledby="headingBidding" data-bs-parent="#activityAccordion">
           <div class="accordion-body">
             {% for bid in bidding_activity %}
@@ -27,7 +27,7 @@
 
       <!-- Selling Activity Section -->
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingSelling"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSelling" aria-expanded="false" aria-controls="collapseSelling">Selling Activity</button></h2>
+        <h2 class="accordion-header" id="headingSelling"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSelling" aria-expanded="false" aria-controls="collapseSelling"><i class="bi bi-person-lines-fill">Selling Activity</i></button></h2>
         <div id="collapseSelling" class="accordion-collapse collapse" aria-labelledby="headingSelling" data-bs-parent="#activityAccordion">
           <div class="accordion-body">
             {% for artwork in selling_activity %}
@@ -54,7 +54,7 @@
 
       <!-- Active Auctions Section -->
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingActive"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseActive" aria-expanded="false" aria-controls="collapseActive">Active Auctions</button></h2>
+        <h2 class="accordion-header" id="headingActive"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseActive" aria-expanded="false" aria-controls="collapseActive"><i class="bi bi-bag-heart">Active Auctions</i></button></h2>
         <div id="collapseActive" class="accordion-collapse collapse" aria-labelledby="headingActive" data-bs-parent="#activityAccordion">
           <div class="accordion-body">
             {% for auction in active_auctions %}
@@ -71,7 +71,7 @@
 
       <!-- Closed Auctions Section -->
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingClosed"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClosed" aria-expanded="false" aria-controls="collapseClosed">Closed Auctions</button></h2>
+        <h2 class="accordion-header" id="headingClosed"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClosed" aria-expanded="false" aria-controls="collapseClosed"><i class="bi bi-door-closed">Closed Auctions</i></button></h2>
         <div id="collapseClosed" class="accordion-collapse collapse" aria-labelledby="headingClosed" data-bs-parent="#activityAccordion">
           <div class="accordion-body">
             {% for auction in closed_auctions %}
