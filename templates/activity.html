@@ -13,7 +13,7 @@
               <div class="mb-3">
                 <h5 class="mb-1">
                   Bid on:
-                  <a href="{% url 'auction_detail' bid.auction.artwork.id bid.auction.id %}" class="text-dark hover-link">{{ bid.auction.artwork.title }}</a>
+                  <a href="{% url 'auction_detail' bid.auction.artwork.id bid.auction.id %}" class="text-light hover-link">{{ bid.auction.artwork.title }}</a>
                 </h5>
                 <p>Bid Amount: {{ bid.amount }}</p>
                 <p>Auction Status: {{ bid.auction.status }}</p>
@@ -32,7 +32,17 @@
           <div class="accordion-body">
             {% for artwork in selling_activity %}
               <div class="mb-3">
-                <h5 class="mb-1">{{ artwork.title }}</h5>
+                <h5 class="mb-1">
+                  <!-- Conditional link based on approval status -->
+                  {% if artwork.approval_status == 'pending' %}
+                    <a href="{% url 'pending_artworks' %}" class="text-light hover-link">{{ artwork.title }}</a>
+                  {% elif artwork.approval_status == 'approved' %}
+                    <!-- Assuming there is an auction related to this artwork -->
+                    <a href="{% url 'auction_detail' artwork.id artwork.auctions.first.id %}" class="text-light hover-link">{{ artwork.title }}</a>
+                  {% else %}
+                    {{ artwork.title }} <!-- No link for other statuses -->
+                  {% endif %}
+                </h5>
                 <p>Status: {{ artwork.approval_status }}</p>
               </div>
               {% empty %}
@@ -49,7 +59,7 @@
           <div class="accordion-body">
             {% for auction in active_auctions %}
               <div class="mb-3">
-                <h5 class="mb-1">Artwork: <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-dark hover-link">{{ auction.artwork.title }}</a></h5>
+                <h5 class="mb-1">Artwork: <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link">{{ auction.artwork.title }}</a></h5>
                 <p>End Date: {{ auction.end_date|date:'F j, Y H:i' }}</p>
               </div>
               {% empty %}
@@ -66,7 +76,7 @@
           <div class="accordion-body">
             {% for auction in closed_auctions %}
               <div class="mb-3">
-                <h5 class="mb-1"><a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-dark hover-link">{{ auction.artwork.title }}</a></h5>
+                <h5 class="mb-1"><a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link">{{ auction.artwork.title }}</a></h5>
                 <p>Final Price: {{ auction.final_price }}</p>
               </div>
               {% empty %}

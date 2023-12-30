@@ -421,7 +421,9 @@ class ActivityDashboardView(LoginRequiredMixin, View):
 
         # Fetch active auctions
         active_auctions = Auction.objects.filter(
-            artwork__artist=user_profile, status="active"
+            artwork__artist=user_profile,
+            status="active",
+            artwork__approval_status="approved",
         )
 
         # Fetch closed auctions and enhance with final price
