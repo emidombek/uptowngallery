@@ -13,6 +13,7 @@ from .views import (
     UpdateProfileView,
     ActivityDashboardView,
     AboutView,
+    SearchActiveAuctionArtworkView,
 )
 
 urlpatterns = [
@@ -48,4 +49,9 @@ urlpatterns = [
     ),
     path("activity/", ActivityDashboardView.as_view(), name="activity"),
     path("about/", AboutView.as_view(), name="about"),
+    path(
+        "search/",
+        SearchActiveAuctionArtworkView.as_view(),
+        name="search_auctions",
+    ),
 ]
