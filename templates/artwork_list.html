@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}
-  Artwork List
-{% endblock %}
 {% block content %}
-  <h1 class="text-center mt-3 mb-5">Artwork List</h1>
+  <h1 class="text-center mt-3 mb-5">
+    {% if is_search %}
+      Search Results for "{{ query }}"
+    {% else %}
+      Artwork List
+    {% endif %}
+  </h1>
+
   <div class="container mt-5 mb-5">
     <div class="row justify-content-center mt-5 mb-5">
       {% for artwork in page_obj %}
@@ -23,7 +27,11 @@
         {% cycle '' '' '' '</div><div class="row justify-content-center mt-5 mb-5">' %}
         {% empty %}
         <div class="d-flex justify-content-center">
-          <p class="text-center">No artworks found in this category.</p>
+          {% if is_search %}
+            <p class="text-center">No search results for "{{ query }}". Try different keywords.</p>
+          {% else %}
+            <p class="text-center">No artworks found in this category.</p>
+          {% endif %}
         </div>
       {% endfor %}
     </div>
