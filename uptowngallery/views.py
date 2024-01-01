@@ -457,3 +457,22 @@ class AboutView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+
+class SearchActiveAuctionArtworkView(View):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get("query", "").strip()
+
+        results = Artwork.objects.filter(
+            title__icontains=query,
+            auctions__status="active",
+            auctions__is_active=True,
+        ).distinct()
+
+        context = {
+            "page_obj": results,
+            "is_search": True,  # Flag to indicate search mode
+            "query": query,  # The actual search term
+        }
+
+        return render(request, "artwork_list.html", context)
