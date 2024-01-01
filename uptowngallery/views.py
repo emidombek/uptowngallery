@@ -463,46 +463,60 @@ class SearchActiveAuctionArtworkView(View):
     def get(self, request):
         query = request.GET.get("query", "").strip()
 
-        artworks = (
-            Artwork.objects.filter(
-                title__icontains=query,
-                approval_status="approved",
-                auctions__status="active",
-            )
-            .distinct()
-            .order_by("-create_date")
-        )
-
-        # Annotate each artwork with the ID of its most recent active auction
-        artworks = artworks.annotate(
-            recent_auction_id=Max(
-                "auctions__id", filter=Q(auctions__status="active")
-            )
-        )
-
-        # Prefetch the related recent active auction for each artwork
-        artworks = artworks.prefetch_related(
-            Prefetch(
-                "auctions",
-                queryset=Auction.objects.filter(
-                    id__in=[
-                        artwork.recent_auction_id
-                        for artwork in artworks
-                    ],
-                    status="active",
-                ),
-                to_attr="recent_auction",
-            )
-        )
-
-        # Implement Pagination
-        paginator = Paginator(artworks, 10)  # Show 10 artworks per page
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-
-        # Pass the paginated results to the template
+        # Initialize an empty context
         context = {
-            "page_obj": page_obj,
             "is_search": True,  # Indicate that this is a search result
             "query": query,  # Pass the search query for display purposes
         }
+
+        if query:
+            artworks = (
+                Artwork.objects.filter(
+                    title__icontains=query,
+                    approval_status="approved",
+                    auctions__status="active",
+                )
+                .distinct()
+                .order_by("-create_date")
+            )
+
+            # Annotate each artwork with the ID of its most recent active auction
+            artworks = artworks.annotate(
+                recent_auction_id=Max(
+                    "auctions__id", filter=Q(auctions__status="active")
+                )
+            )
+
+            # Prefetch the related recent active auction for each artwork
+            recent_auction_ids = list(
+                filter(
+                    None,
+                    artworks.values_list(
+                        "recent_auction_id", flat=True
+                    ),
+                )
+            )
+            artworks = artworks.prefetch_related(
+                Prefetch(
+                    "auctions",
+                    queryset=Auction.objects.filter(
+                        id__in=recent_auction_ids,
+                        status="active",
+                    ),
+                    to_attr="recent_auction",
+                )
+            )
+
+            # Implement Pagination
+            paginator = Paginator(
+                artworks, 10
+            )  # Show 10 artworks per page
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
+
+            context["page_obj"] = page_obj
+        else:
+            # No search query was entered
+            context["error"] = "Please enter a search term."
+
+        return render(request, "artwork_list.html", context)
