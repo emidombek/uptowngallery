@@ -15,7 +15,6 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from .models import (
     Artwork,
-    Category,
     Auction,
     Bids,
 )
@@ -28,7 +27,6 @@ logger = logging.getLogger(__name__)
 
 class LandingPageView(View):
     def get(self, request):
-        top_categories = Category.objects.all()[:9]
         recent_artworks = Artwork.objects.filter(
             approved=True
         ).order_by("-create_date")[:10]
@@ -36,7 +34,6 @@ class LandingPageView(View):
             request,
             "index.html",
             {
-                "top_categories": top_categories,
                 "recent_artworks": recent_artworks,
             },
         )
