@@ -121,7 +121,7 @@ class CreateArtworkView(LoginRequiredMixin, CreateView):
         return super().post(request, *args, **kwargs)
 
 
-class PendingArtworksView(View):
+class PendingArtworksView(LoginRequiredMixin, View):
     def get(self, request):
         # Filter artworks to show only pending artworks of the current user
         artworks = Artwork.objects.filter(
