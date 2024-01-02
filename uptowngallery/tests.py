@@ -3,13 +3,14 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.urls import reverse
 from .models import (
     Artwork,
     UserProfile,
     Auction,
     Bids,
 )
-from django.utils import timezone
 
 
 class UserProfileModelTest(TestCase):
@@ -258,7 +259,7 @@ class BidModelTests(TestCase):
 class LandingPageViewTests(TestCase):
     def test_landing_page_loads_correctly(self):
         response = self.client.get(
-            reverse("landing-page")
+            reverse("home")
         )  # Adjust with your actual url name
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
