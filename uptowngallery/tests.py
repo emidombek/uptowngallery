@@ -362,3 +362,69 @@ class CreateArtworkViewTests(TestCase):
         self.assertFalse(
             Artwork.objects.filter(title="New Artwork").exists()
         )
+
+
+class PendingArtworksViewTests(TestCase):
+    def setUp(self):
+        # Create a user and profile
+        self.user = User.objects.create_user(
+            username="testuser", password="12345"
+        )
+        self.profile = UserProfile.objects.create(
+            user=self.user
+        )  # Create the profile related to the user
+        self.client.login(username="testuser", password="12345")
+
+        # Create 15 artworks, all pending approval
+        for i in range(15):
+            Artwork.objects.create(
+                artist=self.profile,
+                title=f"Artwork {i}",
+                approved=False,  # All artworks are pending (unapproved)
+            )
+
+    def test_pending_artworks_display(self):
+        response = self.client.get(reverse("pending_artworks"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "pending_artworks.html")
+
+        # Ensure only unapproved artworks for the user are listed
+        artworks_in_context = response.context["artworks"]
+        self.assertTrue(
+            all(
+                artwork.approved == False
+                for artwork in artworks_in_context
+            )
+        )
+
+        # Check the number of artworks returned
+        # Assuming that there are more than 10 artworks, it should return only 10 due to pagination
+        self.assertTrue(len(artworks_in_context) <= 10)
+
+    def test_pagination(self):
+        # Test the first page
+        response = self.client.get(
+            reverse("pending_artworks") + "?page=1"
+        )
+        self.assertEqual(len(response.context["artworks"]), 10)
+
+        # Test the second page
+        response = self.client.get(
+            reverse("pending_artworks") + "?page=2"
+        )
+        self.assertTrue(
+            len(response.context["artworks"]) > 0
+        )  # Assuming there's a second page
+
+    def test_access_control(self):
+        # Ensure user is logged out
+        self.client.logout()
+
+        # Attempt to access the page
+        response = self.client.get(reverse("pending_artworks"))
+
+        # Check if redirected to login page
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            response.url.startswith(reverse("account_login"))
+        )
