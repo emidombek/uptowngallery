@@ -267,3 +267,15 @@ class LandingPageViewTests(TestCase):
         )  # Adjust with your actual template
         # Check that recent artworks are in the context and correct
         self.assertTrue("recent_artworks" in response.context)
+
+
+class ArtworkListViewTests(TestCase):
+    def test_artwork_list_loads_correctly(self):
+        response = self.client.get(
+            reverse("artwork_list")
+        )  # Adjust with your actual url name
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "artwork_list.html"
+        )  # Adjust with your actual template
+        self.assertTrue("page_obj" in response.context)
