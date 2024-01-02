@@ -1,6 +1,7 @@
 from datetime import timedelta
 from unittest.mock import patch
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from .models import (
     Artwork,
@@ -186,3 +187,82 @@ class AuctionModelTests(TestCase):
     def tearDown(self):
         # Logout and cleanup any necessary data
         self.client.logout()
+
+
+class BidModelTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            "testuser", "test@example.com", "password"
+        )
+        self.user_profile = UserProfile.objects.create(
+            user=self.user,
+            name="John Doe",
+            shipping_address="123 Test St",
+        )
+
+        self.artwork = Artwork.objects.create(
+            artist=self.user_profile,
+            title="Sample Artwork",
+            description="Sample Artwork Description",
+            category="painting",
+            reserve_price=100.00,
+            # Ensure you set other required fields
+        )
+
+        self.auction = Auction.objects.create(
+            artwork=self.artwork,
+            status="active",
+            reserve_price=100,
+            # Ensure you set other required fields
+        )
+
+    def test_create_valid_bid(self):
+        # Create a bid with all necessary valid fields
+        bid = Bids.objects.create(
+            bidder=self.user_profile,
+            auction=self.auction,
+            amount=150,  # A positive amount
+        )
+
+        # Ensure bid is created successfully
+        self.assertEqual(Bids.objects.count(), 1)
+        self.assertEqual(bid.amount, 150)
+        self.assertEqual(bid.bidder, self.user_profile)
+        self.assertEqual(bid.auction, self.auction)
+
+    def test_negative_bid_amount(self):
+        # Attempt to create a bid with a negative amount
+        with self.assertRaises(ValidationError):
+            Bids.objects.create(
+                bidder=self.user_profile,
+                auction=self.auction,
+                amount=-50,  # A negative amount
+            ).clean()  # This will call the clean method to validate
+
+    def test_bid_time_auto_set(self):
+        # Create a bid and ensure the bid_time is automatically set
+        bid = Bids.objects.create(
+            bidder=self.user_profile,
+            auction=self.auction,
+            amount=200,
+        )
+
+        # bid_time should be close to now
+        self.assertAlmostEqual(
+            bid.bid_time,
+            timezone.now(),
+            delta=timezone.timedelta(seconds=30),
+        )
+
+
+class LandingPageViewTests(TestCase):
+    def test_landing_page_loads_correctly(self):
+        response = self.client.get(
+            reverse("landing-page")
+        )  # Adjust with your actual url name
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "index.html"
+        )  # Adjust with your actual template
+        # Check that recent artworks are in the context and correct
+        self.assertTrue("recent_artworks" in response.context)
