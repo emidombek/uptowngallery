@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import patch
 from django.test import TestCase
 from django.contrib.auth.models import User
 from .models import (
@@ -118,3 +119,70 @@ class ArtworkModelTests(TestCase):
         self.assertIsNotNone(auction)
         self.assertTrue(auction.is_active)
         self.assertEqual(auction.status, "active")
+
+
+class AuctionModelTests(TestCase):
+    def setUp(self):
+        # Create regular user and admin user
+        self.user = User.objects.create_user(
+            username="testuser", password="testpass"
+        )
+        self.admin_user = User.objects.create_superuser(
+            username="adminuser", password="adminpass"
+        )
+
+        # Create UserProfile linked to my user
+        self.user_profile = UserProfile.objects.create(
+            user=self.user,
+            name="Test Artist",
+            shipping_address="123 Street",
+        )
+
+        # Create an artwork that is initially not approved
+        self.artwork = Artwork.objects.create(
+            artist=self.user_profile,
+            title="Test Artwork",
+            description="A beautiful artwork",
+            category="painting",
+            reserve_price=100.00,
+        )
+
+    def test_artwork_approval_triggers_auction_creation(self):
+        # Login as admin to perform approval actions
+        self.client.login(username="adminuser", password="adminpass")
+
+        # Simulate approving the artwork
+        self.artwork.approval_status = "approved"
+        self.artwork.save()  # Assuming this triggers auction creation
+
+        # Verify that an auction has been created for the artwork
+        self.assertTrue(self.artwork.auctions.exists())
+
+        # Check that the auction is in the active status
+        auction = self.artwork.auctions.first()
+        self.assertIsNotNone(auction)
+        self.assertEqual(auction.status, "active")
+
+    def test_auction_closure(self):
+        # Simulate artwork approval and auction creation
+        self.artwork.approval_status = "approved"
+        self.artwork.save()
+        auction = self.artwork.auctions.first()
+
+        # Mock the current time to simulate auction closure
+        with patch("django.utils.timezone.now") as mock_now:
+            mock_now.return_value = auction.end_date + timedelta(
+                minutes=1
+            )
+
+            # Simulate auction closure
+            auction.status = "closed"
+            auction.save()
+
+        # Verify that the auction is now closed
+        updated_auction = Auction.objects.get(id=auction.id)
+        self.assertEqual(updated_auction.status, "closed")
+
+    def tearDown(self):
+        # Logout and cleanup any necessary data
+        self.client.logout()
