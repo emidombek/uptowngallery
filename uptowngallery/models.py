@@ -123,7 +123,7 @@ class Artwork(models.Model):
         ordering = ["-create_date"]
 
     def calculate_price(self):
-        related_auctions = self.auction_set.all()
+        related_auctions = self.auctions.all()
         if related_auctions:
             bids = Bids.objects.filter(auction__in=related_auctions)
             if bids:
