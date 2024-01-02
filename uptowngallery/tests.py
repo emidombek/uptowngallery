@@ -258,24 +258,107 @@ class BidModelTests(TestCase):
 
 class LandingPageViewTests(TestCase):
     def test_landing_page_loads_correctly(self):
-        response = self.client.get(
-            reverse("home")
-        )  # Adjust with your actual url name
+        response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "index.html"
-        )  # Adjust with your actual template
+        self.assertTemplateUsed(response, "index.html")
         # Check that recent artworks are in the context and correct
         self.assertTrue("recent_artworks" in response.context)
 
 
 class ArtworkListViewTests(TestCase):
     def test_artwork_list_loads_correctly(self):
-        response = self.client.get(
-            reverse("artwork_list")
-        )  # Adjust with your actual url name
+        response = self.client.get(reverse("artwork_list"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "artwork_list.html"
-        )  # Adjust with your actual template
+        self.assertTemplateUsed(response, "artwork_list.html")
         self.assertTrue("page_obj" in response.context)
+
+
+class CreateArtworkViewTests(TestCase):
+    def setUp(self):
+        # Create a user for testing
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password="testpass",
+        )
+
+        # Additional setup like creating related objects if needed
+
+    def test_create_artwork_post_success(self):
+        # Log the user in
+        self.client.login(username="testuser", password="testpass")
+
+        # Prepare post data for your artwork creation form
+        post_data = {
+            "title": "New Artwork",
+            "description": "Beautiful Artwork",
+            "category": "painting",
+            # ... include other form fields as necessary
+        }
+
+        # Send a POST request to the view meant to create an artwork
+        response = self.client.post(
+            reverse("create-artwork"), post_data
+        )  # Adjust with your actual url name
+
+        # Check the response and object creation status
+        self.assertEqual(
+            response.status_code, 302
+        )  # Redirect means success in this case
+        self.assertTrue(
+            Artwork.objects.filter(title="New Artwork").exists()
+        )  # Confirm the object was created
+
+
+class CreateArtworkViewTests(TestCase):
+    def setUp(self):
+        # Create a test user and profile
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.profile = UserProfile.objects.create(
+            user=self.user,
+            name="Test User",
+            shipping_address="123 Test St",
+        )
+        self.client.login(username="testuser", password="testpassword")
+
+    def test_create_artwork_post_success(self):
+        # Make sure to include all required fields for your form
+        post_data = {
+            "title": "New Artwork",
+            "description": "Beautiful Artwork",
+            "image": "image/upload/path.jpg",  # Assuming it's a file path or use SimpleUploadedFile for actual file
+            "category": "painting",
+            "reserve_price": 100.00,
+            "auction_duration": "3",  # Adjust with your valid choices or actual field format
+        }
+        response = self.client.post(
+            reverse("create_artwork"), post_data
+        )
+        self.assertEqual(
+            response.status_code, 302
+        )  # Redirects on success
+        self.assertTrue(
+            Artwork.objects.filter(title="New Artwork").exists()
+        )
+
+    def test_create_artwork_without_login(self):
+        self.client.logout()  # Ensure no user is logged in
+        post_data = {
+            "title": "New Artwork",
+            "description": "Beautiful Artwork",
+            "image": "image/upload/path.jpg",  # Assuming it's a file path or use SimpleUploadedFile for actual file
+            "category": "painting",
+            "reserve_price": 100.00,
+            "auction_duration": "3",  # Adjust with your valid choices or actual field format
+        }
+        response = self.client.post(
+            reverse("create_artwork"), post_data
+        )
+        self.assertNotEqual(
+            response.status_code, 200
+        )  # Should not be able to post without login
+        self.assertFalse(
+            Artwork.objects.filter(title="New Artwork").exists()
+        )
