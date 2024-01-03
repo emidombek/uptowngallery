@@ -5,11 +5,9 @@ from .views import (
     ArtworkListView,
     CreateArtworkView,
     PendingArtworksView,
-    ApproveArtworkView,
     AuctionDetailView,
     ProfileInfoView,
     signup_view,
-    RejectArtworkView,
     UpdateProfileView,
     ActivityDashboardView,
     AboutView,
@@ -24,16 +22,6 @@ urlpatterns = [
         "pending_artworks/",
         PendingArtworksView.as_view(),
         name="pending_artworks",
-    ),
-    path(
-        "admin/approve/<int:artwork_id>/",
-        ApproveArtworkView.as_view(),
-        name="approve_artwork",
-    ),
-    path(
-        "admin/reject/<int:artwork_id>/",
-        RejectArtworkView.as_view(),
-        name="reject_artwork",
     ),
     path(
         "auction_detail/<int:artwork_id>/<int:auction_id>/",
