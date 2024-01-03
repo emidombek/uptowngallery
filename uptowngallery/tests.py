@@ -1,7 +1,8 @@
 from datetime import timedelta
 from unittest.mock import patch
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.core.exceptions import ValidationError
+from django.contrib.messages import get_messages
 from .forms import CustomSignupForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -490,3 +491,117 @@ class CustomSignupViewTests(TestCase):
         )
         self.assertFalse(response.context["form"].is_valid())
         self.assertTemplateUsed(response, "account/signup.html")
+
+
+class AuctionDetailViewTests(TestCase):
+    def setUp(self):
+        # Create a user
+        self.user = User.objects.create_user(
+            username="testuser", password="12345"
+        )
+        # Create a user profile for the user
+        self.user_profile = UserProfile.objects.create(
+            user=self.user,
+            name="Test User",
+            shipping_address="123 Test St",
+        )
+
+        # Login
+        login_successful = self.client.login(
+            username="testuser", password="12345"
+        )
+        self.assertTrue(
+            login_successful, "User should be logged in for test cases."
+        )
+
+        # Create an artwork and an auction
+        self.artwork = Artwork.objects.create(
+            title="Test Artwork", description="Test Description"
+        )
+        self.auction = Auction.objects.create(
+            artwork=self.artwork, reserve_price=100
+        )
+
+    def test_get_auction_detail(self):
+        # Simulate logged in user
+        self.client.login(username="testuser", password="12345")
+        # Get response
+        response = self.client.get(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            )
+        )
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "auction_detail.html")
+
+    def test_ajax_request(self):
+        # Simulate AJAX request
+        response = self.client.get(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        # Assert partial template used
+        self.assertTemplateUsed(response, "auction_detail_partial.html")
+
+    def test_post_bid_lower_than_reserve_price(self):
+        response = self.client.post(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            {"bid_amount": 50},
+        )
+        messages = list(get_messages(response.wsgi_request))
+        self.assertGreater(
+            len(messages), 0, "No messages were returned."
+        )
+
+        expected_error_message = (
+            "Bid amount must be higher than the reserve price."
+        )
+        # Ensure the specific error message is in the messages
+        self.assertTrue(
+            any(
+                expected_error_message in str(m).strip()
+                for m in messages
+            )
+        )
+
+    def test_post_valid_bid(self):
+        # Post a valid bid
+        valid_bid = self.auction.reserve_price + 10
+        response = self.client.post(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            {"bid_amount": valid_bid},
+        )
+        messages = list(get_messages(response.wsgi_request))
+        self.assertGreater(
+            len(messages), 0, "No messages were returned."
+        )
+
+        expected_success_message = (
+            "My bid was submitted successfully!"
+        )
+        self.assertTrue(
+            any(expected_success_message in str(m) for m in messages)
+        )
