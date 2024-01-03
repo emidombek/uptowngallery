@@ -1,2 +1,2 @@
 web: gunicorn gallery_site.wsgi
-worker: python manage.py qcluster
+worker: python3 manage.py qcluster
