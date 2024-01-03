@@ -2,7 +2,9 @@ from datetime import timedelta
 from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from .forms import CustomSignupForm
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.urls import reverse
 from .models import (
@@ -275,43 +277,6 @@ class ArtworkListViewTests(TestCase):
 
 class CreateArtworkViewTests(TestCase):
     def setUp(self):
-        # Create a user for testing
-        self.user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
-            password="testpass",
-        )
-
-        # Additional setup like creating related objects if needed
-
-    def test_create_artwork_post_success(self):
-        # Log the user in
-        self.client.login(username="testuser", password="testpass")
-
-        # Prepare post data for your artwork creation form
-        post_data = {
-            "title": "New Artwork",
-            "description": "Beautiful Artwork",
-            "category": "painting",
-            # ... include other form fields as necessary
-        }
-
-        # Send a POST request to the view meant to create an artwork
-        response = self.client.post(
-            reverse("create-artwork"), post_data
-        )  # Adjust with your actual url name
-
-        # Check the response and object creation status
-        self.assertEqual(
-            response.status_code, 302
-        )  # Redirect means success in this case
-        self.assertTrue(
-            Artwork.objects.filter(title="New Artwork").exists()
-        )  # Confirm the object was created
-
-
-class CreateArtworkViewTests(TestCase):
-    def setUp(self):
         # Create a test user and profile
         self.user = User.objects.create_user(
             username="testuser", password="testpassword"
@@ -348,7 +313,7 @@ class CreateArtworkViewTests(TestCase):
         post_data = {
             "title": "New Artwork",
             "description": "Beautiful Artwork",
-            "image": "image/upload/path.jpg",  # Assuming it's a file path or use SimpleUploadedFile for actual file
+            "image": "image/upload/path.jpg",
             "category": "painting",
             "reserve_price": 100.00,
             "auction_duration": "3",  # Adjust with your valid choices or actual field format
@@ -428,3 +393,100 @@ class PendingArtworksViewTests(TestCase):
         self.assertTrue(
             response.url.startswith(reverse("account_login"))
         )
+
+
+class CustomSignupViewTests(TestCase):
+    def test_get_signup_page(self):
+        response = self.client.get(
+            reverse("account_signup")
+        )  # Changed to 'account_signup'
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "account/signup.html")
+        self.assertIsInstance(
+            response.context["form"], CustomSignupForm
+        )
+
+    def test_successful_signup(self):
+        form_data = {
+            "email": "user@example.com",
+            "password1": "testpassword",
+            "password2": "testpassword",
+            "name": "Test User",
+            "street_address": "123 Test St",
+            "city": "Testville",
+            "state": "Testland",
+            "country": "US",
+            "zipcode": "12345",
+        }
+        response = self.client.post(
+            reverse("account_signup"), form_data
+        )
+        self.assertEqual(response.status_code, 302)
+
+        # Verify user creation
+        user = get_user_model().objects.last()
+        self.assertEqual(user.email, "user@example.com")
+
+        # Verify user profile creation
+        profile = UserProfile.objects.get(user=user)
+        self.assertEqual(
+            profile.shipping_address,
+            "123 Test St, Testville, Testland, US, 12345",
+        )
+
+    def test_form_validation(self):
+        # Submit a form with missing or invalid data
+        response = self.client.post(
+            reverse("signup"), {"email": "invalidemail"}
+        )
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertTemplateUsed(response, "signup_template.html")
+
+
+class SignupViewTests(TestCase):
+    def test_get_signup_page(self):
+        # Test that the signup page loads correctly
+        response = self.client.get(reverse("account_signup"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "account/signup.html"
+        )  # Update template name as per your configuration
+
+
+class CustomSignupViewTests(TestCase):
+    def test_get_signup_page(self):
+        # Test that the signup page loads correctly
+        response = self.client.get(reverse("account_signup"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "account/signup.html"
+        )  # or your custom template if it's different
+
+    def test_successful_signup(self):
+        # Test the successful creation of a new user via signup
+        form_data = {
+            "email": "test@example.com",
+            "password1": "complex_password",
+            "password2": "complex_password",
+            # Add the rest of your form fields here
+            "name": "Test User",
+            "street_address": "1234 Test St",
+            "city": "Testville",
+            "state": "Teststate",
+            "country": "US",
+            "zipcode": "12345",
+        }
+        response = self.client.post(
+            reverse("account_signup"), form_data
+        )
+        self.assertEqual(
+            response.status_code, 302
+        )  # Redirect after successful signup
+
+    def test_form_validation(self):
+        # Test submission of form with invalid data
+        response = self.client.post(
+            reverse("account_signup"), {"email": "invalidemail"}
+        )
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertTemplateUsed(response, "account/signup.html")

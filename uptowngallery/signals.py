@@ -14,7 +14,12 @@ logger = logging.getLogger(__name__)
 def create_user_profile(sender, request, user, **kwargs):
     try:
         logger.info("User created: Creating UserProfile")
-        UserProfile.objects.create(user=user)
+        profile, created = UserProfile.objects.get_or_create(user=user)
+
+        if created:
+            logger.info(f"Created new profile for {user}")
+        else:
+            logger.info(f"Found existing profile for {user}")
     except Exception as e:
         logger.error(f"Error in create_user_profile: {e}")
 
