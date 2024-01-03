@@ -605,3 +605,42 @@ class AuctionDetailViewTests(TestCase):
         self.assertTrue(
             any(expected_success_message in str(m) for m in messages)
         )
+
+
+class ProfileInfoViewTests(TestCase):
+    def setUp(self):
+        # Create a user
+        self.user = User.objects.create_user(
+            username="testuser", password="12345"
+        )
+        self.client.login(username="testuser", password="12345")
+
+        # Create user profile with additional fields from the form
+        self.profile = UserProfile.objects.create(
+            user=self.user,
+            name="Test Name",
+            shipping_address="123 Test St, Test City, TS, Country, 12345"  # example data
+            # include other necessary fields
+        )
+
+        # Create related objects like artwork, auction, and bid as needed
+        self.artwork = Artwork.objects.create(
+            title="Test Artwork", description="Test Description"
+        )  # add fields
+        self.auction = Auction.objects.create(
+            artwork=self.artwork, reserve_price=100
+        )  # add fields
+        self.bid = Bids.objects.create(
+            bidder=self.profile, auction=self.auction, amount=100
+        )  # example bid
+
+    def test_get_profile_info(self):
+        # Use the actual name of the url pattern
+        response = self.client.get(reverse("profile_info"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "profile_info.html")
+
+        # Assert that context contains profile and other details
+        self.assertIn("profile", response.context)
+        self.assertEqual(response.context["profile"], self.profile)
+        self.assertIn("winning_bid_amount", response.context)
