@@ -1,6 +1,6 @@
 from datetime import timedelta
 from unittest.mock import patch
-from django.test import Client, TestCase
+from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.messages import get_messages
 from .forms import CustomSignupForm
@@ -644,3 +644,67 @@ class ProfileInfoViewTests(TestCase):
         self.assertIn("profile", response.context)
         self.assertEqual(response.context["profile"], self.profile)
         self.assertIn("winning_bid_amount", response.context)
+
+
+class UpdateProfileViewTests(TestCase):
+    def setUp(self):
+        self.username = "testuser"
+        self.password = "12345"
+        # Create a user
+        self.user = User.objects.create_user(
+            username=self.username, password=self.password
+        )
+        self.profile = UserProfile.objects.create(
+            user=self.user,
+            name="Original Name",
+            shipping_address="Original Address",
+        )
+
+        # Login
+        login_successful = self.client.login(
+            username=self.username, password=self.password
+        )
+        self.assertTrue(
+            login_successful, "User should be logged in for test cases."
+        )
+
+    def test_update_valid_field(self):
+        url = reverse(
+            "update_profile"
+        )  # Use the actual name of the url pattern for UpdateProfileView
+        field_to_update = "name"
+        new_value = "New Name"
+
+        response = self.client.post(
+            url, {"field": field_to_update, "value": new_value}
+        )
+
+        # Reload profile from database
+        self.profile.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.profile.name, new_value
+        )  # Ensure the field was updated
+        self.assertJSONEqual(
+            str(response.content, encoding="utf8"),
+            {
+                "status": "success",
+                "field": field_to_update,
+                "new_value": new_value,
+            },
+        )
+
+    def test_update_invalid_field(self):
+        url = reverse(
+            "update_profile"
+        )  # Use the actual name of the url pattern for UpdateProfileView
+        response = self.client.post(
+            url, {"field": "invalid_field", "value": "Some Value"}
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertJSONEqual(
+            str(response.content, encoding="utf8"),
+            {"status": "error", "message": "Invalid field"},
+        )
