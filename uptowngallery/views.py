@@ -301,11 +301,33 @@ class UpdateProfileView(LoginRequiredMixin, View):
 
 class PlaceBidView(CreateView):
     model = Bids
-    template_name = "place_bid.html"
+    template_name = "auction_detail.html"
     fields = ["amount"]
     success_url = reverse_lazy(
         "auction_list"
     )  # Redirect to the auction list after successful bid
+
+    def post(self, request, *args, **kwargs):
+        # Extract bid_amount from POST data safely
+        bid_amount_str = request.POST.get("bid_amount")
+        if bid_amount_str:
+            try:
+                bid_amount = int(bid_amount_str)
+                request.POST = request.POST.copy()  # Make it mutable
+                request.POST[
+                    "amount"
+                ] = bid_amount  # Update the POST to have the integer value
+            except ValueError:
+                # Handle the error, maybe set a default value or return an error response
+                messages.error(request, "Invalid bid amount.")
+                return self.form_invalid(self.get_form())
+        else:
+            # Handle the case where bid_amount_str is None
+            messages.error(request, "Bid amount is required.")
+            return self.form_invalid(self.get_form())
+
+        # Proceed with the rest of the POST handling, including form validation
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         # Retrieve auction and other necessary data
@@ -339,7 +361,7 @@ class PlaceBidView(CreateView):
         else:
             messages.error(
                 self.request,
-                "Ir bid is not higher than the current highest bid.",
+                "My bid is not higher than the current highest bid.",
             )
             return self.form_invalid(form)
 
