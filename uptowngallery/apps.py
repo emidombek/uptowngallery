@@ -1,4 +1,5 @@
 # apps.py
+
 import sys
 from django.apps import AppConfig
 from django.utils import timezone
@@ -7,6 +8,8 @@ from django.utils import timezone
 class UptowngalleryConfig(AppConfig):
     name = "uptowngallery"
 
+
+"""
     def ready(self):
         import uptowngallery.signals
 
@@ -27,3 +30,4 @@ class UptowngalleryConfig(AppConfig):
                 minutes=60,
                 name="Unique Name for My Task",  # Adding a unique name to the task
             )
+"""
