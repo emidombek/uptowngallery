@@ -1,6 +1,7 @@
 # apps.py
 import sys
 from django.apps import AppConfig
+from django.utils import timezone
 
 
 class UptowngalleryConfig(AppConfig):
@@ -15,7 +16,9 @@ class UptowngalleryConfig(AppConfig):
         task_name = "uptowngallery.tasks.check_and_close_auctions"
 
         # Check if the task is already scheduled
-        if not Schedule.objects.filter(func=task_name).exists():
+        if not Schedule.objects.filter(
+            func=task_name, next_run__gt=timezone.now()
+        ).exists():
             from django_q.tasks import schedule
 
             schedule(
