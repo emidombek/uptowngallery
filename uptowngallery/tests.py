@@ -1,6 +1,6 @@
 from datetime import timedelta
 from unittest.mock import patch
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.core.exceptions import ValidationError
 from django.contrib.messages import get_messages
 from .forms import CustomSignupForm
@@ -708,3 +708,63 @@ class UpdateProfileViewTests(TestCase):
             str(response.content, encoding="utf8"),
             {"status": "error", "message": "Invalid field"},
         )
+
+
+class PlaceBidViewTests(TestCase):
+    def setUp(self):
+        # Create a user and profile
+        self.user = User.objects.create_user(
+            username="testuser", password="12345"
+        )
+        self.profile = UserProfile.objects.create(
+            user=self.user,
+            name="Test User",
+            shipping_address="123 Test St.",
+        )
+
+        # Create an artwork and auction
+        self.artwork = Artwork.objects.create(
+            title="Test Artwork",
+            description="Test Description",
+            category="Test",
+            reserve_price=100,
+        )
+        self.auction = Auction.objects.create(
+            artwork=self.artwork, status="active", reserve_price=100
+        )
+
+        # Client setup
+        self.client = Client()
+
+    def test_place_bid_successfully(self):
+        """
+        Test that a bid can be placed successfully through the AuctionDetailView
+        and redirects to the ArtworkListView.
+        """
+        # Assuming I've setup self.user, self.auction, and self.artwork in setUp
+
+        # Make a bid
+        bid_amount = 150  # Ensure this is above the reserve price
+        response = self.client.post(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            {"bid_amount": bid_amount},
+            follow=True,  # Follow the redirect after bid placement
+        )
+
+        # Check if it redirects to the correct place (ArtworkListView)
+        self.assertRedirects(response, reverse("artwork_list"))
+
+        # Check if the bid was placed successfully
+        self.assertTrue(
+            self.auction.bids.filter(amount=bid_amount).exists()
+        )
+
+        # Optionally, check for success message or other side effects
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn("Bid placed successfully!", str(messages))
