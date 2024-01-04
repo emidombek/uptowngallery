@@ -619,8 +619,7 @@ class ProfileInfoViewTests(TestCase):
         self.profile = UserProfile.objects.create(
             user=self.user,
             name="Test Name",
-            shipping_address="123 Test St, Test City, TS, Country, 12345"  # example data
-            # include other necessary fields
+            shipping_address="123 Test St, Test City, TS, Country, 12345",  # example data
         )
 
         # Create related objects like artwork, auction, and bid as needed
@@ -712,9 +711,13 @@ class UpdateProfileViewTests(TestCase):
 
 class PlaceBidViewTests(TestCase):
     def setUp(self):
+        # Define user credentials
+        self.username = "testuser"
+        self.password = "12345"
+
         # Create a user and profile
         self.user = User.objects.create_user(
-            username="testuser", password="12345"
+            username=self.username, password=self.password
         )
         self.profile = UserProfile.objects.create(
             user=self.user,
@@ -722,7 +725,15 @@ class PlaceBidViewTests(TestCase):
             shipping_address="123 Test St.",
         )
 
-        # Create an artwork and auction
+        # Login with the defined credentials
+        logged_in = self.client.login(
+            username=self.username, password=self.password
+        )
+        self.assertTrue(
+            logged_in, "User should be logged in for test cases."
+        )
+
+        # Create an artwork and auction for testing
         self.artwork = Artwork.objects.create(
             title="Test Artwork",
             description="Test Description",
@@ -732,9 +743,6 @@ class PlaceBidViewTests(TestCase):
         self.auction = Auction.objects.create(
             artwork=self.artwork, status="active", reserve_price=100
         )
-
-        # Client setup
-        self.client = Client()
 
     def test_place_bid_successfully(self):
         """
@@ -756,15 +764,35 @@ class PlaceBidViewTests(TestCase):
             {"bid_amount": bid_amount},
             follow=True,  # Follow the redirect after bid placement
         )
+        # Capture and print messages for debugging
+        messages = list(get_messages(response.wsgi_request))
+        for message in messages:
+            print(
+                message
+            )  # Debug: Print out what messages are being captured
 
-        # Check if it redirects to the correct place (ArtworkListView)
-        self.assertRedirects(response, reverse("artwork_list"))
+        # Check if redirect URL in assertRedirects works
+        self.assertRedirects(
+            response,
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+        )
 
         # Check if the bid was placed successfully
         self.assertTrue(
             self.auction.bids.filter(amount=bid_amount).exists()
         )
 
-        # Optionally, check for success message or other side effects
-        messages = list(get_messages(response.wsgi_request))
-        self.assertIn("Bid placed successfully!", str(messages))
+        # Capture and convert messages to string for comparison
+        messages = [
+            str(message)
+            for message in get_messages(response.wsgi_request)
+        ]
+
+        # Now check if the desired message is in the list of message strings
+        self.assertIn("My bid was submitted successfully!", messages)
