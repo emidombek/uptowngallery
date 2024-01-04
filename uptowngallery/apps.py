@@ -1,6 +1,7 @@
 # apps.py
-from django.apps import AppConfig
 import sys
+from django.apps import AppConfig
+from django_q.models import Schedule
 
 
 class UptowngalleryConfig(AppConfig):
@@ -10,16 +11,15 @@ class UptowngalleryConfig(AppConfig):
     def ready(self):
         import uptowngallery.signals
 
-        # Adjust the condition to also check for 'test' in sys.argv
-        if (
-            "makemigrations" not in sys.argv
-            and "migrate" not in sys.argv
-            and "test" not in sys.argv
-        ):
+        task_name = "uptowngallery.tasks.check_and_close_auctions"
+
+        # Check if the task is already scheduled
+        if not Schedule.objects.filter(func=task_name).exists():
             from django_q.tasks import schedule
 
             schedule(
-                "uptowngallery.tasks.check_and_close_auctions",
+                func=task_name,
                 schedule_type="I",
                 minutes=60,
+                name="Unique Name for My Task",  # Adding a unique name to the task
             )
