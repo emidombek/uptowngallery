@@ -1,3 +1,4 @@
+"""
 from django.utils import timezone
 from .models import Auction
 
@@ -11,3 +12,4 @@ def check_and_close_auctions():
         auction.status = "closed"
         auction.is_active = False
         auction.save()
+"""
