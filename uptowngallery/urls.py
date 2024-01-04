@@ -40,6 +40,6 @@ urlpatterns = [
     path(
         "search/",
         SearchActiveAuctionArtworkView.as_view(),
-        name="search_auctions",
+        name="search_artworks",
     ),
 ]

@@ -28,7 +28,11 @@
         {% empty %}
         <div class="d-flex justify-content-center">
           {% if is_search %}
-            <p class="text-center">No search results for "{{ query }}". Try different keywords.</p>
+            {% if not query %}
+              <p class="text-center">Please enter a search term.</p>
+            {% else %}
+              <p class="text-center">No search results for "{{ query }}". Try different keywords.</p>
+            {% endif %}
           {% else %}
             <p class="text-center">No artworks found in this category.</p>
           {% endif %}
