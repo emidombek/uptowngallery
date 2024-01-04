@@ -796,3 +796,128 @@ class PlaceBidViewTests(TestCase):
 
         # Now check if the desired message is in the list of message strings
         self.assertIn("Your bid was submitted successfully!", messages)
+
+
+class ActivityDashboardViewTests(TestCase):
+    def setUp(self):
+        # Create a user who will act as both artist and bidder
+        self.user = User.objects.create_user(
+            "user", "user@example.com", "userpassword"
+        )
+        self.user_profile = UserProfile.objects.create(
+            user=self.user,
+            name="User",
+            shipping_address="123 User St.",
+        )
+
+        self.artwork1 = Artwork.objects.create(
+            artist=self.user_profile,
+            title="First Artwork",
+            description="First piece of art created by the user",
+            category="Test",
+            reserve_price=100,
+            approval_status="approved",
+        )
+
+        self.artwork2 = Artwork.objects.create(
+            artist=self.user_profile,
+            title="Second Artwork",
+            description="Second piece of art created by the user",
+            category="Test",
+            reserve_price=150,
+            approval_status="approved",
+        )
+
+        # Create an active auction for the first artwork
+        self.active_auction = Auction.objects.create(
+            artwork=self.artwork1, status="active", reserve_price=100
+        )
+
+        # Create a closed auction for the second artwork
+        self.closed_auction = Auction.objects.create(
+            artwork=self.artwork2, status="closed", reserve_price=150
+        )
+
+        # Bidder activity: Create another user's artwork and auction for the original user to bid on
+        self.other_artist_user = User.objects.create_user(
+            "otherartist",
+            "otherartist@example.com",
+            "otherartistpassword",
+        )
+        self.other_artist_profile = UserProfile.objects.create(
+            user=self.other_artist_user,
+            name="Other Artist",
+            shipping_address="456 Other Artist St.",
+        )
+        self.other_artwork = Artwork.objects.create(
+            artist=self.other_artist_profile,
+            title="Other Artist's Artwork",
+            description="Created by another user",
+            category="Other",
+            reserve_price=200,
+            approval_status="approved",
+        )
+        self.other_auction = Auction.objects.create(
+            artwork=self.other_artwork,
+            status="active",
+            reserve_price=200,
+        )
+
+        # User places a bid on the other artist's auction
+        self.bid_on_other_auction = Bids.objects.create(
+            bidder=self.user_profile,  # User places a bid as a bidder
+            auction=self.other_auction,
+            amount=250,
+        )
+
+        # Log in the user
+        self.client.login(username="user", password="userpassword")
+
+
+def test_dashboard_view_with_auth(self):
+    # Make a GET request to the dashboard view
+    response = self.client.get(reverse("activity"))
+
+    # Assert that the response is 200 OK.
+    self.assertEqual(response.status_code, 200)
+
+    # Assert that context contains the correct data
+    self.assertIn("bidding_activity", response.context)
+    self.assertIn("selling_activity", response.context)
+    self.assertIn("active_auctions", response.context)
+    self.assertIn("closed_auctions", response.context)
+
+    # Assert the lengths of the context lists match expected values
+    self.assertEqual(
+        len(response.context["bidding_activity"]), 1
+    )  # one bid by the user on another's auction
+    self.assertEqual(
+        len(response.context["selling_activity"]), 2
+    )  # two artworks created by the user
+    self.assertEqual(
+        len(response.context["active_auctions"]), 1
+    )  # one active auction for user's artwork
+    self.assertEqual(
+        len(response.context["closed_auctions"]), 1
+    )  # one closed auction for user's artwork
+
+
+def test_dashboard_view_no_data(self):
+    self.bid_on_other_auction.delete()
+    self.other_auction.delete()
+    self.active_auction.delete()
+    self.closed_auction.delete()
+    self.other_artwork.delete()
+    self.artwork1.delete()  # Delete both artworks
+    self.artwork2.delete()
+    # Make a GET request to the dashboard view
+    response = self.client.get(reverse("activity"))
+
+    # Assert that the response is 200 OK.
+    self.assertEqual(response.status_code, 200)
+
+    # Assert that context contains empty lists for activities and auctions
+    self.assertEqual(len(response.context["bidding_activity"]), 0)
+    self.assertEqual(len(response.context["selling_activity"]), 0)
+    self.assertEqual(len(response.context["active_auctions"]), 0)
+    self.assertEqual(len(response.context["closed_auctions"]), 0)
