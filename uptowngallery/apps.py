@@ -1,15 +1,16 @@
 # apps.py
 import sys
 from django.apps import AppConfig
-from django_q.models import Schedule
 
 
 class UptowngalleryConfig(AppConfig):
-    default_auto_field = "django.db.models.BigAutoField"
     name = "uptowngallery"
 
     def ready(self):
         import uptowngallery.signals
+
+        # Import models when the app is ready
+        from django_q.models import Schedule
 
         task_name = "uptowngallery.tasks.check_and_close_auctions"
 
