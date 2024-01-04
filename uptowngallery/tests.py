@@ -936,3 +936,43 @@ class AboutViewTest(TestCase):
 
         # Check if the correct template is being used
         self.assertTemplateUsed(response, "about.html")
+
+
+class SearchActiveAuctionArtworkViewTest(TestCase):
+    def setUp(self):
+        # Create an artwork and auction for testing
+        self.artwork = Artwork.objects.create(
+            title="Test Artwork",
+            description="Test Description",
+            category="Test",
+            reserve_price=100,
+            approval_status="approved",
+        )
+        self.auction = Auction.objects.create(
+            artwork=self.artwork, status="active", reserve_price=100
+        )
+
+    def test_no_query(self):
+        response = self.client.get(reverse("search_artworks"))
+        print(response.content)
+        self.assertContains(response, "Please enter a search term.")
+
+    def test_no_results(self):
+        response = self.client.get(
+            reverse("search_artworks") + "?query=nonexistent"
+        )
+        # Assert the page_obj is empty or null
+
+    def test_valid_query(self):
+        # Insert Artworks that match the 'query'
+        response = self.client.get(
+            reverse("search_artworks") + "?query=matchingquery"
+        )
+        # Assert the page_obj contains the expected artworks
+
+    def test_pagination(self):
+        # Insert more than 10 matching Artworks
+        response = self.client.get(
+            reverse("search_artworks") + "?query=matchingquery&page=2"
+        )
+        # Assert page 2 has the correct artworks and the correct number of artworks
