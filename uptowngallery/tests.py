@@ -921,3 +921,18 @@ def test_dashboard_view_no_data(self):
     self.assertEqual(len(response.context["selling_activity"]), 0)
     self.assertEqual(len(response.context["active_auctions"]), 0)
     self.assertEqual(len(response.context["closed_auctions"]), 0)
+
+
+class AboutViewTest(TestCase):
+    def test_about_view_template(self):
+        # Get the URL for the about view
+        url = reverse("about")
+
+        # Use the test client to make a GET request to the view
+        response = self.client.get(url)
+
+        # Check if the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the correct template is being used
+        self.assertTemplateUsed(response, "about.html")
