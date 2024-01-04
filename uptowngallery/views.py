@@ -299,7 +299,7 @@ class UpdateProfileView(LoginRequiredMixin, View):
             )
 
 
-class PlaceBidView(CreateView):
+class PlaceBidView(LoginRequiredMixin, CreateView):
     model = Bids
     template_name = "auction_detail.html"
     fields = ["amount"]
