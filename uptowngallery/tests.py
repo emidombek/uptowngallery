@@ -1,11 +1,13 @@
 from datetime import timedelta
+from decimal import Decimal
 from unittest.mock import patch
-from django.test import TestCase, Client
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
 from django.contrib.messages import get_messages
-from .forms import CustomSignupForm
+from .forms import CustomSignupForm, ArtworkCreateForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
 from .models import (
@@ -976,3 +978,89 @@ class SearchActiveAuctionArtworkViewTest(TestCase):
             reverse("search_artworks") + "?query=matchingquery&page=2"
         )
         # Assert page 2 has the correct artworks and the correct number of artworks
+
+
+class ArtworkCreateFormTest(TestCase):
+    def setUp(self):
+        # Create a User instance
+        self.test_user = User.objects.create_user(
+            username="testuser", password="12345"
+        )
+
+        # Create a UserProfile instance
+        self.user_profile = UserProfile.objects.create(
+            user=self.test_user,
+            name="Test User",
+            shipping_address="123 Test St, Test City",
+            create_date=timezone.now(),
+        )
+
+    def test_form_initialization(self):
+        form = ArtworkCreateForm()
+        self.assertIn("title", form.fields)
+        self.assertIn("image", form.fields)
+        # Add more assertions if you want to test the presence of other fields
+
+    def test_clean_method(self):
+        form_data = {
+            "title": "Test Artwork",
+            "description": "A test description",
+            "category": "painting",
+            "reserve_price": "100.00",
+            "auction_duration": 5,
+            # other fields as necessary
+        }
+        image_file = SimpleUploadedFile(
+            "test_image.jpg",
+            b"image_content",
+            content_type="image/jpeg",
+        )
+
+        form = ArtworkCreateForm(
+            data=form_data, files={"image": image_file}
+        )
+
+        if not form.is_valid():
+            print(
+                "Validation errors in test_clean_method:", form.errors
+            )
+            self.fail("Form did not validate with provided data.")
+        else:
+            # Access cleaned_data directly from the form after checking is_valid
+            self.assertEqual(
+                form.cleaned_data.get("title"), "Test Artwork"
+            )
+
+    @patch(
+        "uptowngallery.forms.cloudinary.uploader.upload"
+    )  # Adjust with the actual import path
+    def test_save_method(self, mock_upload):
+        mock_upload.return_value = {
+            "url": "http://example.com/test.jpg"
+        }
+
+        image_file = SimpleUploadedFile(
+            "test_image.jpg",
+            b"image_content",
+            content_type="image/jpeg",
+        )
+        form_data = {
+            "title": "Test Artwork",
+            "description": "A test description",
+            "category": "painting",
+            "reserve_price": "100.00",
+            "auction_duration": 5,  # Ensure this is an acceptable value for the form
+        }
+
+        form = ArtworkCreateForm(
+            data=form_data, files={"image": image_file}
+        )  # Image is passed as part of files
+
+        if not form.is_valid():
+            print("Validation errors in test_save_method:", form.errors)
+            self.fail("Form did not validate with provided data.")
+        else:
+            artwork = form.save(commit=False)
+            # Assuming form is valid and save operations here
+            # Remember to implement assertions and any necessary cleanup or additional operations
+            artwork.image_url = mock_upload.return_value.get("url")
