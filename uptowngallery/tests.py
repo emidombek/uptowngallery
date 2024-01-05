@@ -1,22 +1,24 @@
 from datetime import timedelta
-from decimal import Decimal
-from unittest.mock import patch
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.exceptions import ValidationError
-from django.contrib.messages import get_messages
 from .forms import CustomSignupForm, ArtworkCreateForm
-from django.contrib.sessions.middleware import SessionMiddleware
-from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
-from django.test import TestCase, RequestFactory, Client
-from django.utils import timezone
-from django.urls import reverse
 from .models import (
     Artwork,
     UserProfile,
     Auction,
     Bids,
 )
+from .admin import ArtworkAdmin
+from unittest.mock import patch
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.exceptions import ValidationError
+from django.contrib.admin.sites import AdminSite
+from django.contrib.messages import get_messages
+from django.contrib.auth.models import User, Group
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.test import TestCase, RequestFactory, Client
+from django.utils import timezone
+from django.urls import reverse
 
 
 class UserProfileModelTest(TestCase):
@@ -1155,3 +1157,80 @@ class CustomSignupFormTest(TestCase):
             )
         else:
             self.fail("Form did not validate with provided data")
+
+
+class MockRequest:
+    def __init__(self, user):
+        self.user = user
+
+
+class ArtworkAdminTest(TestCase):
+    def setUp(self):
+        self.artwork_admin = ArtworkAdmin(
+            model=Artwork, admin_site=AdminSite()
+        )
+        self.user = User.objects.create_user(
+            username="admin", password="password"
+        )
+        self.artist_user = User.objects.create_user(
+            username="artist", password="password"
+        )
+        self.artist_group, _ = Group.objects.get_or_create(
+            name="Artist"
+        )
+        self.artist_user.groups.add(self.artist_group)
+        self.artwork = Artwork.objects.create(title="Test Artwork")
+
+    def test_list_display(self):
+        self.assertEqual(
+            self.artwork_admin.list_display,
+            (
+                "artist",
+                "approved",
+                "auction_start",
+                "create_date",
+                "description",
+                "image",
+            ),
+        )
+
+    def test_list_filter(self):
+        self.assertEqual(
+            self.artwork_admin.list_filter,
+            ("approved",),
+        )
+
+    def test_get_form(self):
+        # Ensure an artist gets a different form
+        request = MockRequest(user=self.artist_user)
+        form = self.artwork_admin.get_form(request)
+        self.assertEqual(form, ArtworkCreateForm)
+
+        # Ensure a non-artist gets the default form
+        request = MockRequest(user=self.user)
+        form = self.artwork_admin.get_form(request)
+        self.assertNotEqual(
+            form, ArtworkCreateForm
+        )  # Adjust based on my expected default form
+
+    def test_approve_artworks(self):
+        request = MockRequest(user=self.user)
+        self.artwork_admin.approve_artworks(
+            request, Artwork.objects.filter(id=self.artwork.id)
+        )
+        updated_artwork = Artwork.objects.get(id=self.artwork.id)
+        self.assertTrue(updated_artwork.approved)
+
+    def test_delete_queryset(self):
+        # Create another artwork to test bulk delete
+        artwork2 = Artwork.objects.create(title="Another Test Artwork")
+        request = MockRequest(user=self.user)
+        self.artwork_admin.delete_queryset(
+            request, Artwork.objects.all()
+        )
+        self.assertEqual(Artwork.objects.count(), 0)
+
+    def test_delete_model(self):
+        request = MockRequest(user=self.user)
+        self.artwork_admin.delete_model(request, self.artwork)
+        self.assertEqual(Artwork.objects.count(), 0)
