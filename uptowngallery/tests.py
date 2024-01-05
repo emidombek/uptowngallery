@@ -5,9 +5,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
 from django.contrib.messages import get_messages
 from .forms import CustomSignupForm, ArtworkCreateForm
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, RequestFactory, Client
 from django.utils import timezone
 from django.urls import reverse
 from .models import (
@@ -999,7 +1000,6 @@ class ArtworkCreateFormTest(TestCase):
         form = ArtworkCreateForm()
         self.assertIn("title", form.fields)
         self.assertIn("image", form.fields)
-        # Add more assertions if I want to test the presence of other fields
 
     def test_clean_method(self):
         form_data = {
@@ -1064,3 +1064,94 @@ class ArtworkCreateFormTest(TestCase):
             # Assuming form is valid and save operations here
             # Remember to implement assertions and any necessary cleanup or additional operations
             artwork.image_url = mock_upload.return_value.get("url")
+
+
+class CustomSignupFormTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        # Create a user for attaching to the request object
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+
+    def test_form_initialization(self):
+        # Testing the initialization of the form with expected fields
+        form = CustomSignupForm()
+        self.assertIn("name", form.fields)
+        self.assertIn("street_address", form.fields)
+        self.assertIn("city", form.fields)
+        self.assertIn("state", form.fields)
+        self.assertIn("country", form.fields)
+        self.assertIn("zipcode", form.fields)
+
+    def test_valid_data(self):
+        # Testing form validation with all expected correct data
+        form_data = {
+            "email": "user@example.com",
+            "password1": "complexpassword",
+            "password2": "complexpassword",
+            "name": "Test User",
+            "street_address": "123 Test St",
+            "city": "Test City",
+            "state": "Test State",
+            "country": "US",
+            "zipcode": "12345",
+        }
+        form = CustomSignupForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_data(self):
+        # Testing form validation with a missing required field 'name'
+        form_data = {
+            "email": "user@example.com",
+            "password1": "complexpassword",
+            "password2": "complexpassword",
+            # name is omitted
+            "street_address": "123 Test St",
+            "city": "Test City",
+            "state": "Test State",
+            "country": "US",
+            "zipcode": "12345",
+        }
+        form = CustomSignupForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("name", form.errors)
+
+    def test_save_method(self):
+        # Testing the save method of the form with valid data
+        form_data = {
+            "email": "user@example.com",
+            "password1": "complexpassword",
+            "password2": "complexpassword",
+            "name": "Test User",
+            "street_address": "123 Test St",
+            "city": "Test City",
+            "state": "Test State",
+            "country": "US",
+            "zipcode": "12345",
+        }
+        form = CustomSignupForm(data=form_data)
+
+        # Create a mock request object
+        request = self.factory.post("/signup/")
+        request.user = self.user  # Attach the user to the request
+
+        # Manually add a session to the request by initializing SessionMiddleware with a dummy get_response
+        middleware = SessionMiddleware(lambda req: None)
+        middleware.process_request(request)
+        request.session.save()  # Save the session to initialize it
+
+        if form.is_valid():
+            # Now pass the request object to the save method
+            user = form.save(request)
+            # Fetch the profile to check the shipping address
+            profile, created = UserProfile.objects.get_or_create(
+                user=user
+            )
+            self.assertEqual(
+                profile.shipping_address,
+                "123 Test St, Test City, Test State, US, 12345",
+            )
+        else:
+            self.fail("Form did not validate with provided data")
