@@ -72,7 +72,7 @@ def send_artwork_approval_notification(
             artwork.title
         ),
         "mailto@uptowngallery.com",
-        l[artwork.artist.email],  # Replace with the artist's email
+        [artwork.artist.email],  # Replace with the artist's email
         fail_silently=False,
     )
 
