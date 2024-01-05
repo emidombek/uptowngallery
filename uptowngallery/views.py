@@ -18,8 +18,8 @@ from .models import (
     Auction,
     Bids,
 )
-from .forms import ArtworkCreateForm
-from .forms import CustomSignupForm
+from .forms import ArtworkCreateForm, CustomSignupForm
+from .signals import bid_placed
 
 
 logger = logging.getLogger(__name__)
@@ -356,8 +356,21 @@ class PlaceBidView(LoginRequiredMixin, CreateView):
             form.instance.bidder = self.request.user.profile
             form.instance.auction = auction
             form.instance.amount = bid_amount
+            self.object = (
+                form.save()
+            )  # Save the form and get the object
+
+            # Send the bid_placed signal
+            bid_placed.send(
+                sender=self.__class__,
+                bid=self.object,  # send the bid instance
+                user=self.request.user,  # user who placed the bid
+            )
+
             messages.success(self.request, "Bid placed successfully!")
             return super().form_valid(form)
+            # Send the bid_placed signal
+
         else:
             messages.error(
                 self.request,
