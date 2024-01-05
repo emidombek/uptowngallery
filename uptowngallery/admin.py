@@ -1,8 +1,9 @@
-import datetime
+from django.utils import timezone
 from django.contrib import admin
 from django.db import transaction
 from .models import Artwork, Auction
 from .forms import ArtworkCreateForm
+from .signals import artwork_approved, artwork_denied
 
 
 class ArtworkAdmin(admin.ModelAdmin):
@@ -14,8 +15,8 @@ class ArtworkAdmin(admin.ModelAdmin):
         "description",
         "image",
     )
-    list_filter = ("approved",)
-    actions = ["approve_artworks"]
+    list_filter = ("approved", "denied")
+    actions = ["approve_artworks", "deny_artworks"]
 
     def get_form(self, request, obj=None, **kwargs):
         if request.user.groups.filter(name="Artist").exists():
@@ -23,13 +24,29 @@ class ArtworkAdmin(admin.ModelAdmin):
         return super().get_form(request, obj, **kwargs)
 
     def approve_artworks(self, request, queryset):
-        queryset.update(
-            approved=True, auction_start=datetime.datetime.now()
-        )
+        queryset.update(approved=True, auction_start=timezone.now())
+        # Emit signal for each approved artwork
+        for artwork in queryset:
+            artwork_approved.send(
+                sender=self.__class__, artwork=artwork, request=request
+            )
 
     approve_artworks.short_description = "Approve selected artworks"
 
     exclude = ["approved", "auction_start"]
+
+    def deny_artworks(self, request, queryset):
+        queryset.update(
+            approved=False
+        )  # Update artworks to denied state
+
+        # Emit denial signal for each denied artwork
+        for artwork in queryset:
+            artwork_denied.send(
+                sender=self.__class__, artwork=artwork, request=request
+            )
+
+    deny_artworks.short_description = "Deny selected artworks"
 
     def delete_queryset(self, request, queryset):
         """
