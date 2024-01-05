@@ -13,6 +13,7 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 artwork_approved = Signal(providing_args=["artwork", "request"])
 artwork_denied = Signal(providing_args=["artwork", "request"])
+auction_closed = Signal(providing_args=["auction", "request"])
 
 
 @receiver(user_signed_up)
@@ -67,7 +68,9 @@ def send_artwork_approval_notification(
     # Send an email notification
     send_mail(
         "Your Artwork Has Been Approved!",
-        'Your artwork "{}" has been approved.'.format(artwork.title),
+        'Your artwork "{}" has been approved and your auction has started.'.format(
+            artwork.title
+        ),
         "mailto@uptowngallery.com",
         l[artwork.artist.email],  # Replace with the artist's email
         fail_silently=False,
@@ -85,5 +88,30 @@ def send_artwork_denial_notification(
         ),
         "mailto@uptowngallery.com",
         [artwork.artist.email],  # The artist's email
+        fail_silently=False,
+    )
+
+
+@receiver(auction_closed)
+def auction_closed_email_notification(sender, auction, **kwargs):
+    # Define the email content
+    subject = f"Auction for {auction.artwork.title} has ended"
+    message = (
+        f"Dear {auction.artwork.artist.name},\n\n"
+        f"The auction for the artwork '{auction.artwork.title}' has ended."
+    )
+    from_email = (
+        "mailto@uptownfgallery.com"  # replace with your actual email
+    )
+    recipient_list = [
+        auction.artwork.artist.email
+    ]  # replace with actual recipient
+
+    # Send the email
+    send_mail(
+        subject,
+        message,
+        from_email,
+        recipient_list,
         fail_silently=False,
     )
