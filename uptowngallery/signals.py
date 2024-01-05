@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 artwork_approved = Signal(providing_args=["artwork", "request"])
 artwork_denied = Signal(providing_args=["artwork", "request"])
 auction_closed = Signal(providing_args=["auction", "request"])
+bid_placed = Signal(providing_args=["bid", "user"])
 
 
 @receiver(user_signed_up)
@@ -113,5 +114,16 @@ def auction_closed_email_notification(sender, auction, **kwargs):
         message,
         from_email,
         recipient_list,
+        fail_silently=False,
+    )
+
+
+@receiver(bid_placed)
+def send_bid_confirmation_email(sender, bid, user, **kwargs):
+    send_mail(
+        subject="Bid Confirmation",
+        message=f"Your bid of {bid.amount} has been placed successfully on {bid.auction.artwork.title}.",
+        from_email="from@example.com",
+        recipient_list=[user.email],
         fail_silently=False,
     )
