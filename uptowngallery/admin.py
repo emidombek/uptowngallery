@@ -21,7 +21,9 @@ class ArtworkAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         if request.user.groups.filter(name="Artist").exists():
             return ArtworkCreateForm
-        return super().get_form(request, obj, **kwargs)
+        return super(ArtworkAdmin, self).get_form(
+            request, obj, **kwargs
+        )
 
     def approve_artworks(self, request, queryset):
         queryset.update(approved=True, auction_start=timezone.now())
