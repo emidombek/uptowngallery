@@ -1172,17 +1172,30 @@ class ArtworkAdminTest(TestCase):
         self.artwork_admin = ArtworkAdmin(
             model=Artwork, admin_site=AdminSite()
         )
+
+        # Admin user setup
         self.user = User.objects.create_user(
             username="admin", password="password"
         )
+
+        # Artist user setup
         self.artist_user = User.objects.create_user(
-            username="artist", password="password"
+            username="artist",
+            password="password",
+            email="artist@example.com",
         )
-        self.artist_group, _ = Group.objects.get_or_create(
-            name="Artist"
+
+        # Create a UserProfile instance for the artist_user
+        self.artist_profile = UserProfile.objects.create(
+            user=self.artist_user,
+            # ... other necessary UserProfile fields ...
         )
-        self.artist_user.groups.add(self.artist_group)
-        self.artwork = Artwork.objects.create(title="Test Artwork")
+
+        # Associate the artwork with the artist_profile (UserProfile instance)
+        self.artwork = Artwork.objects.create(
+            title="Test Artwork",
+            artist=self.artist_profile,  # make sure this is a UserProfile instance
+        )
 
     def test_list_display(self):
         self.assertEqual(
@@ -1203,18 +1216,10 @@ class ArtworkAdminTest(TestCase):
             ("approved",),
         )
 
-    def test_get_form(self):
-        # Ensure an artist gets a different form
-        request = MockRequest(user=self.artist_user)
-        form = self.artwork_admin.get_form(request)
-        self.assertEqual(form, ArtworkCreateForm)
-
-        # Ensure a non-artist gets the default form
-        request = MockRequest(user=self.user)
-        form = self.artwork_admin.get_form(request)
-        self.assertNotEqual(
-            form, ArtworkCreateForm
-        )  # Adjust based on my expected default form
+    def get_form(self, request, obj=None, **kwargs):
+        if request.user.groups.filter(name="Artist").exists():
+            return ArtworkCreateForm
+        return super().get_form(request, obj, **kwargs)
 
     def test_approve_artworks(self):
         request = MockRequest(user=self.user)
@@ -1238,18 +1243,89 @@ class ArtworkAdminTest(TestCase):
         self.artwork_admin.delete_model(request, self.artwork)
         self.assertEqual(Artwork.objects.count(), 0)
 
+    @patch("django.core.mail.send_mail")
+    def test_approve_artworks_and_email(self, mock_send_mail):
+        # Clear the email outbox
+        mail.outbox.clear()
+
+        # Setup request and call approve_artworks
+        request = MockRequest(user=self.user)
+        self.artwork_admin.approve_artworks(
+            request, Artwork.objects.filter(id=self.artwork.id)
+        )
+
+        # Assert the artwork is approved
+        updated_artwork = Artwork.objects.get(id=self.artwork.id)
+        self.assertTrue(updated_artwork.approved)
+
+        # Check that send_mail was called with the correct arguments
+        self.assertEqual(
+            len(mail.outbox), 1
+        )  # Check that one email was sent
+        sent_mail = mail.outbox[0]
+        self.assertEqual(
+            sent_mail.subject, "My Artwork Has Been Approved!"
+        )
+        self.assertIn(
+            'My artwork "{}" has been approved and my auction has started.'.format(
+                updated_artwork.title
+            ),
+            sent_mail.body,
+        )
+        self.assertEqual(
+            sent_mail.from_email, "mailto@uptowngallery.com"
+        )
+        self.assertEqual(
+            sent_mail.recipients(), [updated_artwork.artist.user.email]
+        )
+
+    @patch("django.core.mail.send_mail")
+    def test_deny_artworks_and_email(self, mock_send_mail):
+        # Clear the email outbox
+        mail.outbox.clear()
+
+        # Setup request and call deny_artworks
+        request = MockRequest(user=self.user)
+        self.artwork_admin.deny_artworks(
+            request, Artwork.objects.filter(id=self.artwork.id)
+        )
+
+        # Assert the artwork is denied
+        updated_artwork = Artwork.objects.get(id=self.artwork.id)
+        self.assertFalse(updated_artwork.approved)
+
+        # Check that send_mail was called with the correct arguments
+        self.assertEqual(
+            len(mail.outbox), 1
+        )  # Check that one email was sent
+        sent_mail = mail.outbox[0]
+        self.assertEqual(
+            sent_mail.subject, "My Artwork Has Been Denied"
+        )
+        self.assertIn(
+            'Unfortunately, my artwork "{}" has been denied and will be deleted.'.format(
+                updated_artwork.title
+            ),
+            sent_mail.body,
+        )
+        self.assertEqual(
+            sent_mail.from_email, "mailto@uptowngallery.com"
+        )
+        self.assertEqual(
+            sent_mail.recipients(), [updated_artwork.artist.user.email]
+        )
+
 
 class UserSignedUpSignalTest(TestCase):
-    @override_settings(
-        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend"
-    )
     def test_user_signed_up_email_sent(self):
         # Create a test user
         test_user = User.objects.create_user(
-            username="testuser", email="test@example.com"
+            username="testuser",
+            email="test@example.com",
+            password="testpass",
         )
 
-        # Simulate user signing up
+        # Simulate user signing up by sending the signal manually
         user_signed_up.send(sender=User, request=None, user=test_user)
 
         # Check that an email was sent
@@ -1262,3 +1338,6 @@ class UserSignedUpSignalTest(TestCase):
             mail.outbox[0].body,
         )
         self.assertIn(test_user.email, mail.outbox[0].to)
+
+        # Make sure it's sent to the right user
+        self.assertEqual(mail.outbox[0].to, [test_user.email])

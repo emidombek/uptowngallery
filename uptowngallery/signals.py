@@ -74,7 +74,7 @@ def send_artwork_approval_notification(
             artwork.title
         ),
         "mailto@uptowngallery.com",
-        [artwork.artist.email],  # Replace with the artist's email
+        [artwork.artist.user.email],
         fail_silently=False,
     )
 
@@ -89,7 +89,7 @@ def send_artwork_denial_notification(
             artwork.title
         ),
         "mailto@uptowngallery.com",
-        [artwork.artist.email],  # The artist's email
+        [artwork.artist.user.email],  # Use the user's email
         fail_silently=False,
     )
 
