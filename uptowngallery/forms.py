@@ -136,6 +136,9 @@ class CustomSignupForm(SignupForm):
         # Get the user instance from the parent class's save method
         user = super(CustomSignupForm, self).save(request)
 
+        # Get the name field from the form
+        name = self.cleaned_data.get("name")
+
         # Get the address fields from the form
         street_address = self.cleaned_data.get("street_address")
         city = self.cleaned_data.get("city")
@@ -150,7 +153,11 @@ class CustomSignupForm(SignupForm):
 
         # Create or update the user's profile with the shipping address
         UserProfile.objects.update_or_create(
-            user=user, defaults={"shipping_address": shipping_address}
+            user=user,
+            defaults={
+                "name": name,
+                "shipping_address": shipping_address,
+            },
         )
 
         return user

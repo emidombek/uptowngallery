@@ -1313,6 +1313,3 @@ class ArtworkAdminTest(TestCase):
         self.assertEqual(
             sent_mail.recipients(), [updated_artwork.artist.user.email]
         )
-
-
-e
