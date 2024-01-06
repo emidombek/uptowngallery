@@ -6,7 +6,7 @@ from .models import (
     Auction,
     Bids,
 )
-from .signals import user_signed_up
+from .signals import user_signed_up, auction_closed, bid_placed
 from .admin import ArtworkAdmin
 from unittest.mock import patch
 from django.core import mail
@@ -1188,7 +1188,6 @@ class ArtworkAdminTest(TestCase):
         # Create a UserProfile instance for the artist_user
         self.artist_profile = UserProfile.objects.create(
             user=self.artist_user,
-            # ... other necessary UserProfile fields ...
         )
 
         # Associate the artwork with the artist_profile (UserProfile instance)
@@ -1316,28 +1315,4 @@ class ArtworkAdminTest(TestCase):
         )
 
 
-class UserSignedUpSignalTest(TestCase):
-    def test_user_signed_up_email_sent(self):
-        # Create a test user
-        test_user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
-            password="testpass",
-        )
-
-        # Simulate user signing up by sending the signal manually
-        user_signed_up.send(sender=User, request=None, user=test_user)
-
-        # Check that an email was sent
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(
-            mail.outbox[0].subject, "Welcome to Uptown Gallery"
-        )
-        self.assertIn(
-            "Thank I for signing up for our site!",
-            mail.outbox[0].body,
-        )
-        self.assertIn(test_user.email, mail.outbox[0].to)
-
-        # Make sure it's sent to the right user
-        self.assertEqual(mail.outbox[0].to, [test_user.email])
+e

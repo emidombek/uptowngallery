@@ -96,6 +96,9 @@ def send_artwork_denial_notification(
 
 @receiver(auction_closed)
 def auction_closed_email_notification(sender, auction, **kwargs):
+    # Accessing the artist's user's email based on my models' structure
+    artist_user_email = auction.artwork.artist.user.email
+
     # Define the email content
     subject = f"Auction for {auction.artwork.title} has ended"
     message = (
@@ -105,9 +108,9 @@ def auction_closed_email_notification(sender, auction, **kwargs):
     from_email = (
         "mailto@uptownfgallery.com"  # replace with my actual email
     )
-    recipient_list = [
-        auction.artwork.artist.email
-    ]  # replace with actual recipient
+
+    # Using the correctly accessed email
+    recipient_list = [artist_user_email]
 
     # Send the email
     send_mail(
