@@ -125,7 +125,7 @@ def send_notification_emails(sender, bid, user, **kwargs):
     send_mail(
         subject="Bid Confirmation",
         message=f"Your bid of {bid.amount} has been placed successfully on {bid.auction.artwork.title}.",
-        from_email="from@example.com",
+        from_email="mailto@uptownfgallery.com",
         recipient_list=[user.email],
         fail_silently=False,
     )
@@ -135,7 +135,7 @@ def send_notification_emails(sender, bid, user, **kwargs):
     send_mail(
         subject="New Bid Placed on Your Artwork",
         message=f"A new bid of {bid.amount} has been placed on your artwork '{bid.auction.artwork.title}' by user {user.username}.",
-        from_email="from@example.com",
+        from_email="mailto@uptownfgallery.com",
         recipient_list=[
             artist.email
         ],  # Ensure artist has an email field
@@ -149,7 +149,7 @@ def send_profile_update_email(sender, user, field, new_value, **kwargs):
         send_mail(
             subject="Shipping Address Updated",
             message=f"Your shipping address has been updated to: {new_value}.",
-            from_email="no-reply@example.com",
+            from_email="mailto@uptownfgallery.com",
             recipient_list=[user.email],
             fail_silently=False,
         )
