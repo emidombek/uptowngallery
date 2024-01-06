@@ -119,11 +119,24 @@ def auction_closed_email_notification(sender, auction, **kwargs):
 
 
 @receiver(bid_placed)
-def send_bid_confirmation_email(sender, bid, user, **kwargs):
+def send_notification_emails(sender, bid, user, **kwargs):
+    # Sending email to the bidder
     send_mail(
         subject="Bid Confirmation",
         message=f"Your bid of {bid.amount} has been placed successfully on {bid.auction.artwork.title}.",
         from_email="from@example.com",
         recipient_list=[user.email],
+        fail_silently=False,
+    )
+
+    # Sending email to the artist
+    artist = bid.auction.artwork.artist
+    send_mail(
+        subject="New Bid Placed on Your Artwork",
+        message=f"A new bid of {bid.amount} has been placed on your artwork '{bid.auction.artwork.title}' by user {user.username}.",
+        from_email="from@example.com",
+        recipient_list=[
+            artist.email
+        ],  # Ensure artist has an email field
         fail_silently=False,
     )
