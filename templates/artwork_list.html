@@ -4,6 +4,8 @@
   <h1 class="text-center mt-3 mb-5">
     {% if is_search %}
       Search Results for "{{ query }}"
+    {% elif category %}
+      {{ category|capfirst }}
     {% else %}
       Artwork List
     {% endif %}
