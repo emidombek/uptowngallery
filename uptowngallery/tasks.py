@@ -3,6 +3,7 @@ from django.utils import timezone
 from .models import Auction
 from .signals import auction_closed
 
+
 def check_and_close_auctions():
     now = timezone.now()
     active_auctions = Auction.objects.filter(
@@ -17,4 +18,4 @@ def check_and_close_auctions():
         auction.status = "closed"
         auction.save()
         auction_closed.send(sender=None, auction=auction)
-"""
+        """
