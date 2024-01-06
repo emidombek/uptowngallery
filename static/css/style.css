@@ -134,3 +134,26 @@ body .hover-link:hover {
   color: turquoise;
   text-decoration: none;
 }
+
+.bi-arrow-down {
+  font-size: 2em;
+  /* or any size I prefer */
+}
+
+/* Bounce animation keyframes */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Apply bounce animation on hover to Bootstrap icon */
+.bi-arrow-down:hover {
+  animation: bounce 0.5s ease infinite;
+}
