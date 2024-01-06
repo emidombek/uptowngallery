@@ -15,7 +15,7 @@ class ArtworkAdmin(admin.ModelAdmin):
         "description",
         "image",
     )
-    list_filter = ("approved", "denied")
+    list_filter = ("approved",)
     actions = ["approve_artworks", "deny_artworks"]
 
     def get_form(self, request, obj=None, **kwargs):

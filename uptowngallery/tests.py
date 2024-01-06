@@ -6,8 +6,10 @@ from .models import (
     Auction,
     Bids,
 )
+from .signals import user_signed_up
 from .admin import ArtworkAdmin
 from unittest.mock import patch
+from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
 from django.contrib.admin.sites import AdminSite
@@ -18,6 +20,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.test import TestCase, RequestFactory, Client
 from django.utils import timezone
+from django.test.utils import override_settings
 from django.urls import reverse
 
 
@@ -1234,3 +1237,28 @@ class ArtworkAdminTest(TestCase):
         request = MockRequest(user=self.user)
         self.artwork_admin.delete_model(request, self.artwork)
         self.assertEqual(Artwork.objects.count(), 0)
+
+
+class UserSignedUpSignalTest(TestCase):
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend"
+    )
+    def test_user_signed_up_email_sent(self):
+        # Create a test user
+        test_user = User.objects.create_user(
+            username="testuser", email="test@example.com"
+        )
+
+        # Simulate user signing up
+        user_signed_up.send(sender=User, request=None, user=test_user)
+
+        # Check that an email was sent
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(
+            mail.outbox[0].subject, "Welcome to Uptown Gallery"
+        )
+        self.assertIn(
+            "Thank you for signing up for our site!",
+            mail.outbox[0].body,
+        )
+        self.assertIn(test_user.email, mail.outbox[0].to)

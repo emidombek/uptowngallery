@@ -11,11 +11,11 @@ import logging
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
-artwork_approved = Signal(providing_args=["artwork", "request"])
-artwork_denied = Signal(providing_args=["artwork", "request"])
-auction_closed = Signal(providing_args=["auction", "request"])
-bid_placed = Signal(providing_args=["bid", "user"])
-profile_updated = Signal(providing_args=["user", "field", "new_value"])
+artwork_approved = Signal()
+artwork_denied = Signal()
+auction_closed = Signal()
+bid_placed = Signal()
+profile_updated = Signal()
 
 
 @receiver(user_signed_up)
