@@ -1,4 +1,6 @@
 import logging
+from .forms import ArtworkCreateForm, CustomSignupForm
+from .signals import bid_placed, profile_updated
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -18,8 +20,6 @@ from .models import (
     Auction,
     Bids,
 )
-from .forms import ArtworkCreateForm, CustomSignupForm
-from .signals import bid_placed
 
 
 logger = logging.getLogger(__name__)
@@ -285,6 +285,14 @@ class UpdateProfileView(LoginRequiredMixin, View):
         if field in field_mapping:
             setattr(user_profile, field_mapping[field], value)
             user_profile.save()
+
+            profile_updated.send(
+                sender=self.__class__,
+                user=request.user,
+                field=field,
+                new_value=value,
+            )
+
             return JsonResponse(
                 {
                     "status": "success",

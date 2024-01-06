@@ -15,6 +15,7 @@ artwork_approved = Signal(providing_args=["artwork", "request"])
 artwork_denied = Signal(providing_args=["artwork", "request"])
 auction_closed = Signal(providing_args=["auction", "request"])
 bid_placed = Signal(providing_args=["bid", "user"])
+profile_updated = Signal(providing_args=["user", "field", "new_value"])
 
 
 @receiver(user_signed_up)
@@ -140,3 +141,15 @@ def send_notification_emails(sender, bid, user, **kwargs):
         ],  # Ensure artist has an email field
         fail_silently=False,
     )
+
+
+@receiver(profile_updated)
+def send_profile_update_email(sender, user, field, new_value, **kwargs):
+    if field == "shipping_address":
+        send_mail(
+            subject="Shipping Address Updated",
+            message=f"My shipping address has been updated to: {new_value}.",
+            from_email="no-reply@example.com",
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
