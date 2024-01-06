@@ -83,7 +83,12 @@ class ArtworkListView(View):
         page_obj = paginator.get_page(page_number)
 
         return render(
-            request, "artwork_list.html", {"page_obj": page_obj}
+            request,
+            "artwork_list.html",
+            {
+                "page_obj": page_obj,
+                "category": category,  # Pass the category to the template
+            },
         )
 
 
