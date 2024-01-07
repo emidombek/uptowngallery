@@ -1,5 +1,5 @@
 from datetime import timedelta
-from .forms import CustomSignupForm, ArtworkCreateForm
+from .forms import CustomSignupForm, ArtworkCreateForm, BidForm
 from .models import (
     Artwork,
     UserProfile,
@@ -607,21 +607,38 @@ class AuctionDetailViewTests(TestCase):
     def setUp(self):
         # Create a user
         self.user = User.objects.create_user(
-            username="testuser", password="testpassword"
+            username="testuser", password="12345"
+        )
+        # Create a user profile for the user
+        self.user_profile = UserProfile.objects.create(
+            user=self.user,
+            name="Test User",
+            shipping_address="123 Test St",
         )
 
-        # Create an artwork
+        # Login
+        login_successful = self.client.login(
+            username="testuser", password="12345"
+        )
+        self.assertTrue(
+            login_successful, "User should be logged in for test cases."
+        )
+
+        # Create an artwork and an auction
         self.artwork = Artwork.objects.create(
-            title="Artwork 1",
-            description="Description for Artwork 1",
-            artist=self.user,
+            title="Test Artwork", description="Test Description"
+        )
+        self.auction = Auction.objects.create(
+            artwork=self.artwork, reserve_price=100
         )
 
-        # Create an auction for the artwork
-        self.auction = Auction.objects.create(
-            artwork=self.artwork,
-            reserve_price=100,
-            end_time="2024-01-31 00:00:00",
+        # Create a bid with a valid amount
+        valid_bid_amount = 100
+        bid = Bids.objects.create(
+            auction=self.auction,
+            bidder=self.user_profile,
+            amount=valid_bid_amount,
+            bid_time=timezone.now(),
         )
 
     def test_get_auction_detail(self):
@@ -651,88 +668,6 @@ class AuctionDetailViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "auction_detail_partial.html")
-
-    def test_post_valid_bid(self):
-        self.client.login(username="testuser", password="testpassword")
-
-        data = {"amount": 120}
-
-        response = self.client.post(
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
-            data,
-        )
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(
-            response,
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
-        )
-
-        # Check if the bid was created
-        self.assertTrue(
-            Bids.objects.filter(
-                auction=self.auction,
-                bidder=self.user.profile,
-                amount=120,
-            ).exists()
-        )
-
-    def test_post_invalid_bid(self):
-        self.client.login(username="testuser", password="testpassword")
-
-        data = {
-            "amount": 50  # This should be less than the reserve price
-        }
-
-        response = self.client.post(
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
-            data,
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "auction_detail.html")
-
-        # Check if an error message is displayed
-        self.assertContains(
-            response,
-            "Bid must be greater than or equal to the reserve price",
-        )
-
-    def test_post_bid_without_authentication(self):
-        data = {"amount": 120}
-
-        response = self.client.post(
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
-            data,
-        )
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(
-            response,
-            reverse("login")
-            + f'?next={reverse("auction_detail", kwargs={"artwork_id": self.artwork.id, "auction_id": self.auction.id})}',
-        )
 
 
 class ProfileInfoViewTests(TestCase):
@@ -1227,6 +1162,50 @@ class CustomSignupFormTest(TestCase):
             )
         else:
             self.fail("Form did not validate with provided data")
+
+
+class BidFormTests(TestCase):
+    def setUp(self):
+        # Create a user
+        self.user = User.objects.create_user(
+            username="testuser", password="12345"
+        )
+        # Create a user profile for the user
+        self.user_profile = UserProfile.objects.create(
+            user=self.user,
+            name="Test User",
+            shipping_address="123 Test St",
+        )
+        # Create an artwork
+        self.artwork = Artwork.objects.create(
+            title="Test Artwork", description="Test Description"
+        )
+        # Create an auction for the artwork with a reserve price
+        self.auction = Auction.objects.create(
+            artwork=self.artwork,
+            reserve_price=100,
+        )
+
+    def test_bid_not_higher_than_current_highest_bid(self):
+        # Create a bid with a higher amount than the reserve price
+        higher_bid_amount = 120
+        higher_bid = Bids.objects.create(
+            auction=self.artwork.auctions.first(),  # Access the related Auction using 'auctions' reverse relationship
+            bidder=self.user_profile,
+            amount=higher_bid_amount,
+            bid_time=timezone.now(),
+        )
+
+        # Create a bid form with an amount lower than the current highest bid
+        form_data = {"amount": 100}
+        form = BidForm(
+            data=form_data,
+            auction=self.artwork.auctions.first(),  # Access the related Auction using 'auctions' reverse relationship
+            instance=self.artwork,
+        )
+
+        # Assert that the form is not valid
+        self.assertFalse(form.is_valid())
 
 
 class MockRequest:

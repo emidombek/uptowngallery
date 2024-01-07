@@ -133,17 +133,16 @@ def send_notification_emails(sender, bid, user, **kwargs):
         fail_silently=False,
     )
 
-    # Sending email to the artist
+    # Sending email to the artist if the artist is defined and has an email attribute
     artist = bid.auction.artwork.artist
-    send_mail(
-        subject="New Bid Placed on Your Artwork",
-        message=f"A new bid of {bid.amount} has been placed on your artwork '{bid.auction.artwork.title}' by user {user.username}.",
-        from_email="mailto@uptownfgallery.com",
-        recipient_list=[
-            artist.email
-        ],  # Ensure artist has an email field
-        fail_silently=False,
-    )
+    if artist and hasattr(artist, "email") and artist.email:
+        send_mail(
+            subject="New Bid Placed on Your Artwork",
+            message=f"A new bid of {bid.amount} has been placed on your artwork '{bid.auction.artwork.title}' by user {user.username}.",
+            from_email="mailto@uptownfgallery.com",
+            recipient_list=[artist.email],
+            fail_silently=False,
+        )
 
 
 @receiver(profile_updated)

@@ -160,7 +160,7 @@ def signup_view(request):
     return render(request, "account/signup.html", {"form": form})
 
 
-class AuctionDetailView(View):
+class AuctionDetailView(LoginRequiredMixin, View):
     def get(self, request, artwork_id, auction_id):
         artwork = get_object_or_404(Artwork, pk=artwork_id)
         auction = get_object_or_404(
