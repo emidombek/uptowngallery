@@ -44,5 +44,5 @@ urlpatterns = [
     ),
 ]
 
-handler404 = "ecommerce_project.views.handler404"
-handler500 = "ecommerce_project.views.handler500"
+handler404 = "uptowngallery.views.handler404"
+handler500 = "uptowngallery.views.handler500"
