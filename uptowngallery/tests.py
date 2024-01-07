@@ -579,10 +579,13 @@ class CustomSignupViewTests(TestCase):
     def test_form_validation(self):
         # Submit a form with missing or invalid data
         response = self.client.post(
-            reverse("signup"), {"email": "invalidemail"}
+            reverse(
+                "account_signup"
+            ),  # Use the correct name 'account_signup'
+            {"email": "invalidemail"},  # Example of invalid form data
         )
         self.assertFalse(response.context["form"].is_valid())
-        self.assertTemplateUsed(response, "signup_template.html")
+        self.assertTemplateUsed(response, "account/signup.html")
 
     def test_get_signup_page(self):
         # Make a GET request to the signup page
@@ -598,55 +601,6 @@ class CustomSignupViewTests(TestCase):
         self.assertIsInstance(
             response.context.get("form"), CustomSignupForm
         )
-
-
-class SignupViewTests(TestCase):
-    def test_get_signup_page(self):
-        # Test that the signup page loads correctly
-        response = self.client.get(reverse("account_signup"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "account/signup.html"
-        )  # Update template name as per your configuration
-
-
-class CustomSignupViewTests(TestCase):
-    def test_get_signup_page(self):
-        # Test that the signup page loads correctly
-        response = self.client.get(reverse("account_signup"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "account/signup.html"
-        )  # or your custom template if it's different
-
-    def test_successful_signup(self):
-        # Test the successful creation of a new user via signup
-        form_data = {
-            "email": "test@example.com",
-            "password1": "complex_password",
-            "password2": "complex_password",
-            # Add the rest of your form fields here
-            "name": "Test User",
-            "street_address": "1234 Test St",
-            "city": "Testville",
-            "state": "Teststate",
-            "country": "US",
-            "zipcode": "12345",
-        }
-        response = self.client.post(
-            reverse("account_signup"), form_data
-        )
-        self.assertEqual(
-            response.status_code, 302
-        )  # Redirect after successful signup
-
-    def test_form_validation(self):
-        # Test submission of form with invalid data
-        response = self.client.post(
-            reverse("account_signup"), {"email": "invalidemail"}
-        )
-        self.assertFalse(response.context["form"].is_valid())
-        self.assertTemplateUsed(response, "account/signup.html")
 
 
 class AuctionDetailViewTests(TestCase):

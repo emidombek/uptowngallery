@@ -165,8 +165,8 @@ def signup_view(request):
     else:
         form = CustomSignupForm()
 
-    logger.info("Rendering signup template.")
-    return render(request, "signup_template.html", {"form": form})
+    logger.info("Rendering Allauth signup template.")
+    return render(request, "account/signup.html", {"form": form})
 
 
 class AuctionDetailView(View):
