@@ -178,6 +178,53 @@ class AuctionModelTests(TestCase):
         self.assertIsNotNone(auction)
         self.assertEqual(auction.status, "active")
 
+    def test_calculate_auction_end_date(self):
+        # Test the auction end date calculation for various durations
+        auction_start = timezone.now().replace(
+            microsecond=0
+        )  # Set microseconds to 0
+
+        durations = {
+            "3_days": timedelta(days=3),
+            "5_days": timedelta(days=5),
+            "7_days": timedelta(days=7),
+        }
+
+        for duration_key, duration_value in durations.items():
+            # Simulate setting auction_duration
+            self.artwork.auction_duration = duration_key
+
+            # Simulate calling the method to calculate the end date
+            calculated_end_date = (
+                self.artwork.calculate_auction_end_date(
+                    auction_start
+                ).replace(microsecond=0)
+            )  # Set microseconds to 0
+
+            # Check if the calculated end date matches the expected end date
+            expected_end_date = auction_start + duration_value
+            # Calculate the difference in total seconds (should be near 0 for the dates to be considered equal)
+            delta_seconds = abs(
+                (
+                    calculated_end_date - expected_end_date
+                ).total_seconds()
+            )
+            self.assertTrue(
+                delta_seconds < 1,
+                f"Auction end date calculation failed for {duration_key} with delta {delta_seconds} seconds",
+            )
+
+    def test_artwork_denial(self):
+        # Login as admin to perform approval actions
+        self.client.login(username="adminuser", password="adminpass")
+
+        # Simulate approving the artwork
+        self.artwork.approval_status = "rejected"
+        self.artwork.save()
+
+        # Check that the auction is in the active status
+        self.assertEqual(self.artwork.approval_status, "rejected")
+
     def test_auction_closure(self):
         # Simulate artwork approval and auction creation
         self.artwork.approval_status = "approved"
