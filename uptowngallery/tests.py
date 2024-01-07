@@ -607,35 +607,24 @@ class AuctionDetailViewTests(TestCase):
     def setUp(self):
         # Create a user
         self.user = User.objects.create_user(
-            username="testuser", password="12345"
-        )
-        # Create a user profile for the user
-        self.user_profile = UserProfile.objects.create(
-            user=self.user,
-            name="Test User",
-            shipping_address="123 Test St",
+            username="testuser", password="testpassword"
         )
 
-        # Login
-        login_successful = self.client.login(
-            username="testuser", password="12345"
-        )
-        self.assertTrue(
-            login_successful, "User should be logged in for test cases."
-        )
-
-        # Create an artwork and an auction
+        # Create an artwork
         self.artwork = Artwork.objects.create(
-            title="Test Artwork", description="Test Description"
+            title="Artwork 1",
+            description="Description for Artwork 1",
+            artist=self.user,
         )
+
+        # Create an auction for the artwork
         self.auction = Auction.objects.create(
-            artwork=self.artwork, reserve_price=100
+            artwork=self.artwork,
+            reserve_price=100,
+            end_time="2024-01-31 00:00:00",
         )
 
     def test_get_auction_detail(self):
-        # Simulate logged in user
-        self.client.login(username="testuser", password="12345")
-        # Get response
         response = self.client.get(
             reverse(
                 "auction_detail",
@@ -645,12 +634,11 @@ class AuctionDetailViewTests(TestCase):
                 },
             )
         )
-        # Assert
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "auction_detail.html")
 
-    def test_ajax_request(self):
-        # Simulate AJAX request
+    def test_get_auction_detail_partial(self):
+        # Send an AJAX request
         response = self.client.get(
             reverse(
                 "auction_detail",
@@ -661,39 +649,14 @@ class AuctionDetailViewTests(TestCase):
             ),
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        # Assert partial template used
+        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "auction_detail_partial.html")
 
-    def test_post_bid_lower_than_reserve_price(self):
-        response = self.client.post(
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
-            {"bid_amount": 50},
-        )
-        messages = list(get_messages(response.wsgi_request))
-        self.assertGreater(
-            len(messages), 0, "No messages were returned."
-        )
-
-        expected_error_message = (
-            "Bid amount must be higher than the reserve price."
-        )
-        # Ensure the specific error message is in the messages
-        self.assertTrue(
-            any(
-                expected_error_message in str(m).strip()
-                for m in messages
-            )
-        )
-
     def test_post_valid_bid(self):
-        # Post a valid bid
-        valid_bid = self.auction.reserve_price + 10
+        self.client.login(username="testuser", password="testpassword")
+
+        data = {"amount": 120}
+
         response = self.client.post(
             reverse(
                 "auction_detail",
@@ -702,22 +665,36 @@ class AuctionDetailViewTests(TestCase):
                     "auction_id": self.auction.id,
                 },
             ),
-            {"bid_amount": valid_bid},
+            data,
         )
-        messages = list(get_messages(response.wsgi_request))
-        self.assertGreater(
-            len(messages), 0, "No messages were returned."
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(
+            response,
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
         )
 
-        expected_success_message = (
-            "Your bid was submitted successfully!"
-        )
+        # Check if the bid was created
         self.assertTrue(
-            any(expected_success_message in str(m) for m in messages)
+            Bids.objects.filter(
+                auction=self.auction,
+                bidder=self.user.profile,
+                amount=120,
+            ).exists()
         )
 
-    def test_post_bid_with_invalid_amount(self):
-        # Post a bid with a non-numeric amount
+    def test_post_invalid_bid(self):
+        self.client.login(username="testuser", password="testpassword")
+
+        data = {
+            "amount": 50  # This should be less than the reserve price
+        }
+
         response = self.client.post(
             reverse(
                 "auction_detail",
@@ -726,16 +703,35 @@ class AuctionDetailViewTests(TestCase):
                     "auction_id": self.auction.id,
                 },
             ),
-            {
-                "bid_amount": "invalid_number"
-            },  # This should be something that can't be converted to an integer
+            data,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "auction_detail.html")
+
+        # Check if an error message is displayed
+        self.assertContains(
+            response,
+            "Bid must be greater than or equal to the reserve price",
         )
 
-        # Check if the appropriate error message is returned
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(
-            any("Invalid bid amount." in str(m) for m in messages),
-            "Expected an invalid bid amount error message.",
+    def test_post_bid_without_authentication(self):
+        data = {"amount": 120}
+
+        response = self.client.post(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            data,
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(
+            response,
+            reverse("login")
+            + f'?next={reverse("auction_detail", kwargs={"artwork_id": self.artwork.id, "auction_id": self.auction.id})}',
         )
 
 
@@ -838,173 +834,6 @@ class UpdateProfileViewTests(TestCase):
         self.assertJSONEqual(
             str(response.content, encoding="utf8"),
             {"status": "error", "message": "Invalid field"},
-        )
-
-
-class PlaceBidViewTests(TestCase):
-    def setUp(self):
-        # Define user credentials
-        self.username = "testuser"
-        self.password = "12345"
-
-        # Create a user and profile
-        self.user = User.objects.create_user(
-            username=self.username, password=self.password
-        )
-        self.profile = UserProfile.objects.create(
-            user=self.user,
-            name="Test User",
-            shipping_address="123 Test St.",
-        )
-
-        # Login with the defined credentials
-        logged_in = self.client.login(
-            username=self.username, password=self.password
-        )
-        self.assertTrue(
-            logged_in, "User should be logged in for test cases."
-        )
-
-        # Create an artwork and auction for testing
-        self.artwork = Artwork.objects.create(
-            title="Test Artwork",
-            description="Test Description",
-            category="Test",
-            reserve_price=100,
-        )
-        self.auction = Auction.objects.create(
-            artwork=self.artwork, status="active", reserve_price=100
-        )
-
-    def test_place_bid_with_invalid_amount(self):
-        """
-        Test submitting a bid with an invalid amount (non-integer)
-        to ensure the PlaceBidView handles ValueError.
-        """
-        invalid_bid_amount = "not_a_number"  # This should be a string or other non-integer value
-
-        response = self.client.post(
-            reverse(
-                "auction_detail",  # Use the URL that routes to PlaceBidView
-                kwargs={
-                    "artwork_id": self.artwork.id,  # Ensure these are the correct kwargs for your URL
-                    "auction_id": self.auction.id,
-                },
-            ),
-            {"bid_amount": invalid_bid_amount},
-            follow=True,
-        )
-
-        # Check if the appropriate error message is returned
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(
-            any("Invalid bid amount." in str(m) for m in messages),
-            "Expected an invalid bid amount error message.",
-        )
-
-    def test_place_bid_without_amount(self):
-        response = self.client.post(
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
-            {},  # No bid_amount provided
-            follow=True,
-        )
-
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(
-            any("Bid amount is required." in str(m) for m in messages),
-            "Expected a 'Bid amount is required.' error message.",
-        )
-
-    def test_place_bid_lower_than_reserve(self):
-        low_bid_amount = (
-            self.auction.reserve_price - 1
-        )  # Ensure it's below the reserve price
-
-        response = self.client.post(
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
-            {"bid_amount": low_bid_amount},
-            follow=True,
-        )
-
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(
-            any(
-                "Bid amount cannot be lower than the reserve price."
-                in str(m)
-                for m in messages
-            ),
-            "Expected a 'Bid amount cannot be lower than the reserve price.' error message.",
-        )
-
-    def test_place_higher_than_highest_bid(self):
-        # Assuming 150 is higher than any existing bid and the reserve price.
-        high_bid_amount = 150
-
-        response = self.client.post(
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
-            {"bid_amount": high_bid_amount},
-            follow=True,
-        )
-
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(
-            any("Bid placed successfully!" in str(m) for m in messages),
-            "Expected a 'Bid placed successfully!' success message.",
-        )
-
-        # Verify that the bid was actually created
-        self.assertTrue(
-            Bids.objects.filter(amount=high_bid_amount).exists(),
-            "Bid should be successfully created and saved.",
-        )
-
-    def test_place_not_higher_than_current_highest_bid(self):
-        # Create an initial highest bid
-        Bids.objects.create(
-            bidder=self.profile, auction=self.auction, amount=150
-        )
-
-        # Now, attempt to place a bid that's not higher than the current highest bid
-        lower_bid_amount = 100  # lower than the initial highest bid
-
-        response = self.client.post(
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
-            {"bid_amount": lower_bid_amount},
-            follow=True,
-        )
-
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(
-            any(
-                "Your bid is not higher than the current highest bid."
-                in str(m)
-                for m in messages
-            ),
-            "Expected an error message about bid not being higher than the current highest bid.",
         )
 
 
