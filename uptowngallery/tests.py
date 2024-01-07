@@ -902,6 +902,111 @@ class PlaceBidViewTests(TestCase):
             "Expected an invalid bid amount error message.",
         )
 
+    def test_place_bid_without_amount(self):
+        response = self.client.post(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            {},  # No bid_amount provided
+            follow=True,
+        )
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(
+            any("Bid amount is required." in str(m) for m in messages),
+            "Expected a 'Bid amount is required.' error message.",
+        )
+
+    def test_place_bid_lower_than_reserve(self):
+        low_bid_amount = (
+            self.auction.reserve_price - 1
+        )  # Ensure it's below the reserve price
+
+        response = self.client.post(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            {"bid_amount": low_bid_amount},
+            follow=True,
+        )
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(
+            any(
+                "Bid amount cannot be lower than the reserve price."
+                in str(m)
+                for m in messages
+            ),
+            "Expected a 'Bid amount cannot be lower than the reserve price.' error message.",
+        )
+
+    def test_place_higher_than_highest_bid(self):
+        # Assuming 150 is higher than any existing bid and the reserve price.
+        high_bid_amount = 150
+
+        response = self.client.post(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            {"bid_amount": high_bid_amount},
+            follow=True,
+        )
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(
+            any("Bid placed successfully!" in str(m) for m in messages),
+            "Expected a 'Bid placed successfully!' success message.",
+        )
+
+        # Verify that the bid was actually created
+        self.assertTrue(
+            Bids.objects.filter(amount=high_bid_amount).exists(),
+            "Bid should be successfully created and saved.",
+        )
+
+    def test_place_not_higher_than_current_highest_bid(self):
+        # Create an initial highest bid
+        Bids.objects.create(
+            bidder=self.profile, auction=self.auction, amount=150
+        )
+
+        # Now, attempt to place a bid that's not higher than the current highest bid
+        lower_bid_amount = 100  # lower than the initial highest bid
+
+        response = self.client.post(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            {"bid_amount": lower_bid_amount},
+            follow=True,
+        )
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(
+            any(
+                "Your bid is not higher than the current highest bid."
+                in str(m)
+                for m in messages
+            ),
+            "Expected an error message about bid not being higher than the current highest bid.",
+        )
+
 
 class ActivityDashboardViewTests(TestCase):
     def setUp(self):

@@ -35,7 +35,7 @@
                 <!-- Bid Form -->
                 {% if user.is_authenticated and auction.artwork.artist.user != user %}
                   <h3 class="ms-5 mt-3 mb-5">Place My Bid</h3>
-                  <form method="post" action="{% url 'auction_detail' artwork.id auction.id %}">
+                  <form method="post" action="{% url 'place_bid' artwork_id = artwork.id auction_id = auction.id %}">
                     {% csrf_token %}
                     <div class="mb-3">
                       <label for="bidAmount" class="form-label ms-5">Bid Amount</label>
