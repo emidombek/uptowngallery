@@ -889,12 +889,10 @@ class PlaceBidViewTests(TestCase):
     def test_place_bid_successfully(self):
         """
         Test that a bid can be placed successfully through the AuctionDetailView
-        and redirects to the ArtworkListView.
+        and verifies the appropriate redirection and bid creation.
         """
-        # Assuming you've setup self.user, self.auction, and self.artwork in setUp
-
-        # Make a bid
         bid_amount = 150  # Ensure this is above the reserve price
+
         response = self.client.post(
             reverse(
                 "auction_detail",
@@ -906,38 +904,35 @@ class PlaceBidViewTests(TestCase):
             {"bid_amount": bid_amount},
             follow=True,  # Follow the redirect after bid placement
         )
-        # Capture and print messages for debugging
-        messages = list(get_messages(response.wsgi_request))
-        for message in messages:
-            print(
-                message
-            )  # Debug: Print out what messages are being captured
 
-        # Check if redirect URL in assertRedirects works
-        self.assertRedirects(
-            response,
-            reverse(
-                "auction_detail",
-                kwargs={
-                    "artwork_id": self.artwork.id,
-                    "auction_id": self.auction.id,
-                },
-            ),
+        # Assuming that after a successful bid, you are redirected to the auction detail page
+        expected_redirect_url = reverse(
+            "auction_detail",
+            kwargs={
+                "artwork_id": self.artwork.id,
+                "auction_id": self.auction.id,
+            },
         )
+
+        # Check if the response correctly redirects to the expected URL
+        self.assertRedirects(response, expected_redirect_url)
 
         # Check if the bid was placed successfully
-        self.assertTrue(
-            self.auction.bids.filter(amount=bid_amount).exists()
-        )
+        bid_exists = self.auction.bids.filter(
+            amount=bid_amount
+        ).exists()
+        self.assertTrue(bid_exists, "Bid should be placed successfully")
 
-        # Capture and convert messages to string for comparison
+        # Check messages to ensure the success message is present
         messages = [
             str(message)
             for message in get_messages(response.wsgi_request)
         ]
-
-        # Now check if the desired message is in the list of message strings
-        self.assertIn("Your bid was submitted successfully!", messages)
+        self.assertIn(
+            "Your bid was submitted successfully!",
+            messages,
+            "Success message should be in messages",
+        )
 
 
 class ActivityDashboardViewTests(TestCase):
