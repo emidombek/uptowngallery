@@ -122,16 +122,19 @@ class ArtworkModelTests(TestCase):
         self.artwork.approval_status = "approved"
         self.artwork.save()
 
+        # Assert preconditions are set correctly
+        self.assertEqual(self.artwork.approval_status, "approved")
+
         # Now call the method under test
         self.artwork.approve_and_start_auction()
 
         # Refresh from db to get updated values
         self.artwork.refresh_from_db()
-        auction = Auction.objects.filter(artwork=self.artwork).first()
+        self.assertEqual(self.artwork.approval_status, "approved")
 
         # Check the approval status and auction details
-        self.assertEqual(self.artwork.approval_status, "approved")
-        self.assertIsNotNone(auction)
+        auction = Auction.objects.filter(artwork=self.artwork).first()
+        self.assertIsNotNone(auction, "Auction should be created")
         self.assertTrue(auction.is_active)
         self.assertEqual(auction.status, "active")
 
@@ -357,6 +360,9 @@ class ArtworkListViewTests(TestCase):
         self.auction2 = Auction.objects.create(
             artwork=self.artwork2,
             status="active",  # Make sure the auction is active
+            start_time=timezone.now(),
+            end_time=timezone.now()
+            + timedelta(days=self.artwork2.auction_duration),
         )
 
     def test_artwork_list_loads_correctly(self):
