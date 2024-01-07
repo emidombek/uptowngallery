@@ -175,10 +175,14 @@ class AuctionDetailView(LoginRequiredMixin, View):
             else auction.reserve_price
         )
 
+        # Create an empty instance of the BidForm
+        form = BidForm()
+
         context = {
             "auction": auction,
             "artwork": artwork,
             "current_price": current_price,
+            "form": form,
         }
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":

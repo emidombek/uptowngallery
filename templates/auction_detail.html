@@ -11,19 +11,19 @@
         {% endif %}
 
         <h1 class="text-center mb-5">Auction Detail</h1>
-        <div class="card border-dark mb-5">
+        <div class="card bg-dark text-light border-info mb-5">
           <div class="row no-gutters">
             <!-- Auction Artwork Image Column -->
-            <div class="col-md-4 d-flex align-items-center justify-content-center">
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
               <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ms-5" style="max-height: 500px; object-fit: contain;" />
             </div>
 
             <!-- Auction Information Column -->
-            <div class="col-md-8">
+            <div class="col-md-6">
               <div class="card-body">
                 <!-- Auction Information -->
-                <h2 class="card-title ms-5 mt-3 mb-5">{{ auction.artwork.title }}</h2>
-                <p class="card-text mb-3 ms-5">
+                <h2 class="card-title ms-5 mt-3 mb-3">{{ auction.artwork.title }}</h2>
+                <p class="card-text mb-3 ms-5 border-dark">
                   <strong>Description:</strong> {{ auction.artwork.description }}<br /><br />
                   <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'F j, Y H:i' }}<br /><br />
                   <strong>Auction End Date:</strong> {{ auction.end_date|date:'F j, Y H:i' }}<br /><br />
@@ -34,11 +34,17 @@
                 </p>
                 <!-- Bid Form -->
                 {% if user.is_authenticated and auction.artwork.artist.user != user %}
-                  <h3 class="ms-5 mt-3 mb-5">Place My Bid</h3>
-                  <form method="post" action="{% url 'auction_detail' artwork.id auction.id %}">
+                  <h3 class="ms-5 mt-3 mb-3">Place My Bid</h3>
+                  <form method="POST" action="{% url 'auction_detail' artwork.id auction.id %}" class="needs-validation ms-5" novalidate>
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit">Place Bid</button>
+
+                    <div class="form-group mb-3">
+                      <label for="{{ form.amount.id_for_label }}">Bid Amount:</label>
+                      {{ form.amount }}
+                      <div class="invalid-feedback">Please enter a valid bid amount.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-info mt-2 mb-3 ms-5">Submit Bid</button>
                   </form>
                 {% endif %}
               </div>
