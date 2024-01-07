@@ -360,9 +360,6 @@ class ArtworkListViewTests(TestCase):
         self.auction2 = Auction.objects.create(
             artwork=self.artwork2,
             status="active",  # Make sure the auction is active
-            start_time=timezone.now(),
-            end_time=timezone.now()
-            + timedelta(days=self.artwork2.auction_duration),
         )
 
     def test_artwork_list_loads_correctly(self):
