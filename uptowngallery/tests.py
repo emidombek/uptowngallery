@@ -716,6 +716,28 @@ class AuctionDetailViewTests(TestCase):
             any(expected_success_message in str(m) for m in messages)
         )
 
+    def test_post_bid_with_invalid_amount(self):
+        # Post a bid with a non-numeric amount
+        response = self.client.post(
+            reverse(
+                "auction_detail",
+                kwargs={
+                    "artwork_id": self.artwork.id,
+                    "auction_id": self.auction.id,
+                },
+            ),
+            {
+                "bid_amount": "invalid_number"
+            },  # This should be something that can't be converted to an integer
+        )
+
+        # Check if the appropriate error message is returned
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(
+            any("Invalid bid amount." in str(m) for m in messages),
+            "Expected an invalid bid amount error message.",
+        )
+
 
 class ProfileInfoViewTests(TestCase):
     def setUp(self):
@@ -854,52 +876,30 @@ class PlaceBidViewTests(TestCase):
             artwork=self.artwork, status="active", reserve_price=100
         )
 
-    def test_place_bid_successfully(self):
+    def test_place_bid_with_invalid_amount(self):
         """
-        Test that a bid can be placed successfully through the AuctionDetailView
-        and verifies the appropriate redirection and bid creation.
+        Test submitting a bid with an invalid amount (non-integer)
+        to ensure the PlaceBidView handles ValueError.
         """
-        bid_amount = 150  # Ensure this is above the reserve price
+        invalid_bid_amount = "not_a_number"  # This should be a string or other non-integer value
 
         response = self.client.post(
             reverse(
-                "auction_detail",
+                "auction_detail",  # Use the URL that routes to PlaceBidView
                 kwargs={
-                    "artwork_id": self.artwork.id,
+                    "artwork_id": self.artwork.id,  # Ensure these are the correct kwargs for your URL
                     "auction_id": self.auction.id,
                 },
             ),
-            {"bid_amount": bid_amount},
-            follow=True,  # Follow the redirect after bid placement
+            {"bid_amount": invalid_bid_amount},
+            follow=True,
         )
 
-        # Assuming that after a successful bid, you are redirected to the auction detail page
-        expected_redirect_url = reverse(
-            "auction_detail",
-            kwargs={
-                "artwork_id": self.artwork.id,
-                "auction_id": self.auction.id,
-            },
-        )
-
-        # Check if the response correctly redirects to the expected URL
-        self.assertRedirects(response, expected_redirect_url)
-
-        # Check if the bid was placed successfully
-        bid_exists = self.auction.bids.filter(
-            amount=bid_amount
-        ).exists()
-        self.assertTrue(bid_exists, "Bid should be placed successfully")
-
-        # Check messages to ensure the success message is present
-        messages = [
-            str(message)
-            for message in get_messages(response.wsgi_request)
-        ]
-        self.assertIn(
-            "Your bid was submitted successfully!",
-            messages,
-            "Success message should be in messages",
+        # Check if the appropriate error message is returned
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(
+            any("Invalid bid amount." in str(m) for m in messages),
+            "Expected an invalid bid amount error message.",
         )
 
 
