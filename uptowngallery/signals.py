@@ -56,8 +56,8 @@ def user_signed_up_(request, user, **kwargs):
     # Send an email to the new user
     send_mail(
         "Welcome to Uptown Gallery",
-        "Thank you for signing up for our site!",
-        "mailto@uptowngallery.com",  # Replace with your sender email
+        "Thank I for signing up for our site!",
+        "mailto@uptowngallery.com",  # Replace with my sender email
         [user.email],  # User's email address
         fail_silently=False,
     )
@@ -69,8 +69,8 @@ def send_artwork_approval_notification(
 ):
     # Send an email notification
     send_mail(
-        "Your Artwork Has Been Approved!",
-        'Your artwork "{}" has been approved and your auction has started.'.format(
+        "My Artwork Has Been Approved!",
+        'My artwork "{}" has been approved and my auction has started.'.format(
             artwork.title
         ),
         "mailto@uptowngallery.com",
@@ -84,8 +84,8 @@ def send_artwork_denial_notification(
     sender, artwork, request, **kwargs
 ):
     send_mail(
-        "Your Artwork Has Been Denied",
-        'Unfortunately, your artwork "{}" has been denied and will be deleted.'.format(
+        "My Artwork Has Been Denied",
+        'Unfortunately, my artwork "{}" has been denied and will be deleted.'.format(
             artwork.title
         ),
         "mailto@uptowngallery.com",
@@ -96,7 +96,7 @@ def send_artwork_denial_notification(
 
 @receiver(auction_closed)
 def auction_closed_email_notification(sender, auction, **kwargs):
-    # Accessing the artist's user's email based on your models' structure
+    # Accessing the artist's user's email based on my models' structure
     artist_user_email = auction.artwork.artist.user.email
 
     # Define the email content
@@ -106,7 +106,7 @@ def auction_closed_email_notification(sender, auction, **kwargs):
         f"The auction for the artwork '{auction.artwork.title}' has ended."
     )
     from_email = (
-        "mailto@uptownfgallery.com"  # replace with your actual email
+        "mailto@uptownfgallery.com"  # replace with my actual email
     )
 
     # Using the correctly accessed email
@@ -127,7 +127,7 @@ def send_notification_emails(sender, bid, user, **kwargs):
     # Sending email to the bidder
     send_mail(
         subject="Bid Confirmation",
-        message=f"Your bid of {bid.amount} has been placed successfully on {bid.auction.artwork.title}.",
+        message=f"My bid of {bid.amount} has been placed successfully on {bid.auction.artwork.title}.",
         from_email="mailto@uptownfgallery.com",
         recipient_list=[user.email],
         fail_silently=False,
@@ -136,8 +136,8 @@ def send_notification_emails(sender, bid, user, **kwargs):
     # Sending email to the artist
     artist = bid.auction.artwork.artist
     send_mail(
-        subject="New Bid Placed on Your Artwork",
-        message=f"A new bid of {bid.amount} has been placed on your artwork '{bid.auction.artwork.title}' by user {user.username}.",
+        subject="New Bid Placed on My Artwork",
+        message=f"A new bid of {bid.amount} has been placed on my artwork '{bid.auction.artwork.title}' by user {user.username}.",
         from_email="mailto@uptownfgallery.com",
         recipient_list=[
             artist.email
@@ -151,7 +151,7 @@ def send_profile_update_email(sender, user, field, new_value, **kwargs):
     if field == "shipping_address":
         send_mail(
             subject="Shipping Address Updated",
-            message=f"Your shipping address has been updated to: {new_value}.",
+            message=f"My shipping address has been updated to: {new_value}.",
             from_email="mailto@uptownfgallery.com",
             recipient_list=[user.email],
             fail_silently=False,

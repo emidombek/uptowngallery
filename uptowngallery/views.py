@@ -227,7 +227,7 @@ class AuctionDetailView(View):
                 bid_time=timezone.now(),
             )
             messages.success(
-                request, "Your bid was submitted successfully!"
+                request, "My bid was submitted successfully!"
             )
 
         except ValueError:
@@ -239,13 +239,13 @@ class AuctionDetailView(View):
                 auction_id=auction_id,
             )
 
-        # Redirect back to the auction detail page or to any specific page you want after successful bid submission
+        # Redirect back to the auction detail page or to any specific page I want after successful bid submission
         return redirect(
             "auction_detail",
             artwork_id=artwork_id,
             auction_id=auction_id,
         )
-        # Or redirect to art_list or any other page you prefer
+        # Or redirect to art_list or any other page I prefer
         # return redirect("art_list")
 
 
@@ -387,7 +387,7 @@ class PlaceBidView(LoginRequiredMixin, CreateView):
         else:
             messages.error(
                 self.request,
-                "Your bid is not higher than the current highest bid.",
+                "My bid is not higher than the current highest bid.",
             )
             return self.form_invalid(form)
 
