@@ -43,3 +43,6 @@ urlpatterns = [
         name="search_artworks",
     ),
 ]
+
+handler404 = "ecommerce_project.views.handler404"
+handler500 = "ecommerce_project.views.handler500"
