@@ -326,11 +326,68 @@ class LandingPageViewTests(TestCase):
 
 
 class ArtworkListViewTests(TestCase):
+    def setUp(self):
+        # Assuming you have an 'approval_status' field in Artwork and a related Auction model
+        user = User.objects.create_user(
+            username="testuser", password="12345"
+        )  # Create a user for ownership, if necessary
+        self.artwork1 = Artwork.objects.create(
+            title="Artwork 1",
+            description="Description 1",
+            image="path/to/image1.jpg",
+            category="painting",
+            reserve_price=100.00,
+            auction_duration=3,
+            approval_status="approved",  # Set to approved
+        )
+        self.auction1 = Auction.objects.create(
+            artwork=self.artwork1,
+            status="active",  # Make sure the auction is active,
+        )
+        # Repeat for the second artwork
+        self.artwork2 = Artwork.objects.create(
+            title="Artwork 2",
+            description="Description 2",
+            image="path/to/image2.jpg",
+            category="sculpture",
+            reserve_price=200.00,
+            auction_duration=4,
+            approval_status="approved",  # Set to approved
+        )
+        self.auction2 = Auction.objects.create(
+            artwork=self.artwork2,
+            status="active",  # Make sure the auction is active
+        )
+
     def test_artwork_list_loads_correctly(self):
         response = self.client.get(reverse("artwork_list"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "artwork_list.html")
         self.assertTrue("page_obj" in response.context)
+
+    def test_artwork_list_filter_by_category(self):
+        # Specify the category to filter by
+        category_to_filter = "painting"
+
+        response = self.client.get(
+            reverse("artwork_list"), {"category": category_to_filter}
+        )
+
+        # Ensure the page still loads correctly
+        self.assertEqual(response.status_code, 200)
+
+        # Extract the artworks from response context
+        artworks_in_context = response.context["page_obj"].object_list
+
+        # Check that only artworks of the specified category are present
+        for artwork in artworks_in_context:
+            self.assertEqual(artwork.category, category_to_filter)
+
+        # Optionally, check the count matches expected number of artworks for the category
+        expected_count = Artwork.objects.filter(
+            category=category_to_filter
+        ).count()
+        self.assertEqual(len(artworks_in_context), expected_count)
 
 
 class CreateArtworkViewTests(TestCase):
