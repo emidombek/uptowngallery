@@ -8,3 +8,7 @@ node_modules/
 .github/
 cloudinary_python.txt
 venv/
+db.sqlite3
+fsshyetp
+backup_data.json
+.!77965!db.sqlite3
