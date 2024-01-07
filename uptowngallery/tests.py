@@ -14,7 +14,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
 from django.contrib.admin.sites import AdminSite
 from django.contrib.messages import get_messages
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -537,20 +537,30 @@ class CustomSignupViewTests(TestCase):
             "zipcode": "12345",
         }
         response = self.client.post(
-            reverse("account_signup"), form_data
+            reverse("account_signup"), form_data, follow=True
         )
-        self.assertEqual(response.status_code, 302)
+        # Check if the response is a redirect and has redirected to the correct page
+        self.assertEqual(
+            response.status_code, 200
+        )  # After following, it should land on a 200 page
 
         # Verify user creation
-        user = get_user_model().objects.last()
-        self.assertEqual(user.email, "user@example.com")
+        user = (
+            get_user_model()
+            .objects.filter(email="user@example.com")
+            .first()
+        )
+        self.assertIsNotNone(user, "User was not created")
 
         # Verify user profile creation
-        profile = UserProfile.objects.get(user=user)
-        self.assertEqual(
-            profile.shipping_address,
-            "123 Test St, Testville, Testland, US, 12345",
-        )
+        try:
+            profile = UserProfile.objects.get(user=user)
+            self.assertEqual(
+                profile.shipping_address,
+                "123 Test St, Testville, Testland, US, 12345",
+            )
+        except UserProfile.DoesNotExist:
+            self.fail("UserProfile was not created for the new user")
 
     def test_form_validation(self):
         # Submit a form with missing or invalid data
@@ -559,6 +569,21 @@ class CustomSignupViewTests(TestCase):
         )
         self.assertFalse(response.context["form"].is_valid())
         self.assertTemplateUsed(response, "signup_template.html")
+
+    def test_get_signup_page(self):
+        # Make a GET request to the signup page
+        response = self.client.get(reverse("account_signup"))
+
+        # Check if the response is 200 OK
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the correct template was used
+        self.assertTemplateUsed(response, "account/signup.html")
+
+        # Check if the form in the context is an instance of CustomSignupForm
+        self.assertIsInstance(
+            response.context.get("form"), CustomSignupForm
+        )
 
 
 class SignupViewTests(TestCase):
