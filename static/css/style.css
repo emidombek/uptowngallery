@@ -136,8 +136,7 @@ body .hover-link:hover {
 }
 
 .bi-arrow-down {
-  font-size: 2em;
-  /* or any size I prefer */
+  font-size: 4em;
 }
 
 /* Bounce animation keyframes */
