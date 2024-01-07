@@ -512,14 +512,28 @@ class PendingArtworksViewTests(TestCase):
             response.url.startswith(reverse("account_login"))
         )
 
+    def test_empty_page_redirection(self):
+        # Request a page number that's too high
+        response = self.client.get(
+            reverse("pending_artworks") + "?page=100"
+        )  # Assuming 100 is well beyond the total page count
+
+        # Check if the response redirects to the last page
+        # When EmptyPage is caught, it should return the last page (page 2 in this case)
+        artworks_in_context = response.context["artworks"]
+        self.assertEqual(
+            len(artworks_in_context), 5
+        )  # 5 artworks on the second page (15 total, 10 on the first)
+        self.assertEqual(
+            artworks_in_context.number, 2
+        )  # Ensure it's showing page 2, the last page
+
 
 class CustomSignupViewTests(TestCase):
     def test_get_signup_page(self):
-        response = self.client.get(
-            reverse("account_signup")
-        )  # Changed to 'account_signup'
+        response = self.client.get(reverse("account_signup"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account/signup.html")
+        self.assertTemplateUsed(response, "signup_template.html")
         self.assertIsInstance(
             response.context["form"], CustomSignupForm
         )
@@ -1129,6 +1143,14 @@ class ArtworkCreateFormTest(TestCase):
             shipping_address="123 Test St, Test City",
             create_date=timezone.now(),
         )
+        # Log in the user
+
+        login_successful = self.client.login(
+            username="testuser", password="12345"
+        )
+        self.assertTrue(
+            login_successful, "User should be logged in for test cases."
+        )
 
     def test_form_initialization(self):
         form = ArtworkCreateForm()
@@ -1142,7 +1164,6 @@ class ArtworkCreateFormTest(TestCase):
             "category": "painting",
             "reserve_price": "100.00",
             "auction_duration": 5,
-            # other fields as necessary
         }
         image_file = SimpleUploadedFile(
             "test_image.jpg",
@@ -1164,6 +1185,35 @@ class ArtworkCreateFormTest(TestCase):
             self.assertEqual(
                 form.cleaned_data.get("title"), "Test Artwork"
             )
+
+    def test_create_artwork_invalid_form(self):
+        # Submit a post request with invalid form data
+        response = self.client.post(
+            reverse("create_artwork"),
+            {
+                "title": "",
+                "description": "",
+                "category": "",
+                "reserve_price": "",
+                "auction_duration": 5,
+            },
+            follow=True,
+        )
+        print("Redirection:", response.redirect_chain)
+        print(
+            "Form Errors:",
+            response.context["form"].errors
+            if "form" in response.context
+            else "No form in context",
+        )
+        # Assertions
+        self.assertEqual(
+            response.status_code, 200
+        )  # Expecting to re-render the same page
+        self.assertTemplateUsed(response, "create_artwork.html")
+        self.assertTrue("form" in response.context)
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertTrue(response.context["form"].errors)
 
     @patch(
         "uptowngallery.forms.cloudinary.uploader.upload"
