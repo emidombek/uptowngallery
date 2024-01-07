@@ -12,3 +12,4 @@ db.sqlite3
 fsshyetp
 backup_data.json
 .!77965!db.sqlite3
+*.sqlite3
