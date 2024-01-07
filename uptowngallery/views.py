@@ -227,7 +227,7 @@ class AuctionDetailView(View):
                 bid_time=timezone.now(),
             )
             messages.success(
-                request, "My bid was submitted successfully!"
+                request, "Your bid was submitted successfully!"
             )
 
         except ValueError:
@@ -387,7 +387,7 @@ class PlaceBidView(LoginRequiredMixin, CreateView):
         else:
             messages.error(
                 self.request,
-                "My bid is not higher than the current highest bid.",
+                "Your bid is not higher than the current highest bid.",
             )
             return self.form_invalid(form)
 

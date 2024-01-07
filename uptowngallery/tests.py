@@ -106,6 +106,8 @@ class ArtworkModelTests(TestCase):
         auction = Auction.objects.create(
             artwork=self.artwork, status="active", reserve_price=100.00
         )
+        self.assertEqual(self.artwork.calculate_price(), 100.00)
+
         bid1 = Bids.objects.create(auction=auction, amount=150)
         bid2 = Bids.objects.create(
             auction=auction, amount=200

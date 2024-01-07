@@ -241,11 +241,8 @@ class Auction(models.Model):
         else:
             # If the artwork is updated
             if instance.approval_status == "approved":
-                # If the artwork is approved, call approve_and_start_auction
                 instance.approve_and_start_auction()
             elif instance.approval_status == "rejected":
-                # If the artwork is rejected, no auction instance is created
-                # Handle any other necessary logic for rejected artwork here
                 pass
 
 

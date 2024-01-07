@@ -69,8 +69,8 @@ def send_artwork_approval_notification(
 ):
     # Send an email notification
     send_mail(
-        "My Artwork Has Been Approved!",
-        'My artwork "{}" has been approved and my auction has started.'.format(
+        "Your Artwork Has Been Approved!",
+        'Your artwork "{}" has been approved and your auction has started.'.format(
             artwork.title
         ),
         "mailto@uptowngallery.com",
@@ -84,8 +84,8 @@ def send_artwork_denial_notification(
     sender, artwork, request, **kwargs
 ):
     send_mail(
-        "My Artwork Has Been Denied",
-        'Unfortunately, my artwork "{}" has been denied and will be deleted.'.format(
+        "Your Artwork Has Been Denied",
+        'Unfortunately, your artwork "{}" has been denied and will be deleted.'.format(
             artwork.title
         ),
         "mailto@uptowngallery.com",
@@ -127,7 +127,7 @@ def send_notification_emails(sender, bid, user, **kwargs):
     # Sending email to the bidder
     send_mail(
         subject="Bid Confirmation",
-        message=f"My bid of {bid.amount} has been placed successfully on {bid.auction.artwork.title}.",
+        message=f"Your bid of {bid.amount} has been placed successfully on {bid.auction.artwork.title}.",
         from_email="mailto@uptownfgallery.com",
         recipient_list=[user.email],
         fail_silently=False,
@@ -136,8 +136,8 @@ def send_notification_emails(sender, bid, user, **kwargs):
     # Sending email to the artist
     artist = bid.auction.artwork.artist
     send_mail(
-        subject="New Bid Placed on My Artwork",
-        message=f"A new bid of {bid.amount} has been placed on my artwork '{bid.auction.artwork.title}' by user {user.username}.",
+        subject="New Bid Placed on Your Artwork",
+        message=f"A new bid of {bid.amount} has been placed on your artwork '{bid.auction.artwork.title}' by user {user.username}.",
         from_email="mailto@uptownfgallery.com",
         recipient_list=[
             artist.email
@@ -151,7 +151,7 @@ def send_profile_update_email(sender, user, field, new_value, **kwargs):
     if field == "shipping_address":
         send_mail(
             subject="Shipping Address Updated",
-            message=f"My shipping address has been updated to: {new_value}.",
+            message=f"Your shipping address has been updated to: {new_value}.",
             from_email="mailto@uptownfgallery.com",
             recipient_list=[user.email],
             fail_silently=False,
