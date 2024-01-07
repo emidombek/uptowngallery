@@ -12,7 +12,6 @@ from .views import (
     ActivityDashboardView,
     AboutView,
     SearchActiveAuctionArtworkView,
-    PlaceBidView,
 )
 
 urlpatterns = [
@@ -42,11 +41,6 @@ urlpatterns = [
         "search/",
         SearchActiveAuctionArtworkView.as_view(),
         name="search_artworks",
-    ),
-    path(
-        "place_bid/<int:artwork_id>/<int:auction_id>/",
-        PlaceBidView.as_view(),
-        name="place_bid",
     ),
 ]
 

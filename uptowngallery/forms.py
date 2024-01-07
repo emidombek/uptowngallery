@@ -1,11 +1,12 @@
 # forms.py
 from django import forms
-from .models import Artwork, Auction
+from .models import Artwork, Auction, Bids
 import cloudinary.uploader
 from decimal import Decimal, InvalidOperation
 from allauth.account.forms import SignupForm
 from django.contrib.auth import get_user_model
 from .models import UserProfile
+from django.core.exceptions import ValidationError
 
 
 class ArtworkCreateForm(forms.ModelForm):
@@ -161,3 +162,37 @@ class CustomSignupForm(SignupForm):
         )
 
         return user
+
+
+class BidForm(forms.ModelForm):
+    class Meta:
+        model = Bids
+        fields = ["amount"]
+
+    def __init__(self, *args, **kwargs):
+        self.auction = kwargs.pop("auction", None)
+        super().__init__(*args, **kwargs)
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get("amount")
+
+        if self.auction:
+            # Validate bid amount against the reserve price
+            if amount < self.auction.reserve_price:
+                raise ValidationError(
+                    "Bid amount cannot be lower than the reserve price."
+                )
+
+            # Check if the bid is higher than the current highest bid
+            current_highest_bid = self.auction.bids.order_by(
+                "-amount"
+            ).first()
+            if (
+                current_highest_bid
+                and amount <= current_highest_bid.amount
+            ):
+                raise ValidationError(
+                    "Your bid is not higher than the current highest bid."
+                )
+
+        return amount

@@ -1,5 +1,5 @@
 import logging
-from .forms import ArtworkCreateForm, CustomSignupForm
+from .forms import ArtworkCreateForm, CustomSignupForm, BidForm
 from .signals import bid_placed, profile_updated
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -15,6 +15,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from .signals import bid_placed
 from .models import (
     Artwork,
     Auction,
@@ -177,16 +178,14 @@ class AuctionDetailView(View):
         context = {
             "auction": auction,
             "artwork": artwork,
-            "current_price": current_price,  # Pass current price to the template
+            "current_price": current_price,
         }
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            # Return the partial template for AJAX requests
             return render(
                 request, "auction_detail_partial.html", context
             )
         else:
-            # Return the full page for regular requests
             return render(request, "auction_detail.html", context)
 
     def post(self, request, artwork_id, auction_id):
@@ -195,48 +194,30 @@ class AuctionDetailView(View):
             Auction, pk=auction_id, artwork=artwork
         )
 
-        try:
-            bid_amount = int(request.POST.get("bid_amount"))
+        form = BidForm(request.POST, auction=auction)
+        if form.is_valid():
+            bid = form.save(commit=False)
+            bid.bidder = request.user.profile
+            bid.auction = auction
+            bid.bid_time = timezone.now()
+            bid.save()
 
-            if bid_amount <= auction.reserve_price:
-                messages.error(
-                    request,
-                    "Bid amount must be higher than the reserve price.",
-                )
-                return redirect(
-                    "auction_detail",
-                    artwork_id=artwork_id,
-                    auction_id=auction_id,
-                )
-
-            # Assuming bid amount is valid and higher than current highest bid
-            Bids.objects.create(
-                bidder=request.user.profile,
-                auction=auction,
-                amount=bid_amount,
-                bid_time=timezone.now(),
+            bid_placed.send(
+                sender=self.__class__, bid=bid, user=request.user
             )
+
             messages.success(
                 request, "Your bid was submitted successfully!"
             )
-
-        except ValueError:
-            # Handle the case where bid_amount is not a valid integer
-            messages.error(request, "Invalid bid amount.")
             return redirect(
                 "auction_detail",
                 artwork_id=artwork_id,
                 auction_id=auction_id,
             )
-
-        # Redirect back to the auction detail page or to any specific page I want after successful bid submission
-        return redirect(
-            "auction_detail",
-            artwork_id=artwork_id,
-            auction_id=auction_id,
-        )
-        # Or redirect to art_list or any other page I prefer
-        # return redirect("art_list")
+        else:
+            for error in form.errors.values():
+                messages.error(request, error)
+            return self.get(request, artwork_id, auction_id)
 
 
 class ProfileInfoView(LoginRequiredMixin, View):
@@ -300,86 +281,6 @@ class UpdateProfileView(LoginRequiredMixin, View):
                 {"status": "error", "message": "Invalid field"},
                 status=400,
             )
-
-
-class PlaceBidView(LoginRequiredMixin, CreateView):
-    model = Bids
-    template_name = "auction_detail.html"
-    fields = ["amount"]
-    success_url = reverse_lazy(
-        "auction_list"
-    )  # Redirect to the auction list after successful bid
-
-    def post(self, request, *args, **kwargs):
-        # Extract bid_amount from POST data safely
-        bid_amount_str = request.POST.get("bid_amount")
-        if bid_amount_str:
-            try:
-                bid_amount = int(bid_amount_str)
-                request.POST = request.POST.copy()  # Make it mutable
-                request.POST[
-                    "amount"
-                ] = bid_amount  # Update the POST to have the integer value
-            except ValueError:
-                # Handle the error, maybe set a default value or return an error response
-                messages.error(request, "Invalid bid amount.")
-                return self.form_invalid(self.get_form())
-        else:
-            # Handle the case where bid_amount_str is None
-            messages.error(request, "Bid amount is required.")
-            return self.form_invalid(self.get_form())
-
-        # Proceed with the rest of the POST handling, including form validation
-        return super().post(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        # Retrieve auction and other necessary data
-        auction_id = self.kwargs["auction_id"]
-        auction = Auction.objects.get(pk=auction_id)
-
-        # Get bid amount from the form
-        bid_amount = form.cleaned_data["amount"]
-
-        # Validate bid amount against the reserve price
-        if bid_amount < auction.reserve_price:
-            messages.error(
-                self.request,
-                "Bid amount cannot be lower than the reserve price.",
-            )
-            return self.form_invalid(form)
-
-        # Check if the bid is higher than the current highest bid (if any)
-        current_highest_bid = auction.bids.order_by("-amount").first()
-
-        if (
-            current_highest_bid is None
-            or bid_amount > current_highest_bid.amount
-        ):
-            # Proceed with creating the bid
-            form.instance.bidder = self.request.user.profile
-            form.instance.auction = auction
-            form.instance.amount = bid_amount
-            self.object = (
-                form.save()
-            )  # Save the form and get the object
-
-            # Send the bid_placed signal
-            bid_placed.send(
-                sender=self.__class__,
-                bid=self.object,  # send the bid instance
-                user=self.request.user,  # user who placed the bid
-            )
-
-            messages.success(self.request, "Bid placed successfully!")
-            return super().form_valid(form)
-            # Send the bid_placed signal
-
-        else:
-            messages.error(
-                self.request,
-                "Your bid is not higher than the current highest bid.",
-            )
-            return self.form_invalid(form)
 
 
 class ActivityDashboardView(LoginRequiredMixin, View):
