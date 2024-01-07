@@ -22,9 +22,6 @@ from .models import (
 )
 
 
-logger = logging.getLogger(__name__)
-
-
 class LandingPageView(View):
     def get(self, request):
         recent_artworks = Artwork.objects.filter(
@@ -150,22 +147,15 @@ class PendingArtworksView(LoginRequiredMixin, View):
 
 
 def signup_view(request):
-    logger.info("Entering signup_view function")
-
     if request.method == "POST":
         form = CustomSignupForm(request.POST)
-        logger.info(f"Form data: {form.data}")
-        logger.info(f"Form is valid: {form.is_valid()}")
 
         if form.is_valid():
-            logger.info("Form is valid. Proceeding to save.")
             user = form.save(request)
-            logger.info(f"User saved: {user}")
             return redirect("verification_sent")
     else:
         form = CustomSignupForm()
 
-    logger.info("Rendering Allauth signup template.")
     return render(request, "account/signup.html", {"form": form})
 
 
