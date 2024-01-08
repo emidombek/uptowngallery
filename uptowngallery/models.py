@@ -259,10 +259,11 @@ class Bids(models.Model):
         Auction, on_delete=models.CASCADE, related_name="bids"
     )
 
-    amount = models.IntegerField(
-        null=True,
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
         verbose_name="Amount",
-        help_text="The amount of the bid.",
+        help_text="The amount of the bid in format 0.00.",
     )
     bid_time = models.DateTimeField(
         default=timezone.now,
@@ -271,7 +272,11 @@ class Bids(models.Model):
     )
 
     def clean(self):
-        if self.amount < 0:
-            raise ValidationError(
-                "Bid amount must be a positive integer."
-            )
+        # Check if amount is not None and is a positive value
+        if self.amount is not None:
+            if self.amount < 0:
+                raise ValidationError(
+                    "Bid amount must be a positive number."
+                )
+        else:
+            raise ValidationError("Amount is required.")

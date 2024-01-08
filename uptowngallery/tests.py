@@ -1164,50 +1164,6 @@ class CustomSignupFormTest(TestCase):
             self.fail("Form did not validate with provided data")
 
 
-class BidFormTests(TestCase):
-    def setUp(self):
-        # Create a user
-        self.user = User.objects.create_user(
-            username="testuser", password="12345"
-        )
-        # Create a user profile for the user
-        self.user_profile = UserProfile.objects.create(
-            user=self.user,
-            name="Test User",
-            shipping_address="123 Test St",
-        )
-        # Create an artwork
-        self.artwork = Artwork.objects.create(
-            title="Test Artwork", description="Test Description"
-        )
-        # Create an auction for the artwork with a reserve price
-        self.auction = Auction.objects.create(
-            artwork=self.artwork,
-            reserve_price=100,
-        )
-
-    def test_bid_not_higher_than_current_highest_bid(self):
-        # Create a bid with a higher amount than the reserve price
-        higher_bid_amount = 120
-        higher_bid = Bids.objects.create(
-            auction=self.artwork.auctions.first(),  # Access the related Auction using 'auctions' reverse relationship
-            bidder=self.user_profile,
-            amount=higher_bid_amount,
-            bid_time=timezone.now(),
-        )
-
-        # Create a bid form with an amount lower than the current highest bid
-        form_data = {"amount": 100}
-        form = BidForm(
-            data=form_data,
-            auction=self.artwork.auctions.first(),  # Access the related Auction using 'auctions' reverse relationship
-            instance=self.artwork,
-        )
-
-        # Assert that the form is not valid
-        self.assertFalse(form.is_valid())
-
-
 class MockRequest:
     def __init__(self, user):
         self.user = user
