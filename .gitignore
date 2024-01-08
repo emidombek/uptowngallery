@@ -14,3 +14,5 @@ backup_data.json
 .!77965!db.sqlite3
 *.sqlite3
 .coverage
+newcopy
+

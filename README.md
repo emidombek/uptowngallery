@@ -33,7 +33,7 @@
 
 ## 🌟Credits
 
- ## 👩‍💻 Resources
+## 👩‍💻 Resources
 
 ## 🏆 Acknowledgments
 
