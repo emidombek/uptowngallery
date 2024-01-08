@@ -1,5 +1,5 @@
 # Uptown Gallery Readme 📚
-![Devices Preview](#)
+![Devices Preview](static/docs/images/uptowngallerydevicespreview.png)
 
 [Link to Live Site Here](#)
 
