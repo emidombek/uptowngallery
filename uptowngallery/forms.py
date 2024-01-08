@@ -175,24 +175,40 @@ class BidForm(forms.ModelForm):
 
     def clean_amount(self):
         amount = self.cleaned_data.get("amount")
-
-        if self.auction:
-            # Validate bid amount against the reserve price
-            if amount < self.auction.reserve_price:
-                raise ValidationError(
-                    "Bid amount cannot be lower than the reserve price."
+        if amount:
+            try:
+                # Convert to Decimal and format to two decimal places
+                amount = Decimal(amount).quantize(Decimal("0.00"))
+            except (InvalidOperation, ValueError, TypeError):
+                raise forms.ValidationError(
+                    "Please enter a valid bid amount in the format XXX.XX."
                 )
 
-            # Check if the bid is higher than the current highest bid
-            current_highest_bid = self.auction.bids.order_by(
-                "-amount"
-            ).first()
-            if (
-                current_highest_bid
-                and amount <= current_highest_bid.amount
-            ):
-                raise ValidationError(
-                    "Your bid is not higher than the current highest bid."
+            # Additional validation: Check if positive
+            if amount < Decimal("0.00"):
+                raise forms.ValidationError(
+                    "Bid amount must be positive."
                 )
 
-        return amount
+            if self.auction:
+                # Validate bid amount against the reserve price
+                if amount < self.auction.reserve_price:
+                    raise ValidationError(
+                        "Bid amount cannot be lower than the reserve price."
+                    )
+
+                # Check if the bid is higher than the current highest bid
+                current_highest_bid = self.auction.bids.order_by(
+                    "-amount"
+                ).first()
+                if (
+                    current_highest_bid
+                    and amount <= current_highest_bid.amount
+                ):
+                    raise ValidationError(
+                        "Your bid is not higher than the current highest bid."
+                    )
+
+            return amount
+        else:
+            raise forms.ValidationError("This field is required.")
