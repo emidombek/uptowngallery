@@ -9,11 +9,22 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
 ## ⭐ Purpose and Goals of the Website
 
--Artwork Listing and Bidding: At the heart of Uptown Gallery is the ability for users to list and bid on artwork. This feature democratizes the art acquisition process, making it accessible and engaging for a broad audience of art lovers.
+- Artwork Listing and Bidding: At the heart of Uptown Gallery is the ability for users to list and bid on artwork. This feature democratizes the art acquisition process, making it accessible and engaging for a broad audience of art lovers.
 
--Admin-Controlled Curation: Our platform ensures the quality and authenticity of art pieces through a robust backend approval process. Admins have the capability to control and curate the artwork listed on the website, maintaining high standards and a diverse collection.
+- Admin-Controlled Curation: Our platform ensures the quality and authenticity of art pieces through a robust backend approval process. Admins have the capability to control and curate the artwork listed on the website, maintaining high standards and a diverse collection.
 
 ## 🙋 Target Audience
+
+- Admins
+  Admins are the curators and gatekeepers of the Uptown Gallery platform. Their primary role is to oversee and manage the listing of artwork, ensuring that each piece aligns with the gallery's standards and aesthetic. They possess a keen eye for quality and authenticity, and are responsible for maintaining the integrity and diversity of the art collections on the site. Admins facilitate a smooth, secure, and engaging experience for all users, handling the backend processes and making executive decisions about the content and functionality of the website.
+
+- Bidders
+  Bidders are art enthusiasts and collectors, ranging from seasoned connoisseurs to newcomers in the art world. They are attracted to the platform for its diverse collection of urban modern art and the exciting opportunity to acquire unique pieces through the bidding process. Bidders appreciate the accessibility and convenience of online bidding, and they contribute to the vibrant community of the gallery through their participation and engagement. They value transparency, authenticity, and the thrill of discovering new artists and artworks.
+
+- Artists
+  Artists are the creative force behind Uptown Gallery, offering a window into the contemporary urban art scene. They are both creators and participants in the marketplace, listing their own artworks for sale and engaging with other artists and bidders. Artists on the platform are diverse in their styles and backgrounds, ranging from emerging talents to established names in the modern art scene. They seek a platform that not only showcases their work to a wider audience but also allows them to connect with fellow artists and art enthusiasts.
+
+Note: The roles of Bidder and Artist are fluid on Uptown Gallery, with many users participating as both. This dual role fosters a rich, interactive community where users can experience the full spectrum of art appreciation, from creation to collection.
 
 ## 🧑 User stories
 
