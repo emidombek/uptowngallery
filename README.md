@@ -31,25 +31,23 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 ### **Buyer Product Backlog Milestone**
 
 #### **Buyer Browse Art**
-| Issue ID                                                                                        | User Story       |
-| ----------------------------------------------------------------------------------------------- | ---------------- |
-| [#1](https://github.com/emidombek/uptowngallery/issues/10)                                      | As a As a buyer, |
-| I want to browse through available artworks.So that I can select one for purchase or to bid on. |
+| Issue ID                                                    | User Story                                                                                                      |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| [#10](https://github.com/emidombek/uptowngallery/issues/10) | As a As a buyer,I want to browse through available artworks.So that I can select one for purchase or to bid on. |
 
 #### **Buyer Place Bid**
-| Issue ID                                                                        | User Story  |
-| ------------------------------------------------------------------------------- | ----------- |
-| [#2](https://github.com/emidombek/uptowngallery/issues/11)                      | As a buyer, |
-| I want to place bids on artworks in the auction. So that I can win the auction. |
+| Issue ID                                                    | User Story                                                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [#11](https://github.com/emidombek/uptowngallery/issues/11) | As a buyer,I want to place bids on artworks in the auction. So that I can win the auction. |
 
 #### **Buyer Profile**
-| Issue ID                                                   | User Story  |
-| ---------------------------------------------------------- | ----------- |
-| [#3](https://github.com/emidombek/uptowngallery/issues/13) | As a buyer, |
-I want to be able to view my buying/bidding history in my profile.
-So that I can keep track of my bids.|
+| Issue ID                                                    | User Story                                                                                                        |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [#13](https://github.com/emidombek/uptowngallery/issues/13) | As a buyer,I want to be able to view my buying/bidding history in my profile.So that I can keep track of my bids. |
 
 ### **Seller/Artist Product Backlog Milestone**
+
+
 
 ### **Admin Product Backlog Milestone**
 
