@@ -126,8 +126,6 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
 ## 🖥 Technology
 
-## Technologies used
-
 - ### Languages:
     
     + [Python 3.11.5](https://www.python.org/downloads/release/python-385/): the primary language used to develop the server-side of the website.
@@ -172,8 +170,27 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
   
 ## ✍ Agile Methodology
 
+Github's issues, issue labels, milestones and project management board was used to help me track and organise the work in this project:
 
+#### 💎 Milestones
 
+The issues where orgnaised into Milestones and custom labels where create to add context and detail to each issue and it's status :
+
+  - [#1 Infrastructure Setup](https://github.com/emidombek/uptowngallery/milestone/1?closed=1) 
+  - [#2 Buyer Product Backlog](https://github.com/emidombek/uptowngallery/milestone/2?closed=1)
+  - [#3 Seller Product Backlog](https://github.com/emidombek/uptowngallery/milestone/3?closed=1)
+  - [#4 Admin Product Backlog](https://github.com/emidombek/uptowngallery/milestone/4?closed=1)
+
+And then displayed on my Project Management Board:
+
+Sorted by Issue Status and Milestone, clicking into the issue allowed for viewing labels and updating them:
+
+  - [Project Board Screenshot](static/docs/images/projectdashboard.png)
+
+  - [Added Labels Screenshot](static/docs/images/projectlabels.png)
+
+  - [Project Board Link](https://github.com/users/emidombek/projects/3/views/1) 
+  
 ## ✨ Features
 
 Please refer to the [FEATURES.md](FEATURES.md) file for all features-related documentation.
