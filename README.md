@@ -126,6 +126,7 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
 ## 🖥 Technology
 
+
 ## ✍ Agile Methodology
 
 ## ✨ Features
@@ -136,8 +137,10 @@ Please refer to the [FEATURES.md](FEATURES.md) file for all features-related doc
 
 ### 🗂 Database
 
-* During the earliest stages of the project, the database was created using SQLite.
+* During develoopment the database was created using SQLite.
 * The database was then migrated to PostgreSQL.
+
+### [Database Schema ERD Diagram](static/docs/images/uptown_gallery_database_concept.jpg)
 
 ### 🪄 Data Modeling
 
@@ -204,8 +207,9 @@ Please refer to the [TESTING.md](TESTING.md) file for all test-related documenta
 
 Please refer to the [DEPLOYMENT.md](DEPLOYMENT.md) file for all deployment-related documentation.
 
-
 ## 🌟Credits
+
+
 
 ## 👩‍💻 Resources
 
