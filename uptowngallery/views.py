@@ -367,7 +367,7 @@ class ActivityDashboardView(LoginRequiredMixin, View):
         else:
             messages.error(request, "Invalid auction ID.")
 
-        return redirect("activity_dashboard")
+        return redirect("activity.html")
 
 
 class AboutView(TemplateView):
