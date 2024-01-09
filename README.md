@@ -88,6 +88,38 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
  ### 🌈 Design System
 
+   <details>
+   <summary>Click here to view the Elements of the Design System</summary>
+   
+   *Color Palette*
+
+   This color palette was selected to reflect the game theme, mood, contrast, and accessibility for an immersive and user-friendly experience.
+
+   ![Color Palette](static/docs/images/uptown_gallery.png)
+
+   This font was chosen for its bold and easy-to-read structure while maintaining the theme of the game.
+
+   *Font*
+
+   ![Major Mono Display Font](static/docs/images/majormonofont.png)
+
+   Major Mono Display imported from [Google Fonts](https://fonts.google.com/specimen/Major+Mono+Display?query=Major+Mono+Display)
+
+   ![Raleway 400](static/docs/images/raleway400.png)
+
+   Raleway 400 imported from [Google Fonts](https://fonts.google.com/specimen/Major+Mono+Display?query=Major+Mono+Display)
+
+   *Iconography*
+
+   Icons are taken from [Bootstrap Icons](https://icons.getbootstrap.com/)
+
+   *Additional Fonts, Buttons, Navbar, Activity Dasboard, Hover Effects and Cards*
+
+   These elements are styled using [Bootstrap 5.3](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+
+   </details>
+
+
  ### 🖼 Wireframes
 
  - [Link to Wireframes in Figma](https://www.figma.com/file/cf339FWQmbwsZm2SGmMJNE/Art-Gallery-Auction-App-High-Fi?type=design&node-id=0%3A1&mode=design&t=zQuFhoOFeGiG5taj-1)
@@ -101,6 +133,63 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 Please refer to the [FEATURES.md](FEATURES.md) file for all features-related documentation.
 
 ## 🔢 Information Architecture
+
+### Database
+
+* During the earliest stages of the project, the database was created using SQLite.
+* The database was then migrated to PostgreSQL.
+
+### Data Modeling
+
+ `UserProfile` 
+
+| Field              | Type          | Description                                |
+| ------------------ | ------------- | ------------------------------------------ |
+| `user`             | OneToOneField | Linked to Django's User model              |
+| `name`             | CharField     | The name of the user                       |
+| `shipping_address` | CharField     | The shipping address of the user           |
+| `create_date`      | DateTimeField | The date when the user profile was created |
+
+ `Artwork` Model
+
+| Field              | Type            | Description                                            |
+| ------------------ | --------------- | ------------------------------------------------------ |
+| `id`               | AutoField       | Primary key                                            |
+| `artist`           | ForeignKey      | Linked to UserProfile                                  |
+| `create_date`      | DateTimeField   | The date when the artwork was created                  |
+| `title`            | CharField       | The title of the artwork                               |
+| `description`      | TextField       | Description of the artwork                             |
+| `image`            | CloudinaryField | Image of the artwork                                   |
+| `category`         | CharField       | Category of the artwork                                |
+| `approved`         | BooleanField    | Approval status of the artwork                         |
+| `approval_status`  | CharField       | Detailed approval status (pending, approved, rejected) |
+| `auction_start`    | DateTimeField   | Start date of the auction                              |
+| `auction_duration` | CharField       | Duration of the auction                                |
+| `reserve_price`    | DecimalField    | Minimum price for the artwork                          |
+
+ `Auction` Model
+
+| Field           | Type          | Description                           |
+| --------------- | ------------- | ------------------------------------- |
+| `id`            | AutoField     | Primary key                           |
+| `artwork`       | ForeignKey    | Linked to Artwork model               |
+| `create_date`   | DateTimeField | The date when the auction was created |
+| `status`        | CharField     | Current status of the auction         |
+| `is_active`     | BooleanField  | Active status of the auction          |
+| `end_date`      | DateTimeField | End date of the auction               |
+| `duration`      | CharField     | Duration of the auction               |
+| `reserve_price` | IntegerField  | Minimum price for the artwork         |
+
+ `Bids` Model
+
+| Field      | Type          | Description                           |
+| ---------- | ------------- | ------------------------------------- |
+| `id`       | AutoField     | Primary key                           |
+| `bidder`   | ForeignKey    | Linked to UserProfile model           |
+| `auction`  | ForeignKey    | Linked to Auction model               |
+| `amount`   | DecimalField  | Amount of the bid                     |
+| `bid_time` | DateTimeField | Date and time when the bid was placed |
+
 
 ## 📝 Testing
 
