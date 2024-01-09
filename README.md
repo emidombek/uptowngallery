@@ -277,6 +277,7 @@ Please refer to the [DEPLOYMENT.md](DEPLOYMENT.md) file for all deployment-relat
   Valentino Gagliardi.
   - Lots of information taken from [this youtube video](https://www.youtube.com/watch?v=w-5ukh_ef64)on Django from FreeCodeCamp.
   - The entire series on advacned Python from [Patrick Loeber](https://www.youtube.com/@patloeber).
+  - This video on [AJAX Requests](https://youtu.be/h0ZUpPiV1ac?si=QpPfUdfJt53dmHwn) from Net Ninja.
 
 ## 🏆 Acknowledgments
 
