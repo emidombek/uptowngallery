@@ -1,4 +1,3 @@
-# uptown_gallery/urls.py
 from django.urls import path
 from .views import (
     LandingPageView,
