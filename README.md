@@ -24,7 +24,7 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 - ### **🧑‍🎨 Artists**
   Artists are the creative force behind Uptown Gallery, offering a window into the contemporary urban art scene. They are both creators and participants in the marketplace, listing their own artworks for sale and engaging with other artists and bidders. Artists on the platform are diverse in their styles and backgrounds, ranging from emerging talents to established names in the modern art scene. They seek a platform that not only showcases their work to a wider audience but also allows them to connect with fellow artists and art enthusiasts.
 
-  **Note: The roles of Bidder and Artist are fluid on Uptown Gallery, with many users participating as both. This dual role fosters a rich, interactive community where users can experience the full spectrum of art appreciation, from creation to collection.**
+  **Note: The roles of Bidder and Artist are fluid on Uptown Gallery, with many users participating as both. This dual role fosters a rich, interactive community where users can experience the full spectrum of art appreciation, from creation to collection.The website is designed in such a way that Artists cannot Bid on their Artwork**
 
 ## 🧑 User stories
 
@@ -126,8 +126,53 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
 ## 🖥 Technology
 
+## Technologies used
 
+- ### Languages:
+    
+    + [Python 3.11.5](https://www.python.org/downloads/release/python-385/): the primary language used to develop the server-side of the website.
+    + [JS](https://www.javascript.com/): the primary language used to develop interactive components of the website.
+    + [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML): the markup language used to create the website.
+    + [CSS](https://developer.mozilla.org/en-US/docs/Web/css): the styling language used to style the website.
+    + [Bootstrap] (https://icons.getbootstrap.com/): a CSS Framework used for developing responsive and mobile-first websites.
+
+- ### Frameworks and libraries:
+
+    + [Django](https://www.djangoproject.com/): python framework used to create all the logic.
+    + [jQuery](https://jquery.com/): was used to control click events and sending AJAX requests.
+
+- ### Databases:
+
+    + [SQLite](https://www.sqlite.org/): was used as a development database.
+    + [PostgreSQL](https://www.postgresql.org/): the database used to store all the data.
+
+- ### Other tools:
+
+    + [Git](https://git-scm.com/): the version control system used to manage the code.
+    + [Pip3](https://pypi.org/project/pip/): the package manager used to install the dependencies.
+    + [Gunicorn](https://gunicorn.org/): the webserver used to run the website.
+    + [Spycopg2](https://www.python.org/dev/peps/pep-0249/): the database driver used to connect to the database.
+    + [Django-allauth](https://django-allauth.readthedocs.io/en/latest/): the authentication library used to create the user accounts.
+    + [Django-crispy-forms](https://django-cryptography.readthedocs.io/en/latest/): was used to control the rendering behavior of Django forms.
+    + [Heroku](https://https://www.heroku.com/): the cloud platform used to host the website.
+    + [ElephantSQL](https://www.elephantsql.com/): the cloud database used to store all the data.
+    + [GitHub](https://github.com/): used to host the website's source code.
+    + [VSCode](https://code.visualstudio.com/): the IDE used to develop the website.
+    + [Chrome DevTools](https://developer.chrome.com/docs/devtools/open/): was used to debug the website.
+    + [Bootstrap Icons](https://icons.getbootstrap.com/): was used to create the icons used on the website.
+    + [Miro](https://miro.com/) was used to make a flowchart for the README file.
+    + [Coolors](https://coolors.co/202a3c-1c2431-181f2a-0b1523-65e2d9-925cef-6b28e0-ffffff-eeeeee) was used to make a color palette for the website.
+    + [W3C Validator](https://validator.w3.org/): was used to validate HTML5 code for the website.
+    + [W3C CSS validator](https://jigsaw.w3.org/css-validator/): was used to validate CSS code for the website.
+    + [JShint](https://jshint.com/): was used to validate JS code for the website.
+    + [PEP8](https://pep8.org/): was used to validate Python code for the website.
+    + [Django Q](https://django-q.readthedocs.io/en/latest/): Django Q is a native Django task queue, scheduler and worker application using Python multiprocessing. Used to update auction status after closure.
+    + [Django Widget Tweaks](https://pypi.org/project/django-widget-tweaks/): Used to add extra classes to django html.
+    + [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/): Used to debug various aspects during development.
+  
 ## ✍ Agile Methodology
+
+
 
 ## ✨ Features
 
@@ -208,8 +253,6 @@ Please refer to the [TESTING.md](TESTING.md) file for all test-related documenta
 Please refer to the [DEPLOYMENT.md](DEPLOYMENT.md) file for all deployment-related documentation.
 
 ## 🌟Credits
-
-
 
 ## 👩‍💻 Resources
 

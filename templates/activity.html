@@ -40,7 +40,7 @@
                     <!-- Assuming there is an auction related to this artwork -->
                     <a href="{% url 'auction_detail' artwork.id artwork.auctions.first.id %}" class="text-light hover-link">{{ artwork.title }}</a>
                   {% else %}
-                    {{ artwork.title }} <!-- No link for other statuses -->
+                    {{ artwork.title }}
                   {% endif %}
                 </h5>
                 <p>Status: {{ artwork.approval_status }}</p>
