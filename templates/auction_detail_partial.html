@@ -18,7 +18,7 @@
             <strong>Category:</strong> {{ auction.artwork.get_category_display }}<br />
             <strong>Artist:</strong> {{ auction.artwork.artist.name }}<br />
             <strong>Number of Bids:</strong> {{ auction.bids.count }}<br />
-            <strong>Current Price:</strong> {{ current_price }}<br />
+            <strong>Current Price:</strong> {{ current_price|floatformat:'2' }}<br />
           </p>
           <div class="text-center mt-3 mb-3">
             <a href="{% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info">View Auction</a>

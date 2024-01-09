@@ -204,17 +204,6 @@ class AuctionDetailView(LoginRequiredMixin, View):
         )
         form = BidForm(request.POST, auction=auction)
         if form.is_valid():
-            bid_amount = form.cleaned_data.get("amount")
-            if bid_amount % 1 != 0:
-                messages.warning(
-                    request,
-                    "Please enter a whole price without cents.",
-                )
-                return redirect(
-                    "auction_detail",
-                    artwork_id=artwork_id,
-                    auction_id=auction_id,
-                )
             bid = form.save(commit=False)
             bid.bidder = request.user.profile
             bid.auction = auction

@@ -31,7 +31,7 @@
                   <strong>Category:</strong> {{ auction.artwork.get_category_display }}<br /><br />
                   <strong>Artist:</strong> {{ auction.artwork.artist.name }}<br /><br />
                   <strong>Number of Bids:</strong> {{ auction.bids.count }}<br /><br />
-                  <strong>Current Price:</strong> {{ current_price }}<br /><br />
+                  <strong>Current Price:</strong> {{ current_price|floatformat:'2' }}<br /><br />
                 </p>
                 <!-- Bid Form -->
                 {% if user.is_authenticated and auction.artwork.artist.user != user %}
