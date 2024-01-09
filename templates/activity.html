@@ -76,7 +76,15 @@
           <div class="accordion-body">
             {% for auction in closed_auctions %}
               <div class="mb-3">
-                <h5 class="mb-1"><a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link">{{ auction.artwork.title }}</a></h5>
+                <h5 class="mb-1">
+                  <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link">{{ auction.artwork.title }}</a>
+                  <!-- Delete Button as a Form -->
+                  <form action="{% url 'activity_dashboard' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="auction_id" value="{{ auction.id }}" />
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this auction?');"><i class="bi bi-trash"></i></button>
+                  </form>
+                </h5>
                 <p>Final Price: {{ auction.final_price }}</p>
               </div>
               {% empty %}

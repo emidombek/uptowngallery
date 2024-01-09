@@ -138,6 +138,7 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
     + [Django](https://www.djangoproject.com/): python framework used to create all the logic.
     + [jQuery](https://jquery.com/): was used to control click events and sending AJAX requests.
+    + [Bootstrap](https://jquery.com/): was used to control click events and sending AJAX requests.
 
 - ### Databases:
 

@@ -343,8 +343,31 @@ class ActivityDashboardView(LoginRequiredMixin, View):
             "active_auctions": active_auctions,
             "closed_auctions": closed_auctions,
         }
-
         return render(request, "activity.html", context)
+
+    def post(self, request, *args, **kwargs):
+        auction_id = request.POST.get("auction_id")
+
+        if auction_id:
+            auction = get_object_or_404(
+                Auction,
+                pk=auction_id,
+                artwork__artist=request.user.profile,
+            )
+
+            if auction.status == "closed":
+                auction.delete()
+                messages.success(
+                    request, "Auction deleted successfully."
+                )
+            else:
+                messages.error(
+                    request, "Cannot delete active auctions."
+                )
+        else:
+            messages.error(request, "Invalid auction ID.")
+
+        return redirect("activity_dashboard")
 
 
 class AboutView(TemplateView):
