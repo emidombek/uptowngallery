@@ -275,7 +275,7 @@ Please refer to the [DEPLOYMENT.md](DEPLOYMENT.md) file for all deployment-relat
   - All images used on the website are taken from [Vecteezy](https://www.vecteezy.com/) under free license.
   - Django Q information and setup was taken from [this youtube video](https://www.youtube.com/watch?v=w-5ukh_ef64) by 
   Valentino Gagliardi.
-  - Lots of information taken from [this youtube video](https://www.youtube.com/watch?v=w-5ukh_ef64)on Django from FreeCodeCamp.
+  - Lots of information taken from [this youtube video](https://www.youtube.com/watch?v=w-5ukh_ef64) on Django from FreeCodeCamp.
   - The entire series on advacned Python from [Patrick Loeber](https://www.youtube.com/@patloeber).
   - This video on [AJAX Requests](https://youtu.be/h0ZUpPiV1ac?si=QpPfUdfJt53dmHwn) from Net Ninja.
 
