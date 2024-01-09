@@ -28,7 +28,7 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
 ## 🧑 User stories
 
-### **Buyer Product Backlog Milestone**
+### 👨‍🎤 **Buyer Product Backlog Milestone**
 
 #### **Buyer Browse Art**
 | Issue ID                                                    | User Story                                                                                                      |
@@ -45,7 +45,7 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | [#13](https://github.com/emidombek/uptowngallery/issues/13) | As a buyer,I want to be able to view my buying/bidding history in my profile.So that I can keep track of my bids. |
 
-### **Seller/Artist Product Backlog Milestone**
+### 🧑‍🎨 **Seller/Artist Product Backlog Milestone**
 
 #### **Seller Create Art Listing**
 | Issue ID                                                    | User Story                                                                                                              |
@@ -62,7 +62,7 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [#17](https://github.com/emidombek/uptowngallery/issues/17) | As a seller,I want to view the status of my listed artworks and their auction results in a 'Seller Profile' section.So that I can manage my sales more efficiently. |
 
-### **Admin Product Backlog Milestone**
+### 🧙 **Admin Product Backlog Milestone**
 
 #### **Admin Art Listing Approval**
 | Issue ID                                                    | User Story                                                                                                                 |
@@ -76,7 +76,7 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
 ## 🖌 UX,Design and Layout
 
- ### 🖱 UX Concept 
+ ### 🖱 UX Concept
 
  ![Devices Preview](static/docs/images/uxconcept.png)
 
@@ -134,12 +134,12 @@ Please refer to the [FEATURES.md](FEATURES.md) file for all features-related doc
 
 ## 🔢 Information Architecture
 
-### Database
+### 🗂 Database
 
 * During the earliest stages of the project, the database was created using SQLite.
 * The database was then migrated to PostgreSQL.
 
-### Data Modeling
+### 🪄 Data Modeling
 
  `UserProfile` 
 
@@ -197,10 +197,10 @@ Please refer to the [TESTING.md](TESTING.md) file for all test-related documenta
 
 ## 🚀 Deployment
 
-- The website was deployed to [Heroku](https://uptowngallery-c4ad28352563.herokuapp.com/).
+- The website was deployed to [Heroku](https://www.heroku.com).
 - The database was deployed to [ElephantSQL](https://www.elephantsql.com/).
 
-- This website can be found here [link](https://cool-school.onrender.com).
+- This website can be found here [link](https://uptowngallery-c4ad28352563.herokuapp.com/).
 
 Please refer to the [DEPLOYMENT.md](DEPLOYMENT.md) file for all deployment-related documentation.
 
