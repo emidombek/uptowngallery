@@ -1,4 +1,17 @@
-// Function to toggle between view and edit mode
+/**
+ This script dynamically updates the navigation bar to highlight the active link
+ based on the current page URL. It runs on document ready and performs the following actions:
+ 
+ Defines the `updateActiveNav` function to manage the active state of navigation links.
+ It first removes the 'active' class from all navigation links.
+ Then, it compares each navigation link's href attribute with the current window location.
+ If a match is found, it adds the 'active' class to that link, highlighting it as active.
+ 
+ Invokes the `updateActiveNav` function immediately to set the correct active link when the page loads.
+ 
+ Binds the `updateActiveNav` function to the window's 'popstate' event.
+ This ensures that the active link is updated correctly when navigating through browser history (back/forward buttons).
+ */
 function toggleEdit(field) {
   let textId = `${field}Text`;
   let inputId = `${field}Input`;
@@ -14,21 +27,20 @@ function toggleEdit(field) {
 function getBackendFieldName(field) {
   const fieldMapping = {
     'name': 'name',
-    'shippingAddress': 'shipping_address' // Ensure this mapping is correct
+    'shippingAddress': 'shipping_address'
   };
-  return fieldMapping[field] || field; // Return the backend field name
+  return fieldMapping[field] || field;
 }
 
-
 function saveEdit(field) {
-  let backendField = getBackendFieldName(field); // Use this function to get the backend field name
+  let backendField = getBackendFieldName(field);
   let inputId = `${field}Input`;
   let newValue = document.getElementById(inputId).value;
 
   let data = {
-    'field': backendField, // Use the backend field name here
+    'field': backendField,
     'value': newValue,
-    'csrfmiddlewaretoken': getCookie('csrftoken') // Make sure this token is correctly retrieved
+    'csrfmiddlewaretoken': getCookie('csrftoken')
   };
 
   fetch('/update_profile/', {
@@ -58,13 +70,11 @@ function saveEdit(field) {
 function getBackendFieldName(field) {
   const fieldMapping = {
     'name': 'name',
-    'shippingAddress': 'shipping_address' // Map the frontend name to the backend name
-    // Add more fields if necessary
+    'shippingAddress': 'shipping_address'
   };
-  return fieldMapping[field] || field; // Return the mapped name, or default to the original if not found
+  return fieldMapping[field] || field;
 }
 
-// Helper function to get CSRF token from cookies
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -80,13 +90,10 @@ function getCookie(name) {
   return cookieValue;
 }
 
-// This function is called after a successful AJAX response
 function toggleBackToText(field, newValue) {
   let textId = `${field}Text`;
   let editIconId = `edit${field.charAt(0).toUpperCase() + field.slice(1)}Icon`;
   let saveIconId = `save${field.charAt(0).toUpperCase() + field.slice(1)}Icon`;
-
-  // Update the text display
   document.getElementById(textId).textContent = newValue;
   document.getElementById(textId).style.display = 'inline';
   document.getElementById(`${field}Input`).style.display = 'none';
