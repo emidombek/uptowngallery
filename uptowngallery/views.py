@@ -86,9 +86,10 @@ class ArtworkListView(View):
 
 class CreateArtworkView(LoginRequiredMixin, CreateView):
     """
-    Sets form and template name
+    Sets form class and template name
     Redirects to pending artworks page if successful
-    Set initial auction-related fields in the Artwork instance to None
+    Set initial auction-related fields in the Artwork instance to None,
+    sets user as artist
     Set the 'approval_status' attribute of the form's instance to "pending"
     Call the parent class's `form_valid` method to continue processing the form submission if form is valid
     Save the form's instance to the database
@@ -129,7 +130,8 @@ class CreateArtworkView(LoginRequiredMixin, CreateView):
 class PendingArtworksView(LoginRequiredMixin, View):
     """
     Filter artworks to show only pending artworks of the current user
-    Paginate the artworks, show 10 artworks per page
+    Paginate the artworks,
+    show 10 artworks per page
     """
 
     def get(self, request):
@@ -151,7 +153,8 @@ class PendingArtworksView(LoginRequiredMixin, View):
 
 def signup_view(request):
     """
-    View that sets a custom sign up form, validate and save.
+    View that sets a custom sign up form,
+    validate and save.
     """
     if request.method == "POST":
         form = CustomSignupForm(request.POST)
@@ -165,11 +168,14 @@ def signup_view(request):
 
 class AuctionDetailView(LoginRequiredMixin, View):
     """
-    Get associated artworks and auctions
-    Calculate current price
-    Create an emplty instance of the bidform
-    Route user based on request type
-    Ensure bid amount is entered without cents
+    Fetch artwork and auction or return 404 if not found
+    Get all bids for the auction,
+    calculate current highest bid or use reserve price
+    Prepare context and render appropriate template based on request type (AJAX or regular)
+    Fetch artwork and auction for bid processing
+    Process bid form
+    Save bid data, send signal, and redirect on successful bid
+    Add form errors as messages and redisplay form with errors
     """
 
     def get(self, request, artwork_id, auction_id):
@@ -227,54 +233,53 @@ class AuctionDetailView(LoginRequiredMixin, View):
 
 
 class ProfileInfoView(LoginRequiredMixin, View):
+    """
+    Get template and profile info
+    """
+
     template_name = "profile_info.html"
 
     def get(self, request, *args, **kwargs):
         user_profile = request.user.profile
-        winning_bid = (
-            Bids.objects.filter(
-                bidder=user_profile, auction__artwork__approved=True
-            )
-            .order_by("-amount")
-            .first()
-        )
 
         context = {
             "profile": user_profile,
-            "winning_bid_amount": winning_bid.amount
-            if winning_bid
-            else None,
-            "csrf_token": get_token(
-                request
-            ),  # Retrieves the CSRF token
+            "csrf_token": get_token(request),
         }
-
         return render(request, self.template_name, context)
 
 
 class UpdateProfileView(LoginRequiredMixin, View):
+    """
+    A view to update user profile fields. It accepts POST requests to update specific fields
+    of the user's profile based on a predefined field mapping.
+    Extract the field name and its new value from the POST request.
+    Retrieve the current user's profile.
+    Define a mapping between the field names accepted in the request and the actual
+    Check if the requested field is in the field mapping.
+    Update the specified field with the new value.
+    Send a signal indicating that the profile has been updated.
+    Return a success response as JSON.
+    If the field is not in the mapping, return an error response.
+    """
+
     def post(self, request, *args, **kwargs):
         field = request.POST.get("field")
         value = request.POST.get("value")
         user_profile = request.user.profile
-
-        # Define a mapping of field names to model fields
         field_mapping = {
             "name": "name",
-            "shipping_address": "shipping_address",  # Backend field name
+            "shipping_address": "shipping_address",
         }
-
         if field in field_mapping:
             setattr(user_profile, field_mapping[field], value)
             user_profile.save()
-
             profile_updated.send(
                 sender=self.__class__,
                 user=request.user,
                 field=field,
                 new_value=value,
             )
-
             return JsonResponse(
                 {
                     "status": "success",
@@ -290,27 +295,32 @@ class UpdateProfileView(LoginRequiredMixin, View):
 
 
 class ActivityDashboardView(LoginRequiredMixin, View):
-    def get(self, request):
-        user_profile = (
-            request.user.profile
-        )  # Retrieve the UserProfile instance
+    """
+    View for displaying and managing user's activity dashboard. It handles showing the user's bidding and selling
+    activities, their active and closed auctions, and allows for deletion of closed auctions.
+    Retrieve the UserProfile instance
+    Fetch bidding activity
+    Fetch selling activity
+    Fetch active auctions
+    Fetch closed auctions and enhance with final price
+    Consolidate all context data
+    """
 
-        # Fetch bidding activity
+    def get(self, request):
+        """
+        Handles GET requests. Fetches and displays the user's bidding activity, selling activity, active auctions,
+        and closed auctions with final prices.
+        """
+        user_profile = request.user.profile
         bidding_activity = Bids.objects.filter(
             bidder=user_profile
         ).select_related("auction")
-
-        # Fetch selling activity
         selling_activity = Artwork.objects.filter(artist=user_profile)
-
-        # Fetch active auctions
         active_auctions = Auction.objects.filter(
             artwork__artist=user_profile,
             status="active",
             artwork__approval_status="approved",
         )
-
-        # Fetch closed auctions and enhance with final price
         closed_auctions = Auction.objects.filter(
             artwork__artist=user_profile, status="closed"
         ).select_related("artwork")
@@ -323,8 +333,6 @@ class ActivityDashboardView(LoginRequiredMixin, View):
             auction.final_price = (
                 final_bid.amount if final_bid else auction.reserve_price
             )
-
-        # Consolidate all context data
         context = {
             "bidding_activity": bidding_activity,
             "selling_activity": selling_activity,
@@ -334,6 +342,10 @@ class ActivityDashboardView(LoginRequiredMixin, View):
         return render(request, "activity.html", context)
 
     def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests. Used for deleting closed auctions that belong to the user. Validates auction status
+        before deletion and provides appropriate success or error messages.
+        """
         auction_id = request.POST.get("auction_id")
 
         if auction_id:
@@ -366,15 +378,23 @@ class AboutView(TemplateView):
 
 
 class SearchActiveAuctionArtworkView(View):
+    """
+    A view to handle searching for artworks in active auctions. It accepts a search query and
+    returns artworks that match the query criteria (title, approval status, and active auction status).
+    """
+
     def get(self, request):
+        """
+        Processes GET requests to perform a search based on a query string. It filters artworks by title,
+        ensuring they are approved and part of active auctions. The view supports pagination and shows the results
+        on an artwork list page.
+        """
         query = request.GET.get("query", "").strip()
 
-        # Initialize an empty context
         context = {
-            "is_search": True,  # Indicate that this is a search result
-            "query": query,  # Pass the search query for display purposes
+            "is_search": True,
+            "query": query,
         }
-
         if query:
             artworks = (
                 Artwork.objects.filter(
@@ -385,15 +405,11 @@ class SearchActiveAuctionArtworkView(View):
                 .distinct()
                 .order_by("-create_date")
             )
-
-            # Annotate each artwork with the ID of its most recent active auction
             artworks = artworks.annotate(
                 recent_auction_id=Max(
                     "auctions__id", filter=Q(auctions__status="active")
                 )
             )
-
-            # Prefetch the related recent active auction for each artwork
             recent_auction_ids = list(
                 filter(
                     None,
@@ -412,19 +428,13 @@ class SearchActiveAuctionArtworkView(View):
                     to_attr="recent_auction",
                 )
             )
-
-            # Implement Pagination
-            paginator = Paginator(
-                artworks, 10
-            )  # Show 10 artworks per page
+            paginator = Paginator(artworks, 10)
             page_number = request.GET.get("page")
             page_obj = paginator.get_page(page_number)
-
             context["page_obj"] = page_obj
         else:
             # No search query was entered
             context["error"] = "Please enter a search term."
-
         return render(request, "artwork_list.html", context)
 
 

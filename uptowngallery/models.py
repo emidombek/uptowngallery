@@ -6,9 +6,6 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class UserProfile(models.Model):
