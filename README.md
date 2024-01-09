@@ -271,9 +271,17 @@ Please refer to the [DEPLOYMENT.md](DEPLOYMENT.md) file for all deployment-relat
 
 ## 🌟Credits
 
-## 👩‍💻 Resources
+  - Custom 404/500 pages and views were taken from my mentor Juliia's ecommerce project and modified with her permission. 
+  - All images used on the website are taken from [Vecteezy](https://www.vecteezy.com/) under free license.
+  - Django Q information and setup was taken from [this youtube video](https://www.youtube.com/watch?v=w-5ukh_ef64) by 
+  Valentino Gagliardi.
+  - Lots of information taken from [this youtube video](https://www.youtube.com/watch?v=w-5ukh_ef64) on Django from FreeCodeCamp.
 
+  
 ## 🏆 Acknowledgments
+
+ - I would like to acknowledge my daughter and husband for their support and understanding during this time of intense learning.
+ - My mentor Juliia for her guidance and suggestions, she has gone above and beyond and I am very grateful for her support and knowledge.
 
 
 
