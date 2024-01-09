@@ -168,6 +168,9 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
     + [Django Q](https://django-q.readthedocs.io/en/latest/): Django Q is a native Django task queue, scheduler and worker application using Python multiprocessing. Used to update auction status after closure.
     + [Django Widget Tweaks](https://pypi.org/project/django-widget-tweaks/): Used to add extra classes to django html.
     + [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/): Used to debug various aspects during development.
+    + [Cloudinary](https://cloudinary.com): Image/file cloud hosting service.
+    + [Whitenoise] (https://whitenoise.readthedocs.io/en/latest/): tool used in Django applications for serving static files.
+
   
 ## ✍ Agile Methodology
 

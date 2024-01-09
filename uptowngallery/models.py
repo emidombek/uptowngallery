@@ -1,14 +1,19 @@
 from datetime import timedelta
-from django.db import models
 from django.contrib.auth.models import User
-from cloudinary.models import CloudinaryField
 from django.core.exceptions import ValidationError
-from django.utils import timezone
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 
 class UserProfile(models.Model):
+    """
+    Represents a user profile, extending the built-in User model.
+    Includes additional fields like name and shipping address.
+    """
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -40,6 +45,11 @@ class UserProfile(models.Model):
 
 
 class Artwork(models.Model):
+    """
+    Represents an artwork, associated with a user profile (artist).
+    Contains details about the artwork like title, description, image, and auction-related information.
+    """
+
     id = models.AutoField(primary_key=True)
     artist = models.ForeignKey(
         UserProfile,
@@ -120,6 +130,10 @@ class Artwork(models.Model):
         ordering = ["-create_date"]
 
     def calculate_price(self):
+        """
+        Calculate the current price of the artwork based on the highest bid
+        or the reserve price if there are no bids.
+        """
         related_auctions = self.auctions.all()
         if related_auctions:
             bids = Bids.objects.filter(auction__in=related_auctions)
@@ -133,8 +147,9 @@ class Artwork(models.Model):
         return f"Artwork #{self.id} - Title: {self.title} - Artist: {self.artist}"
 
     def approve_and_start_auction(self):
-        logger.info(f"Starting auction approval for Artwork: {self.id}")
-
+        """
+        Approve the artwork and start an auction. Create or update the auction details.
+        """
         auction_start = timezone.now()
         auction_end = self.calculate_auction_end_date(auction_start)
         auction_duration_value = self.auction_duration
@@ -152,7 +167,6 @@ class Artwork(models.Model):
         )
 
         if not created:
-            # The auction already exists, so update it
             auction.create_date = auction_start
             auction.end_date = auction_end
             auction.reserve_price = self.reserve_price
@@ -160,10 +174,6 @@ class Artwork(models.Model):
             auction.is_active = True
             auction.duration = auction_duration_value
             auction.save()
-
-        logger.info(
-            f"Auction {'created' if created else 'updated'} for Artwork: {self.id}"
-        )
 
     def calculate_auction_end_date(self, auction_start):
         auction_start = timezone.now()
@@ -180,6 +190,11 @@ class Artwork(models.Model):
 
 
 class Auction(models.Model):
+    """
+    Represents an auction for an artwork. Contains details like status,
+    creation date, end date, and reserve price.
+    """
+
     STATUS_CHOICES = [
         ("active", "Active"),
         ("closed", "Closed"),
@@ -233,10 +248,8 @@ class Auction(models.Model):
     @receiver(post_save, sender=Artwork)
     def artwork_approval_handler(sender, instance, created, **kwargs):
         if created:
-            # If a new artwork is created, call approve_and_start_auction
             instance.approve_and_start_auction()
         else:
-            # If the artwork is updated
             if instance.approval_status == "approved":
                 instance.approve_and_start_auction()
             elif instance.approval_status == "rejected":
@@ -244,6 +257,11 @@ class Auction(models.Model):
 
 
 class Bids(models.Model):
+    """
+    Represents a bid in an auction. Contains details like the amount,
+    time of the bid, and references to the user profile and auction.
+    """
+
     id = models.AutoField(primary_key=True)
     bidder = models.ForeignKey(
         UserProfile,
@@ -269,7 +287,6 @@ class Bids(models.Model):
     )
 
     def clean(self):
-        # Check if amount is not None and is a positive value
         if self.amount is not None:
             if self.amount < 0:
                 raise ValidationError(
