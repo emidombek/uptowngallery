@@ -155,3 +155,15 @@ def send_profile_update_email(sender, user, field, new_value, **kwargs):
             recipient_list=[user.email],
             fail_silently=False,
         )
+
+
+@receiver(profile_updated)
+def send_profile_update_email(sender, user, field, new_value, **kwargs):
+    if field == "name":
+        send_mail(
+            subject="Name Updated",
+            message=f"Your name has been updated to: {new_value}.",
+            from_email="mailto@uptownfgallery.com",
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
