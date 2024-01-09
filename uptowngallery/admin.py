@@ -1,12 +1,17 @@
+from django.db import transaction
 from django.utils import timezone
 from django.contrib import admin
-from django.db import transaction
-from .models import Artwork, Auction
 from .forms import ArtworkCreateForm
+from .models import Artwork, Auction
 from .signals import artwork_approved, artwork_denied
 
 
 class ArtworkAdmin(admin.ModelAdmin):
+    """
+    Custom admin interface for the Artwork model. Defines how artworks are displayed,
+    filtered, and modified in the Django admin interface.
+    """
+
     list_display = (
         "artist",
         "approved",
@@ -27,22 +32,16 @@ class ArtworkAdmin(admin.ModelAdmin):
 
     def approve_artworks(self, request, queryset):
         queryset.update(approved=True, auction_start=timezone.now())
-        # Emit signal for each approved artwork
         for artwork in queryset:
             artwork_approved.send(
                 sender=self.__class__, artwork=artwork, request=request
             )
 
     approve_artworks.short_description = "Approve selected artworks"
-
     exclude = ["approved", "auction_start"]
 
     def deny_artworks(self, request, queryset):
-        queryset.update(
-            approved=False
-        )  # Update artworks to denied state
-
-        # Emit denial signal for each denied artwork
+        queryset.update(approved=False)
         for artwork in queryset:
             artwork_denied.send(
                 sender=self.__class__, artwork=artwork, request=request
@@ -54,20 +53,18 @@ class ArtworkAdmin(admin.ModelAdmin):
         """
         This method is called when admin tries to delete artworks in bulk from the admin interface.
         """
-        with transaction.atomic():  # Use a transaction to ensure deletion
+        with transaction.atomic():
             for artwork in queryset:
-                # Handle or delete related auctions first
                 Auction.objects.filter(artwork=artwork).delete()
-                artwork.delete()  # Then delete the artwork itself
+                artwork.delete()
 
     def delete_model(self, request, obj):
         """
         This method is called when an admin tries to delete a single artwork instance.
         """
-        with transaction.atomic():  # Use a transaction to ensure atomic deletion
-            # Handle or delete related auctions first
+        with transaction.atomic():
             Auction.objects.filter(artwork=obj).delete()
-            obj.delete()  # Then delete the artwork itself
+            obj.delete()
 
 
 admin.site.register(Artwork, ArtworkAdmin)
