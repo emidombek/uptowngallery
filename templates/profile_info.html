@@ -16,16 +16,16 @@
                   <div>
                     <strong>Name:</strong>
                     <span id="nameText">{{ user.profile.name }}</span>
-                    <input type="text" id="nameInput" value="{{ user.profile.name }}" />
+                    <input type="text" id="nameInput" value="{{ user.profile.name }}" style="display:none;" />
                     <i id="editNameIcon" class="bi bi-pencil-square" onclick="toggleEdit('name')"></i>
-                    <i id="saveNameIcon" class="bi bi-save" onclick="saveEdit('name')"></i>
+                    <i id="saveNameIcon" class="bi bi-save" onclick="saveEdit('name')" style="display:none;"></i>
                   </div>
                   <div>
                     <strong>Shipping Address:</strong>
                     <span id="shippingAddressText">{{ user.profile.shipping_address }}</span>
-                    <input type="text" id="shippingAddressInput" value="{{ user.profile.shipping_address }}" />
+                    <input type="text" id="shippingAddressInput" value="{{ user.profile.shipping_address }}" style="display:none;" />
                     <i id="editShippingAddressIcon" class="bi bi-pencil-square" onclick="toggleEdit('shippingAddress')"></i>
-                    <i id="saveShippingAddressIcon" class="bi bi-save" onclick="saveEdit('shippingAddress')"></i>
+                    <i id="saveShippingAddressIcon" class="bi bi-save" onclick="saveEdit('shippingAddress')" style="display:none;"></i>
                   </div>
                   <div>
                     <strong>Account Create Date:</strong> {{ user.date_joined|date:'F j, Y' }}

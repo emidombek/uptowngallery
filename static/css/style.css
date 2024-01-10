@@ -94,30 +94,6 @@ body .h12 {
   object-fit: contain
 }
 
-#nameText {
-  display: none;
-}
-
-#editNameIcon {
-  display: none;
-}
-
-#saveNameIcon {
-  display: none;
-}
-
-#shippingAddressText {
-  display: none;
-}
-
-#shippingAddressInput {
-  display: none;
-}
-
-#saveShippingAddressIcon {
-  display: none;
-}
-
 .row .custom-card:hover {
   transform: scale(1.15);
 }

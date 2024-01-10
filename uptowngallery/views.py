@@ -363,56 +363,6 @@ class UpdatePendingArtworkView(LoginRequiredMixin, View):
             )
 
 
-class UpdatePendingArtworkView(LoginRequiredMixin, View):
-    """
-    A view to update fields of an artwork. It accepts POST requests to update specific fields
-    of an artwork based on the artwork's ID and a predefined field mapping.
-    Extract the artwork ID, field name, and its new value from the POST request.
-    Retrieve the specified artwork.
-    Define a mapping between the field names accepted in the request and the actual
-    model fields.
-    Check if the requested field is in the field mapping and if the user has permission
-    to update the artwork.
-    Update the specified field with the new value.
-    Return a success response as JSON.
-    If the field is not in the mapping or the artwork doesn't belong to the user, return an error response.
-    """
-
-    def post(self, request, *args, **kwargs):
-        artwork_id = request.POST.get("artwork_id")
-        field = request.POST.get("field")
-        value = request.POST.get("value")
-
-        artwork = get_object_or_404(
-            Artwork, id=artwork_id, artist=request.user.profile
-        )
-
-        field_mapping = {
-            "title": "title",
-            "description": "description",
-        }
-
-        if field in field_mapping:
-            setattr(artwork, field_mapping[field], value)
-            artwork.save()
-            return JsonResponse(
-                {
-                    "status": "success",
-                    "field": field,
-                    "new_value": value,
-                }
-            )
-
-        else:
-            return JsonResponse(
-                {
-                    "status": "error",
-                    "message": "Invalid field or unauthorized access",
-                },
-                status=400,
-            )
-
-
 class ActivityDashboardView(LoginRequiredMixin, View):
     """
     View for displaying and managing user's activity dashboard. It handles showing the user's bidding and selling
