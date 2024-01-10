@@ -150,6 +150,30 @@ class PendingArtworksView(LoginRequiredMixin, View):
             request, "pending_artworks.html", {"artworks": artworks}
         )
 
+    def post(self, request, *args, **kwargs):
+        action = request.POST.get("action")
+        artwork_id = request.POST.get("artwork_id")
+        artwork = get_object_or_404(
+            Artwork, id=artwork_id, artist=request.user.profile
+        )
+        if action == "delete":
+            artwork.delete()
+            messages.success(request, "Artwork deleted successfully.")
+            return redirect("pending_artworks")
+        elif action == "update":
+            form = ArtworkCreateForm(
+                request.POST, request.FILES, instance=artwork
+            )
+            if form.is_valid():
+                form.save()
+                messages.success(
+                    request, "Artwork updated successfully."
+                )
+                return redirect("pending_artworks")
+            else:
+                pass
+        return redirect("pending_artworks")
+
 
 def signup_view(request):
     """
