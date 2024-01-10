@@ -172,7 +172,7 @@ class PendingArtworksView(LoginRequiredMixin, View):
                 return redirect("pending_artworks")
             else:
                 pass
-        return redirect("pending_artworks")
+                return redirect("pending_artworks")
 
 
 def signup_view(request):
@@ -314,6 +314,101 @@ class UpdateProfileView(LoginRequiredMixin, View):
         else:
             return JsonResponse(
                 {"status": "error", "message": "Invalid field"},
+                status=400,
+            )
+
+
+class UpdatePendingArtworkView(LoginRequiredMixin, View):
+    """
+    A view to update user profile fields. It accepts POST requests to update specific fields
+    of the user's profile based on a predefined field mapping.
+    Extract the field name and its new value from the POST request.
+    Retrieve the current user's profile.
+    Define a mapping between the field names accepted in the request and the actual
+    Check if the requested field is in the field mapping.
+    Update the specified field with the new value.
+    Send a signal indicating that the profile has been updated.
+    Return a success response as JSON.
+    If the field is not in the mapping, return an error response.
+    """
+
+    def post(self, request, *args, **kwargs):
+        field = request.POST.get("field")
+        value = request.POST.get("value")
+        user_profile = request.user.profile
+        field_mapping = {
+            "name": "name",
+            "shipping_address": "shipping_address",
+        }
+        if field in field_mapping:
+            setattr(user_profile, field_mapping[field], value)
+            user_profile.save()
+            profile_updated.send(
+                sender=self.__class__,
+                user=request.user,
+                field=field,
+                new_value=value,
+            )
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "field": field,
+                    "new_value": value,
+                }
+            )
+        else:
+            return JsonResponse(
+                {"status": "error", "message": "Invalid field"},
+                status=400,
+            )
+
+
+class UpdatePendingArtworkView(LoginRequiredMixin, View):
+    """
+    A view to update fields of an artwork. It accepts POST requests to update specific fields
+    of an artwork based on the artwork's ID and a predefined field mapping.
+    Extract the artwork ID, field name, and its new value from the POST request.
+    Retrieve the specified artwork.
+    Define a mapping between the field names accepted in the request and the actual
+    model fields.
+    Check if the requested field is in the field mapping and if the user has permission
+    to update the artwork.
+    Update the specified field with the new value.
+    Return a success response as JSON.
+    If the field is not in the mapping or the artwork doesn't belong to the user, return an error response.
+    """
+
+    def post(self, request, *args, **kwargs):
+        artwork_id = request.POST.get("artwork_id")
+        field = request.POST.get("field")
+        value = request.POST.get("value")
+
+        artwork = get_object_or_404(
+            Artwork, id=artwork_id, artist=request.user.profile
+        )
+
+        field_mapping = {
+            "title": "title",
+            "description": "description",
+        }
+
+        if field in field_mapping:
+            setattr(artwork, field_mapping[field], value)
+            artwork.save()
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "field": field,
+                    "new_value": value,
+                }
+            )
+
+        else:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Invalid field or unauthorized access",
+                },
                 status=400,
             )
 

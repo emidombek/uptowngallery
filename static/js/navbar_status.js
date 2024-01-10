@@ -1,4 +1,4 @@
-/**
+/*
  This script dynamically updates the navigation bar to highlight the active link
  based on the current page URL. It runs on document ready and performs the following actions:
 
@@ -7,7 +7,7 @@
 
  Then, it compares each navigation link's href attribute with the current window location.
  If a match is found, it adds the 'active' class to that link, highlighting it as active.
- 
+
  Invokes the `updateActiveNav` function immediately to set the correct active link when the page loads.
  Binds the `updateActiveNav` function to the window's 'popstate' event.
  This ensures that the active link is updated correctly when navigating through browser history (back/forward buttons).

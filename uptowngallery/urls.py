@@ -11,6 +11,7 @@ from .views import (
     ActivityDashboardView,
     AboutView,
     SearchActiveAuctionArtworkView,
+    UpdatePendingArtworkView,
 )
 
 urlpatterns = [
@@ -33,6 +34,11 @@ urlpatterns = [
         "update_profile/",
         UpdateProfileView.as_view(),
         name="update_profile",
+    ),
+    path(
+        "update-artwork/",
+        UpdatePendingArtworkView.as_view(),
+        name="update_artwork",
     ),
     path("activity/", ActivityDashboardView.as_view(), name="activity"),
     path("about/", AboutView.as_view(), name="about"),
