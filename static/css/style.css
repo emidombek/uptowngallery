@@ -89,6 +89,35 @@ body .h12 {
   width: 17.5rem;
 }
 
+.card-img ajax {
+  max-height: 300px;
+  object-fit: contain
+}
+
+#nameText {
+  display: none;
+}
+
+#editNameIcon {
+  display: none;
+}
+
+#saveNameIcon {
+  display: none;
+}
+
+#shippingAddressText {
+  display: none;
+}
+
+#shippingAddressInput {
+  display: none;
+}
+
+#saveShippingAddressIcon {
+  display: none;
+}
+
 .row .custom-card:hover {
   transform: scale(1.15);
 }

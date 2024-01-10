@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
   <h1 class="text-center mt-3 mb-5">
     {% if is_search %}
@@ -10,7 +9,6 @@
       Artwork List
     {% endif %}
   </h1>
-
   <div class="container mt-5 mb-5">
     <div class="row justify-content-center mt-5 mb-5">
       {% for artwork in page_obj %}
@@ -42,35 +40,27 @@
       {% endfor %}
     </div>
   </div>
-
-  <!-- Pagination and Modal -->
   <div class="pagination mt-4">
     <span class="step-links">
       {% if page_obj.has_previous %}
         <a href="?page=1">&laquo; first</a>
         <a href="?page={{ page_obj.previous_page_number }}">previous</a>
       {% endif %}
-
       <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
-
       {% if page_obj.has_next %}
         <a href="?page={{ page_obj.next_page_number }}">next</a>
         <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
       {% endif %}
     </span>
   </div>
-  <!-- Auction Details Modal -->
   <div class="modal fade" id="auctionModal" tabindex="-1" aria-labelledby="auctionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header bg-dark text-light">
-          <!-- Added bg-dark and text-light classes -->
           <h5 class="modal-title" id="auctionModalLabel">{{ auction.artwork }}</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button> <!-- Added btn-close-white for better visibility -->
         </div>
-        <div class="modal-body" id="auction-detail-content">
-          <!-- AJAX content will be loaded here -->
-        </div>
+        <div class="modal-body" id="auction-detail-content"></div>
       </div>
     </div>
   </div>

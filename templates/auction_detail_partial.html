@@ -1,17 +1,13 @@
-<!-- auction_detail_partial.html -->
 <div class="container">
   <h1 class="text-center mb-5">Auction Detail</h1>
   <div class="row justify-content-center">
     <div class="col-md-12 mt-3">
       <div class="card bg-dark text-light border-info mb-5">
-        <!-- Auction Artwork Image -->
         <div class="row no-gutters">
           <div class="col-12 d-flex justify-content-center mt-3">
-            <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img mb-3" style="max-height: 300px; object-fit: contain;" />
+            <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ajax mb-3" />
           </div>
         </div>
-
-        <!-- Auction Information -->
         <div class="card-body">
           <h2 class="card-title text-center mt-3 mb-3">{{ auction.artwork.title }}</h2>
           <p class="card-text text-center">
