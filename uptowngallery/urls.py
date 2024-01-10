@@ -48,6 +48,3 @@ urlpatterns = [
         name="search_artworks",
     ),
 ]
-
-handler404 = "uptowngallery.views.handler404"
-handler500 = "uptowngallery.views.handler500"
