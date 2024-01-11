@@ -13,7 +13,7 @@
         <div class="card bg-dark text-light border-info mb-5">
           <div class="row no-gutters">
             <div class="col-md-6 d-flex align-items-center justify-content-center">
-              <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ms-5" style="max-height: 500px; object-fit: contain;" />
+              <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ms-5" aria-label="Artwork Image" style="max-height: 500px; object-fit: contain;" />
             </div>
             <div class="col-md-6">
               <div class="card-body">
@@ -36,7 +36,7 @@
                       {{ form.amount|add_class:'form-control custom-amount' }}
                       <div class="invalid-feedback">Please enter a valid bid amount.</div>
                     </div>
-                    <button type="submit" class="btn btn-info mt-2 mb-3 ms-5">Submit Bid</button>
+                    <button type="submit" class="btn btn-info mt-2 mb-3 ms-5" aria-label="Submit bid button">Submit Bid</button>
                   </form>
                 {% endif %}
               </div>

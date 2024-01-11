@@ -5,7 +5,7 @@
       <div class="card bg-dark text-light border-info mb-5">
         <div class="row no-gutters">
           <div class="col-12 d-flex justify-content-center mt-3">
-            <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ajax mb-3" />
+            <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ajax mb-3" aria-label="Artwork Image" />
           </div>
         </div>
         <div class="card-body">
@@ -17,7 +17,7 @@
             <strong>Current Price:</strong> {{ current_price|floatformat:'2' }}<br />
           </p>
           <div class="text-center mt-3 mb-3">
-            <a href="{% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info">View Auction</a>
+            <a href="{% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info" aria-label="Link to auction detail page">View Auction</a>
           </div>
         </div>
       </div>

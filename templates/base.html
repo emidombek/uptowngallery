@@ -20,82 +20,82 @@
     <header class="main-header">
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container py-3 d-flex">
-          <a class="navbar-brand pe-3" href="{% url 'home' %}">Uptown Gallery</a>
+          <a class="navbar-brand pe-3" href="{% url 'home' %}" aria-label="Link to home page">Uptown Gallery</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{% url 'home' %}">Home</a>
+                <a class="nav-link" aria-current="page" href="{% url 'home' %}" aria-label="Link to home page">Home</a>
               </li>
               {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Profile</a>
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Dropdown Menu toggle for user pages">Profile</a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li>
-                      <a class="dropdown-item" href="{% url 'profile_info' %}">Profile Info</a>
+                      <a class="dropdown-item" href="{% url 'profile_info' %}" aria-label="Link to profile info page">Profile Info</a>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="{% url 'activity' %}">Activity Dashboard</a>
+                      <a class="dropdown-item" href="{% url 'activity' %}" aria-label="Link to activity dashboard">Activity Dashboard</a>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="{% url 'create_artwork' %}">Sell</a>
+                      <a class="dropdown-item" href="{% url 'create_artwork' %}" aria-label="Link to create artwork">Sell</a>
                     </li>
                   </ul>
                 </li>
               {% endif %}
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Browse Art</a>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Dropdown toggle for artwork categories">Browse Art</a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=painting">Paintings</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=painting" aria-label="Link to paintings category">Paintings</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=sculpture">Sculpture</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=sculpture" aria-label="Link to sculpture category">Sculpture</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=photography">Photography</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=photography" aria-label="Link to photography category">Photography</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=posters">Posters</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=posters" aria-label="Link to posters category">Posters</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=portraits">Portraits</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=portraits" aria-label="Link to portraits category">Portraits</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=contemporary">Contemporary</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=contemporary" aria-label="Link to contemporary category">Contemporary</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=abstract">Abstract</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=abstract" aria-label="Link to abstract category">Abstract</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=popart">Popart</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=popart" aria-label="Link to popart category">Popart</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=classical">Classic Art</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}?category=classical" aria-label="Link to classic art category">Classic Art</a>
                   </li>
                   <li>
                     <hr class="dropdown-divider" />
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{% url 'artwork_list' %}">View All</a>
+                    <a class="dropdown-item" href="{% url 'artwork_list' %}" aria-label="Link to view all artworks">View All</a>
                   </li>
                 </ul>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}">About</a>
+                <a class="nav-link" href="{% url 'about' %}" aria-label="Link to about page">About</a>
               </li>
             </ul>
             <ul class="navbar-nav ms-auto">
               {% if user.is_authenticated %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'account_logout' %}"><i class="bi bi-box-arrow-left"></i> Logout</a>
+                  <a class="nav-link" href="{% url 'account_logout' %}" aria-label="Link to logout"><i class="bi bi-box-arrow-left"></i> Logout</a>
                 </li>
               {% else %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'account_signup' %}"><i class="bi bi-pencil-square"></i> Sign-up</a>
+                  <a class="nav-link" href="{% url 'account_signup' %}" aria-label="Link to signup"><i class="bi bi-pencil-square"></i> Sign-up</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                  <a class="nav-link" href="{% url 'account_login' %}" aria-label="Link to login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
                 </li>
               {% endif %}
             </ul>
@@ -106,7 +106,7 @@
     <main>
       <div class="container-fluid no-side-spacing pt-5">
         <div class="row main-image">
-          <img src="https://res.cloudinary.com/dh4ck00n3/image/upload/v1700144138/vecteezy_Rainbow_Background_AP0121-01_cryntk.jpg" alt="main-image" class="img-fluid cropped-image" />
+          <img src="https://res.cloudinary.com/dh4ck00n3/image/upload/v1700144138/vecteezy_Rainbow_Background_AP0121-01_cryntk.jpg" alt="main-image" class="img-fluid cropped-image" aria-label="Main cover image artwork" />
         </div>
       </div>
       <div class="container-fluid no-side-spacing-grey">
@@ -127,10 +127,10 @@
       <div class="container-lg">
         <!-- Social Media Icons -->
         <div class="row gx-5 social-icons justify-content-center py-3">
-          <a href="https://facebook.com" target="_blank" class="social-icon"><i class="bi bi-facebook"></i></a>
-          <a href="https://instagram.com" target="_blank" class="social-icon"><i class="bi bi-instagram"></i></a>
-          <a href="https://threads.net" target="_blank" class="social-icon"><i class="bi bi-threads"></i></a>
-          <a href="https://pintrest.com" target="_blank" class="social-icon"><i class="bi bi-pinterest"></i></a>
+          <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Link to facebook page"><i class="bi bi-facebook"></i></a>
+          <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Link to instagram page"><i class="bi bi-instagram"></i></a>
+          <a href="https://threads.net" target="_blank" class="social-icon" aria-label="Link to threads page"><i class="bi bi-threads"></i></a>
+          <a href="https://pintrest.com" target="_blank" class="social-icon" aria-label="Link to pintrest page"><i class="bi bi-pinterest"></i></a>
         </div>
         <span class="text-light bg-dark">Copyright 2023 Emilia Dombek. All rights reserved.</span>
       </div>
