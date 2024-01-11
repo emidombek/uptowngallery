@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.sites",
-    "django_q",
     "uptowngallery.apps.UptowngalleryConfig",
     "allauth",
     "allauth.account",
@@ -202,14 +201,4 @@ LOGGING = {
             "level": "INFO",  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
         },
     },
-}
-
-Q_CLUSTER = {
-    "name": "DjangORM",
-    "workers": 1,
-    "timeout": 90,
-    "retry": 120,
-    "queue_limit": 50,
-    "bulk": 10,
-    "orm": "default",
 }
