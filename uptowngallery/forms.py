@@ -169,6 +169,23 @@ class CustomSignupForm(SignupForm):
 
 
 class BidForm(forms.ModelForm):
+    """
+    This form is used for placing bids in an auction. It is tied to the 'Bids' model.
+
+    The form only includes one field, 'amount', which represents the bid amount.
+    During the form's initialization, it accepts an 'auction' argument which is
+    used for additional validations.
+
+    The 'clean_amount' method is overridden to include custom validation logic:
+    - Ensures that the amount is not None and is a positive value.
+    - Validates that the bid amount is not lower than the auction's reserve price.
+    - Checks against the current highest bid in the auction to ensure that
+      the new bid is higher than any existing bids.
+
+    Raises a ValidationError if any of these conditions are not met, ensuring
+    the integrity of the bidding process.
+    """
+
     class Meta:
         model = Bids
         fields = ["amount"]
