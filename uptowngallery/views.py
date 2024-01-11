@@ -152,6 +152,11 @@ class PendingArtworksView(LoginRequiredMixin, View):
             Artwork, id=artwork_id, artist=request.user.profile
         )
         if action == "delete":
+            referencing_auctions = Auction.objects.filter(
+                artwork=artwork
+            )
+        if referencing_auctions.exists():
+            referencing_auctions.delete()
             artwork.delete()
             messages.success(request, "Artwork deleted successfully.")
             return redirect("pending_artworks")
