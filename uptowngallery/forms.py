@@ -74,6 +74,14 @@ class ArtworkCreateForm(forms.ModelForm):
         else:
             raise forms.ValidationError("This field is required.")
 
+    def clean_image(self):
+        image = self.cleaned_data.get("image")
+        if not image:
+            raise ValidationError(
+                _("An image is required for the artwork.")
+            )
+        return image
+
     def save(self, commit=True, user_profile=None):
         artwork = super().save(commit=False)
 
