@@ -9,7 +9,7 @@
       <div class="card bg-dark">
         <div class="row no-gutters">
           <div class="col-md-4">
-            <img src="{{ artwork.image.url }}" class="img-thumbnail" alt="{{ artwork.title }}" />
+            <img src="{{ artwork.image.url }}" class="img-thumbnail" alt="{{ artwork.title }}" aria-label="Artwork image" />
           </div>
           <div class="col-md-8">
             <div class="card-body">
@@ -34,14 +34,14 @@
                 </p>
               </div>
               <br />
-              <a href="{% url 'edit_artwork' artwork.id %}" class="btn btn-info">Edit</a>
+              <a href="{% url 'edit_artwork' artwork.id %}" class="btn btn-info" aria-label="Edit artwork button that links to edit artwork page">Edit</a>
               <br />
             </div>
             <form action="{% url 'pending_artworks' %}" method="post">
               {% csrf_token %}
               <input type="hidden" name="action" value="delete" />
               <input type="hidden" name="artwork_id" value="{{ artwork.id }}" />
-              <button type="submit" class="btn btn-danger">Delete Artwork</button>
+              <button type="submit" class="btn btn-danger" aria-label="Delete artwork button">Delete Artwork</button>
             </form>
           </div>
         </div>

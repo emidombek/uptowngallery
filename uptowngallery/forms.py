@@ -78,7 +78,7 @@ class ArtworkCreateForm(forms.ModelForm):
         image = self.cleaned_data.get("image")
         if not image:
             raise ValidationError(
-                _("An image is required for the artwork.")
+                ("An image is required for the artwork.")
             )
         return image
 
