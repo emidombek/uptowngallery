@@ -318,51 +318,6 @@ class UpdateProfileView(LoginRequiredMixin, View):
             )
 
 
-class UpdatePendingArtworkView(LoginRequiredMixin, View):
-    """
-    A view to update user profile fields. It accepts POST requests to update specific fields
-    of the user's profile based on a predefined field mapping.
-    Extract the field name and its new value from the POST request.
-    Retrieve the current user's profile.
-    Define a mapping between the field names accepted in the request and the actual
-    Check if the requested field is in the field mapping.
-    Update the specified field with the new value.
-    Send a signal indicating that the profile has been updated.
-    Return a success response as JSON.
-    If the field is not in the mapping, return an error response.
-    """
-
-    def post(self, request, *args, **kwargs):
-        field = request.POST.get("field")
-        value = request.POST.get("value")
-        user_profile = request.user.profile
-        field_mapping = {
-            "name": "name",
-            "shipping_address": "shipping_address",
-        }
-        if field in field_mapping:
-            setattr(user_profile, field_mapping[field], value)
-            user_profile.save()
-            profile_updated.send(
-                sender=self.__class__,
-                user=request.user,
-                field=field,
-                new_value=value,
-            )
-            return JsonResponse(
-                {
-                    "status": "success",
-                    "field": field,
-                    "new_value": value,
-                }
-            )
-        else:
-            return JsonResponse(
-                {"status": "error", "message": "Invalid field"},
-                status=400,
-            )
-
-
 class ActivityDashboardView(LoginRequiredMixin, View):
     """
     View for displaying and managing user's activity dashboard. It handles showing the user's bidding and selling
@@ -505,6 +460,36 @@ class SearchActiveAuctionArtworkView(View):
             # No search query was entered
             context["error"] = "Please enter a search term."
         return render(request, "artwork_list.html", context)
+
+
+class EditArtworkView(LoginRequiredMixin, View):
+    def get(self, request, artwork_id):
+        artwork = get_object_or_404(
+            Artwork, id=artwork_id, artist=request.user.profile
+        )
+        form = ArtworkCreateForm(instance=artwork)
+        return render(
+            request,
+            "edit_artwork.html",
+            {"form": form, "artwork": artwork},
+        )
+
+    def post(self, request, artwork_id):
+        artwork = get_object_or_404(
+            Artwork, id=artwork_id, artist=request.user.profile
+        )
+        form = ArtworkCreateForm(
+            request.POST, request.FILES, instance=artwork
+        )
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Artwork updated successfully.")
+            return redirect("pending_artworks")
+        return render(
+            request,
+            "edit_artwork.html",
+            {"form": form, "artwork": artwork},
+        )
 
 
 def handler404(request, exception):

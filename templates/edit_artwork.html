@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %} <!-- Load widget_tweaks if you're using it for form field classes -->
+
+{% block content %}
+  <div class="container mt-5 mb-5">
+    <h1 class="text-center mb-5">Edit Artwork</h1>
+    <div class="row justify-content-center custom-row-edit-artwork">
+      <div class="col-md-6">
+        <form method="post" enctype="multipart/form-data" class="custom-form-edit-artwork">
+          {% csrf_token %}
+          {% for field in form.visible_fields %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}" class="col-form-label">{{ field.label }}</label>
+              {{ field|add_class:'form-control' }}
+              {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+              {% endif %}
+              {{ field.errors }}
+            </div>
+          {% endfor %}
+          <div class="form-group mt-3">
+            <button type="submit" class="btn btn-info">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
