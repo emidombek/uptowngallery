@@ -29,6 +29,7 @@ body .container-fluid.no-side-spacing {
   padding-left: 0;
   margin-right: 0;
   margin-left: 0;
+  overflow: hidden;
 }
 
 .row.main-image {
