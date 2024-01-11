@@ -93,7 +93,6 @@ class CreateArtworkView(LoginRequiredMixin, CreateView):
     Set the 'approval_status' attribute of the form's instance to "pending"
     Call the parent class's `form_valid` method to continue processing the form submission if form is valid
     Save the form's instance to the database
-    Prints errors if form is not valid
     Logging the context data and returning it without modifications
     Logging the POST data and then calling the parent class's post method to handle the form submission
     """
@@ -109,8 +108,6 @@ class CreateArtworkView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("Form is invalid")
-        print(form.errors)
         messages.error(
             self.request,
             "Artwork creation failed. Please check the form.",
@@ -119,11 +116,9 @@ class CreateArtworkView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print("Context data:", context)
         return context
 
     def post(self, request, *args, **kwargs):
-        print("POST request data:", request.POST)
         return super().post(request, *args, **kwargs)
 
 

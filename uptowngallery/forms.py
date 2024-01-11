@@ -38,7 +38,6 @@ class ArtworkCreateForm(forms.ModelForm):
         cleaned_data = super().clean()
         image = cleaned_data.get("image")
         # I can add additional validation checks here if needed
-        print("Clean method executed")
 
     def __init__(self, *args, **kwargs):
         super(ArtworkCreateForm, self).__init__(*args, **kwargs)
@@ -109,7 +108,7 @@ class ArtworkCreateForm(forms.ModelForm):
                 )
 
             except Exception as e:
-                print(f"Error saving artwork: {e}")
+                logger.error(f"Error saving artwork: {e}")
 
         return artwork
 

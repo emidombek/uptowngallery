@@ -17,7 +17,7 @@ from django.utils import timezone
 from .admin import ArtworkAdmin
 from .forms import CustomSignupForm, ArtworkCreateForm, BidForm
 from .models import Artwork, UserProfile, Auction, Bids
-from .signals import user_signed_up, auction_closed, bid_placed
+from .signals import user_signed_up, auction_closed, bid_place
 
 
 class UserProfileModelTest(TestCase):
@@ -715,7 +715,6 @@ class SearchActiveAuctionArtworkViewTest(TestCase):
 
     def test_no_query(self):
         response = self.client.get(reverse("search_artworks"))
-        print(response.content)
         self.assertContains(response, "Please enter a search term.")
 
     def test_no_results(self):
@@ -774,9 +773,6 @@ class ArtworkCreateFormTest(TestCase):
             data=form_data, files={"image": image_file}
         )
         if not form.is_valid():
-            print(
-                "Validation errors in test_clean_method:", form.errors
-            )
             self.fail("Form did not validate with provided data.")
         else:
             self.assertEqual(
@@ -794,13 +790,6 @@ class ArtworkCreateFormTest(TestCase):
                 "auction_duration": 5,
             },
             follow=True,
-        )
-        print("Redirection:", response.redirect_chain)
-        print(
-            "Form Errors:",
-            response.context["form"].errors
-            if "form" in response.context
-            else "No form in context",
         )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "create_artwork.html")
@@ -829,7 +818,6 @@ class ArtworkCreateFormTest(TestCase):
             data=form_data, files={"image": image_file}
         )
         if not form.is_valid():
-            print("Validation errors in test_save_method:", form.errors)
             self.fail("Form did not validate with provided data.")
         else:
             artwork = form.save(commit=False)
