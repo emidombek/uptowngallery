@@ -71,20 +71,6 @@ body h1 {
   font-family: 'Major Mono Display', monospace;
 }
 
-body .h5,
-body .h6,
-body .h7,
-body .h8,
-body .h9,
-body .h10,
-body .h11,
-body .h12 {
-  font-size: 3rem;
-  font-family: Raleway, sans-serif;
-  font-weight: 600;
-  text-decoration: none;
-}
-
 .row .custom-card {
   transition: transform 0.3s;
   width: 17.5rem;
@@ -170,4 +156,18 @@ body .hover-link:hover {
 /* Apply bounce animation on hover to Bootstrap icon */
 .bi-arrow-down:hover {
   animation: bounce 0.5s ease infinite;
+}
+
+body .h5,
+body .h6,
+body .h7,
+body .h8,
+body .h9,
+body .h10,
+body .h11,
+body .h12 {
+  font-size: 3rem !important;
+  font-family: Raleway, sans-serif !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
 }

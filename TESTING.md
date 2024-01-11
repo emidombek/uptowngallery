@@ -3,7 +3,7 @@
 
 - [Full HTML Validation Report](#)
 
-- No errors or warnings were found when passing through the official [W3C](https://validator.w3.org/) validator. 
+- No errors or warnings were found when passing through the official [W3C](https://validator.w3.org/) validator by copying the copy from the . 
 
 ### CSS Validation:
 
