@@ -7,6 +7,23 @@ from django.contrib.auth import get_user_model
 from .models import UserProfile
 from django.core.exceptions import ValidationError
 
+"""
+ArtworkCreateForm: Django ModelForm for creating & validating artwork forms for auctions.
+- Auction Duration Choices: Offers 3, 5, or 7 days as auction duration options.
+- Fields: Includes fields from Artwork model except 'approved', 'auction_start'.
+- Custom Fields: 'auction_duration' with dropdown choices.
+- Validation:
+  - clean_reserve_price: Validates and formats reserve price as a positive decimal.
+  - clean_image: Ensures an image is provided for the artwork.
+- Initialization (__init__): Customizes 'reserve_price' field with specific attributes.
+- Save Method:
+  - Creates Artwork instance, optionally linking to a user profile.
+  - Uploads image to Cloudinary and saves the URL.
+  - Creates associated Auction object with status 'pending' and sets duration.
+Purpose: Manages creation and validation of artwork entries for auctions, including
+         reserve price formatting, image management, and auction duration settings.
+"""
+
 
 class ArtworkCreateForm(forms.ModelForm):
     AUCTION_DURATION_CHOICES = [
