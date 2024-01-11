@@ -1,16 +1,7 @@
 /**
- This script dynamically updates the navigation bar to highlight the active link
- based on the current page URL. It runs on document ready and performs the following actions:
- 
- Defines the `updateActiveNav` function to manage the active state of navigation links.
- It first removes the 'active' class from all navigation links.
- Then, it compares each navigation link's href attribute with the current window location.
- If a match is found, it adds the 'active' class to that link, highlighting it as active.
- 
- Invokes the `updateActiveNav` function immediately to set the correct active link when the page loads.
- 
- Binds the `updateActiveNav` function to the window's 'popstate' event.
- This ensures that the active link is updated correctly when navigating through browser history (back/forward buttons).
+ Toggles the edit mode for a specified field by changing the display
+of text, input elements, and edit/save icons.
+ @param {string} field - The field to be toggled (e.g., 'name', 'address').
  */
 function toggleEdit(field) {
   let textId = `${field}Text`;
@@ -23,7 +14,12 @@ function toggleEdit(field) {
   document.getElementById(editIconId).style.display = 'none';
   document.getElementById(saveIconId).style.display = 'inline';
 }
-
+/**
+ Maps a frontend field name to a corresponding backend field name.
+ If no mapping is found, returns the original field name.
+ @param {string} field - The frontend field name.
+ @returns {string} The mapped backend field name.
+ */
 function getBackendFieldName(field) {
   const fieldMapping = {
     'name': 'name',
@@ -31,7 +27,12 @@ function getBackendFieldName(field) {
   };
   return fieldMapping[field] || field;
 }
-
+/**
+ Saves the edited value of a field to the backend. Upon successful update,
+ it toggles back to display the updated text and hides the input field.
+ If the update fails, it logs the error.
+ @param {string} field - The field that has been edited.
+ */
 function saveEdit(field) {
   let backendField = getBackendFieldName(field);
   let inputId = `${field}Input`;
@@ -74,7 +75,12 @@ function getBackendFieldName(field) {
   };
   return fieldMapping[field] || field;
 }
-
+/**
+ Retrieves the value of a specified cookie by its name.
+ 
+ @param {string} name - The name of the cookie.
+ @returns {string|null} The value of the cookie, or null if not found.
+ */
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -89,7 +95,13 @@ function getCookie(name) {
   }
   return cookieValue;
 }
-
+/**
+ Toggles back the display from edit mode to text mode after a field's 
+ value has been successfully updated. It updates the text content and 
+ adjusts the visibility of the edit and save icons.
+ @param {string} field - The field that was edited.
+ @param {string} newValue - The new value of the field to display.
+ */
 function toggleBackToText(field, newValue) {
   let textId = `${field}Text`;
   let editIconId = `edit${field.charAt(0).toUpperCase() + field.slice(1)}Icon`;
