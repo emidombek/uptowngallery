@@ -307,7 +307,7 @@
  
   - Bug 1: I was having isses with the bidding function where the amounts where not being recorded in decimal format, this was resolved by changing the data type to decimal in the Bids model for the amount field.
   
-  - Bug 2: Search works in development but not in production, likely to do with enviromental variables.
+  - Bug 2: Search works in development but not in production, likely to do with enviromental variables such as middleware or the way static files are served.
 
   
 
