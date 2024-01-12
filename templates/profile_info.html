@@ -7,7 +7,7 @@
         <div class="card bg-dark text-light mb-5">
           <div class="row no-gutters">
             <div class="col-md-4">
-              <img src="https://res.cloudinary.com/dh4ck00n3/image/upload/v1701895696/u8e3mzqahxlnyrxzuz8h.jpg" alt="Default Profile" class="card-img" aria-label="Default profile img" />
+              <img src="https://res.cloudinary.com/dh4ck00n3/image/upload/v1701895696/u8e3mzqahxlnyrxzuz8h.jpg" alt="Default Profile" class="card-img" aria-label="Default profile img"/>
             </div>
             <div class="col-md-8">
               <div class="card-body">
@@ -16,14 +16,14 @@
                   <div>
                     <strong>Name:</strong>
                     <span id="nameText">{{ user.profile.name }}</span>
-                    <input type="text" id="nameInput" value="{{ user.profile.name }}" style="display:none;" />
+                    <input type="text" id="nameInput" value="{{ user.profile.name }}" style="display:none;"/>
                     <i id="editNameIcon" class="bi bi-pencil-square" onclick="toggleEdit('name')" aria-label="Edit Name"></i>
                     <i id="saveNameIcon" class="bi bi-save" onclick="saveEdit('name')" style="display:none;" aria-label="Save Name"></i>
                   </div>
                   <div>
                     <strong>Shipping Address:</strong>
                     <span id="shippingAddressText">{{ user.profile.shipping_address }}</span>
-                    <input type="text" id="shippingAddressInput" value="{{ user.profile.shipping_address }}" style="display:none;" />
+                    <input type="text" id="shippingAddressInput" value="{{ user.profile.shipping_address }}" style="display:none;"/>
                     <i id="editShippingAddressIcon" class="bi bi-pencil-square" onclick="toggleEdit('shippingAddress')" aria-label="Edit Shipping Address"></i>
                     <i id="saveShippingAddressIcon" class="bi bi-save" onclick="saveEdit('shippingAddress')" style="display:none;" aria-label="Save Shipping Address"></i>
                   </div>
