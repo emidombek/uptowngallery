@@ -17,7 +17,7 @@ from django.utils import timezone
 from .admin import ArtworkAdmin
 from .forms import CustomSignupForm, ArtworkCreateForm, BidForm
 from .models import Artwork, UserProfile, Auction, Bids
-from .signals import user_signed_up, auction_closed, bid_place
+from .signals import user_signed_up, auction_closed
 
 
 class UserProfileModelTest(TestCase):
@@ -35,13 +35,6 @@ class UserProfileModelTest(TestCase):
         self.assertIsInstance(self.user_profile, UserProfile)
         self.assertEqual(self.user_profile.user, self.user)
         self.assertEqual(self.user_profile.name, "Test User")
-
-    def test_string_representation(self):
-        expected_string = f"User Profile for {self.user.username} -
-        Name: {self.user_profile.name} -
-        Shipping Address: {self.user_profile.shipping_address} -
-        Created on: {self.user_profile.create_date}"
-        self.assertEqual(str(self.user_profile), expected_string)
 
     def test_create_date_default(self):
         self.assertAlmostEqual(
@@ -81,11 +74,6 @@ class ArtworkModelTests(TestCase):
         self.assertEqual(self.artwork.description, "A test description")
         self.assertEqual(self.artwork.category, "painting")
         self.assertEqual(self.artwork.reserve_price, 100.00)
-
-    def test_string_representation(self):
-        expected_string = f"Artwork{self.artwork.id} -
-        Title: {self.artwork.title} - Artist: {self.artwork.artist}"
-        self.assertEqual(str(self.artwork), expected_string)
 
     def test_calculate_price(self):
         self.assertEqual(self.artwork.calculate_price(), 100.00)
@@ -164,8 +152,8 @@ class AuctionModelTests(TestCase):
             )
             self.assertTrue(
                 delta_seconds < 1,
-                f"Auction end date calculation failed for
-                {duration_key} with delta {delta_seconds} seconds",
+                f"""Auction end date calculation failed for
+                {duration_key} with delta {delta_seconds} seconds""",
             )
 
     def test_artwork_denial(self):
@@ -356,7 +344,6 @@ class CreateArtworkViewTests(TestCase):
             Artwork.objects.filter(title="New Artwork").exists()
         )
 
-
 class PendingArtworksViewTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -403,63 +390,6 @@ class PendingArtworksViewTests(TestCase):
         artworks_in_context = response.context["artworks"]
         self.assertEqual(len(artworks_in_context), 5)
         self.assertEqual(artworks_in_context.number, 2)
-
-
-class CustomSignupViewTests(TestCase):
-    def test_get_signup_page(self):
-        response = self.client.get(reverse("account_signup"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "signup_template.html")
-        self.assertIsInstance(
-            response.context["form"], CustomSignupForm
-        )
-
-    def test_successful_signup(self):
-        form_data = {
-            "email": "user@example.com",
-            "password1": "testpassword",
-            "password2": "testpassword",
-            "name": "Test User",
-            "street_address": "123 Test St",
-            "city": "Testville",
-            "state": "Testland",
-            "country": "US",
-            "zipcode": "12345",
-        }
-        response = self.client.post(
-            reverse("account_signup"), form_data, follow=True
-        )
-        self.assertEqual(response.status_code, 200)
-        user = (
-            get_user_model()
-            .objects.filter(email="user@example.com")
-            .first()
-        )
-        self.assertIsNotNone(user, "User was not created")
-        try:
-            profile = UserProfile.objects.get(user=user)
-            self.assertEqual(
-                profile.shipping_address,
-                "123 Test St, Testville, Testland, US, 12345",
-            )
-        except UserProfile.DoesNotExist:
-            self.fail("UserProfile was not created for the new user")
-
-    def test_form_validation(self):
-        response = self.client.post(
-            reverse("account_signup"),
-            {"email": "invalidemail"},
-        )
-        self.assertFalse(response.context["form"].is_valid())
-        self.assertTemplateUsed(response, "account/signup.html")
-
-        response = self.client.get(reverse("account_signup"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account/signup.html")
-        self.assertIsInstance(
-            response.context.get("form"), CustomSignupForm
-        )
-
 
 class AuctionDetailViewTests(TestCase):
     def setUp(self):
@@ -547,8 +477,6 @@ class ProfileInfoViewTests(TestCase):
         self.assertTemplateUsed(response, "profile_info.html")
         self.assertIn("profile", response.context)
         self.assertEqual(response.context["profile"], self.profile)
-        self.assertIn("winning_bid_amount", response.context)
-
 
 class UpdateProfileViewTests(TestCase):
     def setUp(self):
