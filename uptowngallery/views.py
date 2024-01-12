@@ -19,6 +19,7 @@ from .forms import (
 )
 from .models import Artwork, Auction, Bids
 from .signals import bid_placed, profile_updated
+from django.http import HttpResponseNotFound, HttpResponseServerError
 
 
 class LandingPageView(View):
@@ -491,9 +492,7 @@ class EditArtworkView(LoginRequiredMixin, View):
         artwork = get_object_or_404(
             Artwork, id=artwork_id, artist=request.user.profile
         )
-        form = ArtworkEditForm(
-            instance=artwork
-        )
+        form = ArtworkEditForm(instance=artwork)
         return render(
             request,
             "edit_artwork.html",
@@ -515,12 +514,11 @@ class EditArtworkView(LoginRequiredMixin, View):
             {"form": form, "artwork": artwork},
         )
 
-
 def handler404(request, exception):
     """Error Handler 404 - Page Not Found"""
     return render(request, "errors/404.html", status=404)
 
-
 def handler500(request):
     """Error Handler 500 - Internal Server Error"""
     return render(request, "errors/500.html", status=500)
+
