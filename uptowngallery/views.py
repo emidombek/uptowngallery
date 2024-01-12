@@ -11,7 +11,12 @@ from django.views.generic.edit import CreateView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.middleware.csrf import get_token
-from .forms import ArtworkCreateForm, CustomSignupForm, BidForm
+from .forms import (
+    ArtworkCreateForm,
+    CustomSignupForm,
+    BidForm,
+    ArtworkEditForm,
+)
 from .models import Artwork, Auction, Bids
 from .signals import bid_placed, profile_updated
 
@@ -161,7 +166,7 @@ class PendingArtworksView(LoginRequiredMixin, View):
             messages.success(request, "Artwork deleted successfully.")
             return redirect("pending_artworks")
         elif action == "update":
-            form = ArtworkCreateForm(
+            form = ArtworkEditForm(
                 request.POST, request.FILES, instance=artwork
             )
             if form.is_valid():
@@ -467,7 +472,9 @@ class EditArtworkView(LoginRequiredMixin, View):
         artwork = get_object_or_404(
             Artwork, id=artwork_id, artist=request.user.profile
         )
-        form = ArtworkCreateForm(instance=artwork)
+        form = ArtworkEditForm(
+            instance=artwork
+        )  # Use the new form here
         return render(
             request,
             "edit_artwork.html",
@@ -478,9 +485,7 @@ class EditArtworkView(LoginRequiredMixin, View):
         artwork = get_object_or_404(
             Artwork, id=artwork_id, artist=request.user.profile
         )
-        form = ArtworkCreateForm(
-            request.POST, request.FILES, instance=artwork
-        )
+        form = ArtworkEditForm(request.POST, instance=artwork)
         if form.is_valid():
             form.save()
             messages.success(request, "Artwork updated successfully.")

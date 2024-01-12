@@ -31,6 +31,7 @@ class ArtworkCreateForm(forms.ModelForm):
         (5, "5 days"),
         (7, "7 days"),
     ]
+
     auction_duration = forms.ChoiceField(
         label="Duration",
         choices=AUCTION_DURATION_CHOICES,
@@ -52,6 +53,7 @@ class ArtworkCreateForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         image = cleaned_data.get("image")
+        print("Clean method executed")
 
     def __init__(self, *args, **kwargs):
         super(ArtworkCreateForm, self).__init__(*args, **kwargs)
@@ -73,6 +75,7 @@ class ArtworkCreateForm(forms.ModelForm):
                 raise forms.ValidationError(
                     "Please enter a valid reserve price in the format XXX.XX."
                 )
+
             if reserve_price < Decimal("0.00"):
                 raise forms.ValidationError(
                     "Reserve price must be positive."
@@ -83,28 +86,27 @@ class ArtworkCreateForm(forms.ModelForm):
         else:
             raise forms.ValidationError("This field is required.")
 
-    def clean_image(self):
-        image = self.cleaned_data.get("image")
-        if not image:
-            raise ValidationError(
-                ("An image is required for the artwork.")
-            )
-        return image
-
     def save(self, commit=True, user_profile=None):
         artwork = super().save(commit=False)
+
         if user_profile:
             artwork.artist = user_profile
+
         if commit:
-            artwork.save()
-            image = self.cleaned_data.get("image")
-            if image:
-                upload_result = cloudinary.uploader.upload(image)
-                artwork.image_url = upload_result.get("url")
-            duration = int(self.cleaned_data.get("auction_duration"))
-            Auction.objects.create(
-                artwork=artwork, status="pending", duration=duration
-            )
+            try:
+                artwork.save()
+                image = self.cleaned_data.get("image")
+                if image:
+                    upload_result = cloudinary.uploader.upload(image)
+                    artwork.image_url = upload_result.get("url")
+                duration = int(
+                    self.cleaned_data.get("auction_duration")
+                )
+                Auction.objects.create(
+                    artwork=artwork, status="pending", duration=duration
+                )
+            except Exception as e:
+                print(f"Error saving artwork: {e}")
 
         return artwork
 
@@ -216,3 +218,9 @@ class BidForm(forms.ModelForm):
                     "Your bid is not higher than the current highest bid."
                 )
         return amount
+
+
+class ArtworkEditForm(forms.ModelForm):
+    class Meta:
+        model = Artwork
+        fields = ["title", "description"]

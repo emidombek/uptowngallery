@@ -41,7 +41,8 @@
               {% csrf_token %}
               <input type="hidden" name="action" value="delete" />
               <input type="hidden" name="artwork_id" value="{{ artwork.id }}" />
-              <button type="submit" class="btn btn-danger" aria-label="Delete artwork button">Delete Artwork</button>
+              <br />
+              <button type="submit" class="btn btn-danger mb-3" aria-label="Delete artwork button">Delete Artwork</button>
             </form>
           </div>
         </div>
