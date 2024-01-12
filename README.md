@@ -1,5 +1,5 @@
 # Uptown Gallery Readme 📚
-![Devices Preview](static/docs/images/uptowngallerydevicespreview.png)
+![Devices Preview](docs/images/uptowngallerydevicespreview.png)
 
 [Link to Live Site Here](https://uptowngallery-c4ad28352563.herokuapp.com/)
 
@@ -78,13 +78,13 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
  ### 🖱 UX Concept
 
- ![Devices Preview](static/docs/images/uxconcept.png)
+ ![Devices Preview](docs/images/uxconcept.png)
 
  ### 🌊 User Type Flowcharts
 
-- [Buyer/Bidder](static/docs/images/buyer_flow.jpg)
-- [Seller/Artist](static/docs/images/seller_flow.jpg)
-- [Admin](static/docs/images/admin_flow.jpg)
+- [Buyer/Bidder](docs/images/buyer_flow.jpg)
+- [Seller/Artist](docs/images/seller_flow.jpg)
+- [Admin](docs/images/admin_flow.jpg)
 
  ### 🌈 Design System
 
@@ -95,17 +95,17 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
 
    This color palette was selected to reflect the game theme, mood, contrast, and accessibility for an immersive and user-friendly experience.
 
-   ![Color Palette](static/docs/images/uptown_gallery.png)
+   ![Color Palette](docs/images/uptown_gallery.png)
 
    This font was chosen for its bold and easy-to-read structure while maintaining the theme of the game.
 
    *Font*
 
-   ![Major Mono Display Font](static/docs/images/majormonofont.png)
+   ![Major Mono Display Font](docs/images/majormonofont.png)
 
    Major Mono Display imported from [Google Fonts](https://fonts.google.com/specimen/Major+Mono+Display?query=Major+Mono+Display)
 
-   ![Raleway 400](static/docs/images/raleway400.png)
+   ![Raleway 400](docs/images/raleway400.png)
 
    Raleway 400 imported from [Google Fonts](https://fonts.google.com/specimen/Major+Mono+Display?query=Major+Mono+Display)
 
@@ -132,7 +132,7 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
     + [JS](https://www.javascript.com/): the primary language used to develop interactive components of the website.
     + [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML): the markup language used to create the website.
     + [CSS](https://developer.mozilla.org/en-US/docs/Web/css): the styling language used to style the website.
-    + [Bootstrap] (https://icons.getbootstrap.com/): a CSS Framework used for developing responsive and mobile-first websites.
+    + [Bootstrap](https://icons.getbootstrap.com/): a CSS Framework used for developing responsive and mobile-first websites.
 
 - ### Frameworks and libraries:
 
@@ -169,7 +169,7 @@ Uptown Gallery is a vibrant and contemporary online platform dedicated to the wo
     + [Django Widget Tweaks](https://pypi.org/project/django-widget-tweaks/): Used to add extra classes to django html.
     + [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/): Used to debug various aspects during development.
     + [Cloudinary](https://cloudinary.com): Image/file cloud hosting service.
-    + [Whitenoise] (https://whitenoise.readthedocs.io/en/latest/): tool used in Django applications for serving static files.
+    + [Whitenoise](https://whitenoise.readthedocs.io/en/latest/): tool used in Django applications for serving static files.
 
   
 ## ✍ Agile Methodology
@@ -189,9 +189,9 @@ And then displayed on my Project Management Board:
 
 Sorted by Issue Status and Milestone, clicking into the issue allowed for viewing labels and updating them:
 
-  - [Project Board Screenshot](static/docs/images/projectdashboard.png)
+  - [Project Board Screenshot](docs/images/projectdashboard.png)
 
-  - [Added Labels Screenshot](static/docs/images/projectlabels.png)
+  - [Added Labels Screenshot](docs/images/projectlabels.png)
 
   - [Project Board Link](https://github.com/users/emidombek/projects/3/views/1) 
   
@@ -206,7 +206,7 @@ Please refer to the [FEATURES.md](FEATURES.md) file for all features-related doc
 * During develoopment the database was created using SQLite.
 * The database was then migrated to PostgreSQL.
 
-### [Database Schema ERD Diagram](static/docs/images/uptown_gallery_database_concept.jpg)
+### [Database Schema ERD Diagram](docs/images/uptown_gallery_database_concept.jpg)
 
 ### 🪄 Data Modeling
 
