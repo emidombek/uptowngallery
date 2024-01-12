@@ -1,4 +1,6 @@
-## Validation:
+# Testing 📝 
+
+## Validation ⚙:
 ### HTML Validation:
 
 - [Full HTML Validation Report](docs/HTMLValidation.pdf)
@@ -23,7 +25,7 @@
 
 - No errors were found when the code was passed through CI's [online validation tool](https://pep8ci.herokuapp.com/).According to the reports, the code is [Pep 8-compliant](https://legacy.python.org/dev/peps/pep-0008/).
   
-## Manual Testing
+## Manual Testing 🔨
 
 ### Index Page
 
@@ -285,25 +287,26 @@
 | 14           | Content Accuracy                  | All displayed information (mission, history, art forms, community programs) is accurate and up-to-date. | Expected Behavior | Pass      |          |
 | 15           | Overall User Experience           | The page provides a clear and informative user experience about the Uptown Art Gallery.                 | Expected Behavior | Pass      |          |
 
-## Python Testing 
+## Python Testing 🐍
 
 - [Python Coverage Report](docs/CoverageReportforPython.pdf)
 
-## Lighthouse Testing
+## Lighthouse Testing 💡
 
-- [Python Coverage Report](docs/CoverageReportforPython.pdf)
+- [Python Coverage Report](docs/LighthouseReports.pdf)
   
-## Issues/Bugs
+## Issues/Bugs 🐛
 
    ### Issues
 
-  - I encountered lots of issues while trying to get Jest for Javascript testing to run on machine, I utlimately opted for extensive manual testing in the interests of time. Javascript is not a large part of this project therefore manually testing the functionality should be sufficent. 
+  - Issue 1: I encountered lots of issues while trying to get Jest for Javascript testing to run on my machine, I utlimately opted for extensive manual testing in the interests of time. Javascript is not a large part of this project therefore manually testing the functionality should be sufficent. 
 
-  - I orginally opted for Django Q as a way to have tasks running in the background to close the auctions on time but the elephant SQL kept getting overwhelmed with the connects despite limiting them. I had to scrap this idea in the end due to the database crashes it was causing. 
-  
-  - I was having isses with the bidding function where the amounts where not being recorded in decimal format, this was resolved by changing the data type to decimal in the Bids model for the amount field.
+  - Issue 2: I orginally opted for Django Q as a way to have tasks running in the background to close the auctions on time but the elephant SQL kept getting overwhelmed with the connects despite limiting them. I had to scrap this idea in the end due to the database crashes it was causing. 
 
-  - My commits where huge I found it very time consuming to make smaller commits and just kept forgetting as well to keep them smaller. I will realize this and will improve. 
+  - Issue 3: My commits where huge I found it very time consuming to make smaller commits and just kept forgetting as well to keep them smaller. I will realize this and will improve. 
+ 
+  - Bug 1: I was having isses with the bidding function where the amounts where not being recorded in decimal format, this was resolved by changing the data type to decimal in the Bids model for the amount field.
+
   
 
 
