@@ -482,7 +482,6 @@ class SearchActiveAuctionArtworkView(View):
             page_obj = paginator.get_page(page_number)
             context["page_obj"] = page_obj
         else:
-            # No search query was entered
             context["error"] = "Please enter a search term."
         return render(request, "artwork_list.html", context)
 
@@ -494,7 +493,7 @@ class EditArtworkView(LoginRequiredMixin, View):
         )
         form = ArtworkEditForm(
             instance=artwork
-        )  # Use the new form here
+        )
         return render(
             request,
             "edit_artwork.html",
