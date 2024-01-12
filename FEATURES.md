@@ -36,33 +36,33 @@ Our footer includes links to our social media platforms, represented by Bootstra
 
 - Profile Customization: Once registered, users can view and update their profile information, including changing their name and address, ensuring a personalized experience.
   
-![Profile Info Page](docs/images/footer.png)
+![Profile Info Page](docs/images/profile.png)
 
 ## Browsing and Bidding on Artwork
 
 - Quick View Modal: Our site offers a 'Quick View' modal for each artwork, allowing users to glance at the essential details without leaving the page.
 
-![Quick View Modal](docs/images/footer.png)
+![Quick View Modal](docs/images/modal.png)
 
 - Detailed Auction Pages: For users interested in placing bids, clicking on an artwork opens a detailed auction page. Here, users can find in-depth information about the artwork and participate in the bidding process.
 
-![Custom Bootstrap Footer](docs/images/footer.png)
+![Detailed Auction View](docs/images/artworkdetails.png)
   
 ## Activity Dashboard
 
 - Comprehensive Activity Tracking: Users have access to an Activity Dashboard, where they can monitor all their interactions on the site, including bids placed, artworks followed, and more. This feature provides a central place to track their engagement with the gallery.
 
-![Custom Bootstrap Footer](docs/images/footer.png)
+![Activity Dashboard](docs/images/activity.png)
   
 ## Features for Sellers/Artists
 
 - Artwork Listing Creation: Artists and sellers on our platform can easily list their artworks for sale. This feature is designed to be intuitive, guiding sellers through the process of creating a listing.
 
-![Custom Bootstrap Footer](docs/images/footer.png)
+![Create Artwork Listing](docs/images/create.png)
 
 - Editing and Deletion of Listings: Sellers have the flexibility to edit or delete their listings while they are still pending approval, giving them control over their offerings.
 
-![Custom Bootstrap Footer](docs/images/footer.png)
+![Pending Listing Edit/Delete](docs/images/pendingartworks.png)
   
 ## Admin Panel for Artwork Management
 
@@ -70,5 +70,7 @@ Our footer includes links to our social media platforms, represented by Bootstra
 
 - Admin Capabilities: Admins have the ability to view, edit, delete, approve, or reject artwork listings. This control ensures that only suitable and high-quality artworks are available on the site, maintaining the integrity and reputation of the Uptown Gallery.
 
-![Custom Bootstrap Footer](docs/images/footer.png)
+![Admin View + Actions](docs/images/admin1.png)
+
+![Admin View + Actions](docs/images/admin2.png)
 
