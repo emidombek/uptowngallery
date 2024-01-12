@@ -43,7 +43,8 @@ class ArtworkListView(View):
     """
     Gets the category from the request
     Filters by category
-    Annotate each artwork with the ID of its most recent active auction
+    Annotate each artwork with the
+    ID of its most recent active auction
     Prefetch the related recent active auction for each artwork
     Implement Pagination,show 10 artworks per page
     Pass the category to the template
@@ -96,10 +97,12 @@ class CreateArtworkView(LoginRequiredMixin, CreateView):
     Set initial auction-related fields in the Artwork instance to None,
     sets user as artist
     Set the 'approval_status' attribute of the form's instance to "pending"
-    Call the parent class's `form_valid` method to continue processing the form submission if form is valid
+    Call the parent class's `form_valid` method to
+    continue processing the form submission if form is valid
     Save the form's instance to the database
     Logging the context data and returning it without modifications
-    Logging the POST data and then calling the parent class's post method to handle the form submission
+    Logging the POST data and then calling the
+    parent class's post method to handle the form submission
     """
 
     template_name = "create_artwork.html"
@@ -129,7 +132,8 @@ class CreateArtworkView(LoginRequiredMixin, CreateView):
 
 class PendingArtworksView(LoginRequiredMixin, View):
     """
-    Filter artworks to show only pending artworks of the current user
+    Filter artworks to show
+    only pending artworks of the current user
     Paginate the artworks,
     show 10 artworks per page
     """
@@ -200,7 +204,8 @@ class AuctionDetailView(LoginRequiredMixin, View):
     Fetch artwork and auction or return 404 if not found
     Get all bids for the auction,
     calculate current highest bid or use reserve price
-    Prepare context and render appropriate template based on request type (AJAX or regular)
+    Prepare context and render
+    appropriate template based on request type (AJAX or regular)
     Fetch artwork and auction for bid processing
     Process bid form
     Save bid data, send signal, and redirect on successful bid
@@ -280,11 +285,13 @@ class ProfileInfoView(LoginRequiredMixin, View):
 
 class UpdateProfileView(LoginRequiredMixin, View):
     """
-    A view to update user profile fields. It accepts POST requests to update specific fields
+    A view to update user profile fields.
+    It accepts POST requests to update specific fields
     of the user's profile based on a predefined field mapping.
     Extract the field name and its new value from the POST request.
     Retrieve the current user's profile.
-    Define a mapping between the field names accepted in the request and the actual
+    Define a mapping between the field names accepted in the
+    request and the actual
     Check if the requested field is in the field mapping.
     Update the specified field with the new value.
     Send a signal indicating that the profile has been updated.
@@ -325,8 +332,10 @@ class UpdateProfileView(LoginRequiredMixin, View):
 
 class ActivityDashboardView(LoginRequiredMixin, View):
     """
-    View for displaying and managing user's activity dashboard. It handles showing the user's bidding and selling
-    activities, their active and closed auctions, and allows for deletion of closed auctions.
+    View for displaying and managing user's activity dashboard.
+    It handles showing the user's bidding and selling
+    activities, their active and closed auctions,
+    and allows for deletion of closed auctions.
     Retrieve the UserProfile instance
     Fetch bidding activity
     Fetch selling activity
@@ -337,7 +346,8 @@ class ActivityDashboardView(LoginRequiredMixin, View):
 
     def get(self, request):
         """
-        Handles GET requests. Fetches and displays the user's bidding activity, selling activity, active auctions,
+        Handles GET requests. Fetches and displays
+        the user's bidding activity, selling activity, active auctions,
         and closed auctions with final prices.
         """
         user_profile = request.user.profile
@@ -372,8 +382,11 @@ class ActivityDashboardView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         """
-        Handles POST requests. Used for deleting closed auctions that belong to the user. Validates auction status
-        before deletion and provides appropriate success or error messages.
+        Handles POST requests.
+        Used for deleting closed auctions that belong to the user.
+        Validates auction status
+        before deletion and provides appropriate
+        success or error messages.
         """
         auction_id = request.POST.get("auction_id")
 
@@ -408,14 +421,21 @@ class AboutView(TemplateView):
 
 class SearchActiveAuctionArtworkView(View):
     """
-    A view to handle searching for artworks in active auctions. It accepts a search query and
-    returns artworks that match the query criteria (title, approval status, and active auction status).
+    A view to handle searching for artworks
+    in active auctions.
+    It accepts a search query and
+    returns artworks that match the
+    query criteria (title, approval status,
+    and active auction status).
     """
 
     def get(self, request):
         """
-        Processes GET requests to perform a search based on a query string. It filters artworks by title,
-        ensuring they are approved and part of active auctions. The view supports pagination and shows the results
+        Processes GET requests to perform
+        a search based on a query string.
+        It filters artworks by title,
+        ensuring they are approved and part of active auctions.
+        The view supports pagination and shows the results
         on an artwork list page.
         """
         query = request.GET.get("query", "").strip()

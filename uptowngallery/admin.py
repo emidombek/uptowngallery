@@ -8,7 +8,8 @@ from .signals import artwork_approved, artwork_denied
 
 class ArtworkAdmin(admin.ModelAdmin):
     """
-    Custom admin interface for the Artwork model. Defines how artworks are displayed,
+    Custom admin interface for the Artwork model.
+    Defines how artworks are displayed,
     filtered, and modified in the Django admin interface.
     """
 
@@ -51,7 +52,9 @@ class ArtworkAdmin(admin.ModelAdmin):
 
     def delete_queryset(self, request, queryset):
         """
-        This method is called when admin tries to delete artworks in bulk from the admin interface.
+        This method is called when admin
+        tries to delete artworks in bulk
+        from the admin interface.
         """
         with transaction.atomic():
             for artwork in queryset:
@@ -60,7 +63,8 @@ class ArtworkAdmin(admin.ModelAdmin):
 
     def delete_model(self, request, obj):
         """
-        This method is called when an admin tries to delete a single artwork instance.
+        This method is called when an admin
+        tries to delete a single artwork instance.
         """
         with transaction.atomic():
             Auction.objects.filter(artwork=obj).delete()

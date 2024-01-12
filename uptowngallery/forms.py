@@ -10,20 +10,34 @@ from django.core.exceptions import ValidationError
 
 class ArtworkCreateForm(forms.ModelForm):
     """
-    ArtworkCreateForm: Django ModelForm for creating & validating artwork forms for auctions.
-    - Auction Duration Choices: Offers 3, 5, or 7 days as auction duration options.
-    - Fields: Includes fields from Artwork model except 'approved', 'auction_start'.
-    - Custom Fields: 'auction_duration' with dropdown choices.
-    - Validation:
-      - clean_reserve_price: Validates and formats reserve price as a positive decimal.
-      - clean_image: Ensures an image is provided for the artwork.
-    - Initialization (__init__): Customizes 'reserve_price' field with specific attributes.
-    - Save Method:
-      - Creates Artwork instance, optionally linking to a user profile.
-      - Uploads image to Cloudinary and saves the URL.
-      - Creates associated Auction object with status 'pending' and sets duration.
-    Purpose: Manages creation and validation of artwork entries for auctions, including
-             reserve price formatting, image management, and auction duration settings.
+    ArtworkCreateForm:
+    Django ModelForm for creating & validating
+    artwork forms for auctions.
+    Auction Duration Choices:
+    Offers 3, 5, or 7 days as auction duration options.
+    Fields:
+    Includes fields from Artwork model
+    except 'approved', 'auction_start'.
+    Custom Fields:
+    'auction_duration'
+    with dropdown choices.
+    Validation:
+    clean_reserve_price:
+    Validates and formats reserve
+    price as a positive decimal.
+    Initialization (__init__):
+    Customizes 'reserve_price'
+    field with specific attributes.
+    Save Method:
+    Creates Artwork instance,
+    optionally linking to a user profile.
+    ploads image to Cloudinary and saves the URL.
+    Creates associated Auction object with status
+    'pending' and sets duration.
+    Purpose: Manages creation and
+    validation of artwork entries for auctions, including
+    reserve price formatting, image management,
+    and auction duration settings.
     """
 
     AUCTION_DURATION_CHOICES = [
@@ -57,10 +71,10 @@ class ArtworkCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ArtworkCreateForm, self).__init__(*args, **kwargs)
-        widget=forms.NumberInput(attrs={
+        widget = forms.NumberInput(attrs={
             'step': '0.01',
             'class': 'form-control custom-reserve',
-            'title': 'Enter a number with up to two decimal places. e.g., 300 or 300.00'
+            'title': 'Enter a number with upto two decimal places.'
         })
 
     def clean_reserve_price(self):
@@ -112,20 +126,25 @@ class ArtworkCreateForm(forms.ModelForm):
 
 class CustomSignupForm(SignupForm):
     """
-    This form extends the default SignupForm for user registration.
-    Additional fields are added to capture more user details like name,
-    address, city, state, country, and zipcode. These details are
-    important for maintaining user profiles and for shipping purposes.
+    This form extends the default
+    SignupForm for user registration.
+    Additional fields are added to
+    capture more user details like name,
+    address, city, state, country,
+    and zipcode. These details are
+    important for maintaining user
+    profiles and for shipping purposes.
 
-    The form also overrides the save method to save the additional
-    information into the UserProfile model, ensuring that all user
+    The form also overrides
+    the save method to save the additional
+    information into the UserProfile model,
+    ensuring that all user
     data is captured and stored correctly.
     """
-
     name = forms.CharField(max_length=255, required=True, label="Name")
     street_address = forms.CharField(
         max_length=255, label="Street Address"
-    )
+        )
     city = forms.CharField(max_length=255, label="City")
     state = forms.CharField(max_length=255, label="State")
     country = forms.ChoiceField(
@@ -171,20 +190,26 @@ class CustomSignupForm(SignupForm):
 
 class BidForm(forms.ModelForm):
     """
-    This form is used for placing bids in an auction. It is tied to the 'Bids' model.
+    This form is used for placing bids in an auction.
+    It is tied to the 'Bids' model.
 
-    The form only includes one field, 'amount', which represents the bid amount.
-    During the form's initialization, it accepts an 'auction' argument which is
+    The form only includes one field,
+    'amount', which represents the bid amount.
+    During the form's initialization,
+    it accepts an 'auction' argument which is
     used for additional validations.
 
-    The 'clean_amount' method is overridden to include custom validation logic:
-    - Ensures that the amount is not None and is a positive value.
-    - Validates that the bid amount is not lower than the auction's reserve price.
-    - Checks against the current highest bid in the auction to ensure that
-      the new bid is higher than any existing bids.
+    The 'clean_amount' method is overridden
+    to include custom validation logic:
+    Ensures that the amount is not None
+    and is a positive value.
+    Validates that the bid amount is not
+    lower than the auction's reserve price.
+    Checks against the current highest bid in the auction to ensure that
+    the new bid is higher than any existing bids.
 
-    Raises a ValidationError if any of these conditions are not met, ensuring
-    the integrity of the bidding process.
+    Raises a ValidationError if any of these conditions are not met,
+    ensuring the integrity of the bidding process.
     """
 
     class Meta:
