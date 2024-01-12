@@ -9,7 +9,7 @@
     <div class="row justify-content-center mb-4">
       <div class="col-md-6">
         <div class="alert alert-info">
-          <strong>Instructions:</strong> Looking to sell? You can create a artwork auction listing by filling out the below form. Provide accurate details for your artwork to enhance it's listing. Make sure to upload a high-quality image for better visibility.
+          <strong>Instructions:</strong> Looking to sell? You can create an artwork auction listing by filling out the below form. Provide accurate details for your artwork to enhance its listing. Make sure to upload a high-quality image for better visibility.
         </div>
       </div>
     </div>
@@ -18,49 +18,48 @@
         <form method="post" enctype="multipart/form-data" class="custom-form-create-artwork">
           {% csrf_token %}
           <div class="form-group">
-            <label for="{{ form.title.id_for_label }}" class="col-form-label">{{ form.title.label_tag }}</label>
+            {{ form.title.label_tag }}
             {{ form.title|add_class:'form-control custom-title' }}
-            <small class="form-text text-muted">{{ form.title.widget.attrs.placeholder }}</small>
+            <small class="form-text text-muted">{{ form.title.help_text }}</small>
             {{ form.title.errors }}
           </div>
           <div class="form-group">
-            <label for="{{ form.description.id_for_label }}" class="col-form-label">{{ form.description.label_tag }}</label>
+            {{ form.description.label_tag }}
             {{ form.description|add_class:'form-control custom-description' }}
-            <small class="form-text text-muted">{{ form.description.widget.attrs.placeholder }}</small>
+            <small class="form-text text-muted">{{ form.description.help_text }}</small>
             {{ form.description.errors }}
           </div>
           <div class="form-group">
-            <label for="{{ form.image.id_for_label }}" class="col-form-label">{{ form.image.label_tag }}</label>
+            {{ form.image.label_tag }}
             {{ form.image|add_class:'form-control custom-image' }}
-            <small class="form-text text-muted">{{ form.image.widget.attrs.placeholder }}</small>
+            <small class="form-text text-muted">{{ form.image.help_text }}</small>
             {{ form.image.errors }}
           </div>
           <div class="form-group">
-            <label for="{{ form.category.id_for_label }}" class="col-form-label">{{ form.category.label_tag }}</label>
+            {{ form.category.label_tag }}
             {{ form.category|add_class:'form-control custom-category' }}
-            <small class="form-text text-muted">{{ form.category.widget.attrs.placeholder }}</small>
+            <small class="form-text text-muted">{{ form.category.help_text }}</small>
             {{ form.category.errors }}
           </div>
           <div class="form-group">
-            <label for="{{ form.reserve_price.id_for_label }}" class="col-form-label">{{ form.reserve_price.label_tag }}</label>
+            {{ form.reserve_price.label_tag }}
             <div class="input-group">
               {{ form.reserve_price|add_class:'form-control custom-reserve' }}
               <div class="input-group-append">
                 <span class="input-group-text">.00</span>
               </div>
             </div>
-            <small class="form-text text-muted">{{ form.reserve_price.widget.attrs.placeholder }}</small>
+            <small class="form-text text-muted">{{ form.reserve_price.help_text }}</small>
             {{ form.reserve_price.errors }}
           </div>
           <div class="form-group">
-            <label for="{{ form.auction_duration.id_for_label }}" class="col-form-label">{{ form.auction_duration.label_tag }}</label>
-            {{ form.auction_duration }}
-            <small class="form-text text-muted">{{ form.auction_duration.widget.attrs.placeholder }}</small>
+            {{ form.auction_duration.label_tag }}
+            {{ form.auction_duration|add_class:'form-control' }}
+            <small class="form-text text-muted">{{ form.auction_duration.help_text }}</small>
             {{ form.auction_duration.errors }}
           </div>
           <div class="form-group mt-3">
             <button type="submit" class="btn btn-info" aria-label="Submit button">Submit</button>
-            <br />
             {{ form.non_field_errors }}
           </div>
         </form>
@@ -69,7 +68,7 @@
     <div class="row justify-content-center mt-4">
       <div class="col-md-6">
         <div class="alert alert-warning">
-          <strong>Important:</strong>We carefully curate each piece of art listing for sale with us. Your artwork will go through a screening process and you will be notified once the auction is active. Please allow a few hours for review.
+          <strong>Important:</strong> We carefully curate each piece of art listing for sale with us. Your artwork will go through a screening process and you will be notified once the auction is active. Please allow a few hours for review.
         </div>
       </div>
     </div>

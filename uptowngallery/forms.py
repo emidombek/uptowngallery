@@ -57,12 +57,11 @@ class ArtworkCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ArtworkCreateForm, self).__init__(*args, **kwargs)
-        self.fields["reserve_price"].widget.attrs.update(
-            {
-                "pattern": r"\d+(\.\d{2})?",
-                "title": "Enter a number with up to two decimal places. e.g., 300 or 300.00",
-            }
-        )
+        widget=forms.NumberInput(attrs={
+            'step': '0.01',
+            'class': 'form-control custom-reserve',
+            'title': 'Enter a number with up to two decimal places. e.g., 300 or 300.00'
+        })
 
     def clean_reserve_price(self):
         reserve_price = self.cleaned_data.get("reserve_price")
