@@ -60,8 +60,8 @@ def update_or_create_auction(sender, instance, created, **kwargs):
     it triggers the auction approval process.
     """
     logger.info(
-        f"Artwork post_save signal
-        triggered for Artwork ID: {instance.id}, Created: {created}"
+        f"""Artwork post_save signal
+        triggered for Artwork ID: {instance.id}, Created: {created}"""
     )
     if instance.approval_status == "approved":
         instance.approve_and_start_auction()
@@ -161,9 +161,9 @@ def send_notification_emails(sender, bid, user, **kwargs):
     """
     send_mail(
         subject="Bid Confirmation",
-        message=f"Your bid of {bid.amount} has been
+        message=f"""Your bid of {bid.amount} has been
         placed successfully on {bid.auction.artwork.title}.",
-        from_email="mailto@uptownfgallery.com",
+        from_email="mailto@uptownfgallery.com""",
         recipient_list=[user.email],
         fail_silently=False,
     )
@@ -171,9 +171,9 @@ def send_notification_emails(sender, bid, user, **kwargs):
     if artist and hasattr(artist, "email") and artist.email:
         send_mail(
             subject="New Bid Placed on Your Artwork",
-            message=f"A new bid of {bid.amount}has been placed
+            message=f"""A new bid of {bid.amount}has been placed
             on your artwork '{bid.auction.artwork.title}'
-            by user {user.username}.",
+            by user {user.username}.""",
             from_email="mailto@uptownfgallery.com",
             recipient_list=[artist.email],
             fail_silently=False,

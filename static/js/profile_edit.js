@@ -1,4 +1,4 @@
-/**
+/*
  Toggles the edit mode for a specified field by changing the display
 of text, input elements, and edit/save icons.
  @param {string} field - The field to be toggled (e.g., 'name', 'address').
@@ -14,7 +14,7 @@ function toggleEdit(field) {
   document.getElementById(editIconId).style.display = 'none';
   document.getElementById(saveIconId).style.display = 'inline';
 }
-/**
+/*
  Maps a frontend field name to a corresponding backend field name.
  If no mapping is found, returns the original field name.
  @param {string} field - The frontend field name.
@@ -95,7 +95,7 @@ function getCookie(name) {
   }
   return cookieValue;
 }
-/**
+/*
  Toggles back the display from edit mode to text mode after a field's 
  value has been successfully updated. It updates the text content and 
  adjusts the visibility of the edit and save icons.

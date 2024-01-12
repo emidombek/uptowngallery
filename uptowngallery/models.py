@@ -43,9 +43,9 @@ class UserProfile(models.Model):
     )
 
     def __str__(self):
-        return f"User Profile for {self.user.username} -
+        return f"""User Profile for {self.user.username} -
         Name: {self.name} - Shipping Address: {self.shipping_address} -
-        Created on: {self.create_date}"
+        Created on: {self.create_date}"""
 
 
 class Artwork(models.Model):
@@ -150,8 +150,8 @@ class Artwork(models.Model):
         return self.reserve_price
 
     def __str__(self):
-        return f"Artwork #{self.id} -
-        Title: {self.title} - Artist: {self.artist}"
+        return f"""Artwork #{self.id} -
+        Title: {self.title} - Artist: {self.artist}"""
 
     def approve_and_start_auction(self):
         """
