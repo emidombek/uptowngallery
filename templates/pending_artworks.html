@@ -4,12 +4,18 @@
 {% endblock %}
 {% block content %}
   <h1 class="text-center mt-5 mb-5">Pending Artworks</h1>
+  <div class="alert alert-info">
+    <strong>Alert:</strong> Your artwork is currently in pending status and will need to be reviewed and approved by an Admin in our backend system to display on the website as an auction.
+  </div>
+  <div class="alert alert-info">
+    <strong>Tip:</strong> You can view the status of your artwork in your Profile under the Selling Activity section. You can edit or delete any pending artwork on this page.
+  </div>
   {% for artwork in artworks %}
     <div class="container mt-5 mb-5 bg-dark text-light">
       <div class="card bg-dark">
         <div class="row no-gutters">
           <div class="col-md-4">
-            <img src="{{ artwork.image.url }}" class="img-thumbnail" alt="{{ artwork.title }}" aria-label="Artwork image"/>
+            <img src="{{ artwork.image.url }}" class="img-thumbnail" alt="{{ artwork.title }}" aria-label="Artwork image" />
           </div>
           <div class="col-md-8">
             <div class="card-body">
@@ -33,15 +39,15 @@
                   <strong class="text-light">Approval Status:</strong> {{ artwork.approval_status }}
                 </p>
               </div>
-              <br/>
+              <br />
               <a href="{% url 'edit_artwork' artwork.id %}" class="btn btn-info" aria-label="Edit artwork button that links to edit artwork page">Edit</a>
-              <br/>
+              <br />
             </div>
             <form action="{% url 'pending_artworks' %}" method="post">
               {% csrf_token %}
-              <input type="hidden" name="action" value="delete"/>
-              <input type="hidden" name="artwork_id" value="{{ artwork.id }}"/>
-              <br/>
+              <input type="hidden" name="action" value="delete" />
+              <input type="hidden" name="artwork_id" value="{{ artwork.id }}" />
+              <br />
               <button type="submit" class="btn btn-danger mb-3" aria-label="Delete artwork button">Delete Artwork</button>
             </form>
           </div>
