@@ -6,15 +6,12 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6 text-center">
-        <h1 class="display-1">500</h1>
-        <p class="lead text-danger">Oh! It seems that there are some internal problems with the server.</p>
-        <a href="{% url 'home' %}" aria-label="Go to Tags page" class="btn btn-primary btn-lg">
-          <i class="bi bi-arrow-left-circle"></i>
-          Back to Page
-        </a>
+  <div class="d-flex justify-content-center align-items-center">
+    <div class="text-center">
+      <h1 class="dashboard__main--name mt-3 mb-3">Error 500</h1>
+      <strong>Oh! It seems that we are having some internal issues.</strong>
+      <div class="mt-3">
+        <a href="{% url 'home' %}" aria-label="Go to home page" class="btn btn-info mb-3"><i class="bi bi-shop"></i> Back to page</a>
       </div>
     </div>
   </div>

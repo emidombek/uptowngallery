@@ -7,15 +7,12 @@
 {% endblock %}
 
 {% block content %}
-  <div class="dashboard">
-    <div class="dashboard__form form__delete warning__msg">
-      <h1 class="dashboard__main--name">404</h1>
+  <div class="d-flex justify-content-center align-items-center">
+    <div class="text-center">
+      <h1 class="dashboard__main--name mt-3 mb-3">Error 404</h1>
       <strong>Oh! It seems that this page doesn't exist.</strong>
-      <div class="form__btns accent">
-        <a href="{% url 'home' %}" aria-label="Go to Tags page" class="btn btn__getstarted">
-          <i class="fas fa-store"></i>
-          Back to page
-        </a>
+      <div class="mt-3">
+        <a href="{% url 'home' %}" aria-label="Go to home page" class="btn btn-info mb-3"><i class="bi bi-shop"></i> Back to page</a>
       </div>
     </div>
   </div>
