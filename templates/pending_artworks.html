@@ -10,6 +10,11 @@
   <div class="alert alert-warning">
     <strong>Tip:</strong> You can view the status of your artwork in your Profile under the Selling Activity section. You can edit or delete any pending artwork on this page.
   </div>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} mt-4" role="alert">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
   {% for artwork in artworks %}
     <div class="container mt-5 mb-5 bg-dark text-light">
       <div class="card bg-dark">

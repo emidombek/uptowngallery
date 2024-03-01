@@ -500,7 +500,6 @@ class EditArtworkView(LoginRequiredMixin, View):
             "edit_artwork.html",
             {"form": form, "artwork": artwork},
         )
-
     def post(self, request, artwork_id):
         artwork = get_object_or_404(
             Artwork, id=artwork_id, artist=request.user.profile
@@ -510,11 +509,10 @@ class EditArtworkView(LoginRequiredMixin, View):
             form.save()
             messages.success(request, "Artwork updated successfully.")
             return redirect("pending_artworks")
-        return render(
-            request,
-            "edit_artwork.html",
-            {"form": form, "artwork": artwork},
-        )
+        else:
+            messages.error(request, "Update failed. Please check the form for errors.")
+            return render(request, "edit_artwork.html", {"form": form, "artwork": artwork})
+
 
 def handler404(request, exception):
     """Error Handler 404 - Page Not Found"""
