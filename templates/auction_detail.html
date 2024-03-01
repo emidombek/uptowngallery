@@ -13,19 +13,19 @@
         <div class="card bg-dark text-light border-info mb-5">
           <div class="row no-gutters">
             <div class="col-md-6 d-flex align-items-center justify-content-center">
-              <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ms-5" aria-label="Artwork Image" style="max-height: 500px; object-fit: contain;"/>
+              <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ms-5" aria-label="Artwork Image" style="max-height: 500px; object-fit: contain;" />
             </div>
             <div class="col-md-6">
               <div class="card-body">
                 <h2 class="card-title ms-5 mt-3 mb-3">{{ auction.artwork.title }}</h2>
                 <p class="card-text mb-3 ms-5 border-dark">
-                  <strong>Description:</strong> {{ auction.artwork.description }}<br/><br/>
-                  <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'F j, Y H:i' }}<br/><br/>
-                  <strong>Auction End Date:</strong> {{ auction.end_date|date:'F j, Y H:i' }}<br/><br/>
-                  <strong>Category:</strong> {{ auction.artwork.get_category_display }}<br/><br/>
-                  <strong>Artist:</strong> {{ auction.artwork.artist.name }}<br/><br/>
-                  <strong>Number of Bids:</strong> {{ auction.bids.count }}<br/><br/>
-                  <strong>Current Price:</strong> {{ current_price|floatformat:'2' }}<br/><br/>
+                  <strong>Description:</strong> {{ auction.artwork.description }}<br /><br />
+                  <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'F j, Y H:i' }}<br /><br />
+                  <strong>Auction End Date:</strong> {{ auction.end_date|date:'F j, Y H:i' }}<br /><br />
+                  <strong>Category:</strong> {{ auction.artwork.get_category_display }}<br /><br />
+                  <strong>Artist:</strong> {{ auction.artwork.artist.name }}<br /><br />
+                  <strong>Number of Bids:</strong> {{ auction.bids.count }}<br /><br />
+                  <strong>Current Price:</strong> {{ current_price|floatformat:'2' }}<br /><br />
                 </p>
                 {% if user.is_authenticated and auction.artwork.artist.user != user %}
                   <h3 class="ms-5 mt-3 mb-3">Place My Bid</h3>
@@ -38,6 +38,10 @@
                     </div>
                     <button type="submit" class="btn btn-info mt-2 mb-3 ms-5" aria-label="Submit bid button">Submit Bid</button>
                   </form>
+                {% else %}
+                  <div class="text-center mt-2 mb-3">
+                    <a href="{% url 'account_login' %}?next={% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info">Log in to Bid</a>
+                  </div>
                 {% endif %}
               </div>
             </div>
