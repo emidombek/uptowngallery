@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models import Q, Max, Prefetch
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views import View
@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import AccessMixin
 from django.middleware.csrf import get_token
 from .forms import (
     ArtworkCreateForm,
@@ -21,7 +22,12 @@ from .models import Artwork, Auction, Bids
 from .signals import bid_placed, profile_updated
 from django.http import HttpResponseNotFound, HttpResponseServerError
 
-
+class CustomLoginRequiredMixin(AccessMixin):
+    """Require login only for POST requests."""
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'POST' and not request.user.is_authenticated:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
 class LandingPageView(View):
     """
     Retrieve 10 most recent artowrks to display
@@ -200,7 +206,7 @@ def signup_view(request):
     return render(request, "account/signup.html", {"form": form})
 
 
-class AuctionDetailView(LoginRequiredMixin, View):
+class AuctionDetailView(CustomLoginRequiredMixin, View):
     """
     Fetch artwork and auction or return 404 if not found
     Get all bids for the auction,
@@ -239,6 +245,8 @@ class AuctionDetailView(LoginRequiredMixin, View):
             return render(request, "auction_detail.html", context)
 
 def post(self, request, artwork_id, auction_id):
+    if not request.user.is_authenticated:
+        return redirect('%s?next=%s' % (reverse('login'), request.path))
     artwork = get_object_or_404(Artwork, pk=artwork_id)
     auction = get_object_or_404(Auction, pk=auction_id, artwork=artwork)
     # Check if the current user is the seller of the auction
