@@ -80,7 +80,7 @@ class Artwork(models.Model):
     description = models.TextField(
         null=True, verbose_name="Description"
     )
-    image = CloudinaryField(null=True, blank=True, verbose_name="Image")
+    image = CloudinaryField(null=False, blank=False, verbose_name="Image")
 
     CATEGORY_CHOICES = [
         ("painting", "Painting"),
