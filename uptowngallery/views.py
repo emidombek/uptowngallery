@@ -288,18 +288,13 @@ class ProfileInfoView(LoginRequiredMixin, View):
 
 class UpdateProfileView(LoginRequiredMixin, View):
     """
-    A view to update user profile fields.
-    It accepts POST requests to update specific fields
-    of the user's profile based on a predefined field mapping.
-    Extract the field name and its new value from the POST request.
-    Retrieve the current user's profile.
-    Define a mapping between the field names accepted in the
-    request and the actual
-    Check if the requested field is in the field mapping.
-    Update the specified field with the new value.
-    Send a signal indicating that the profile has been updated.
-    Return a success response as JSON.
-    If the field is not in the mapping, return an error response.
+    Handles POST requests to update user profile fields.
+    - Gets field name and new value from POST data.
+    - Checks if the field is valid based on a predefined mapping.
+    - Updates the user's profile with the new value if valid.
+    - Sends a success message to be displayed on the profile page.
+    - Returns JSON response indicating success.
+    If the field name is not recognized, it returns an error.
     """
 
     def post(self, request, *args, **kwargs):
@@ -310,15 +305,11 @@ class UpdateProfileView(LoginRequiredMixin, View):
             "name": "name",
             "shipping_address": "shipping_address",
         }
+        
         if field in field_mapping:
             setattr(user_profile, field_mapping[field], value)
             user_profile.save()
-            profile_updated.send(
-                sender=self.__class__,
-                user=request.user,
-                field=field,
-                new_value=value,
-            )
+            messages.success(request, 'Profile updated successfully.')
             return JsonResponse(
                 {
                     "status": "success",
@@ -331,7 +322,6 @@ class UpdateProfileView(LoginRequiredMixin, View):
                 {"status": "error", "message": "Invalid field"},
                 status=400,
             )
-
 
 class ActivityDashboardView(LoginRequiredMixin, View):
     """

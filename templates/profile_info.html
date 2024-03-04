@@ -4,10 +4,18 @@
     <div class="row justify-content-center">
       <div class="col-md-8 mt-3">
         <h1 class="text-center mb-5">Profile</h1>
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+          {% endfor %}
+        {% endif %}
         <div class="card bg-dark text-light mb-5">
           <div class="row no-gutters">
             <div class="col-md-4">
-              <img src="https://res.cloudinary.com/dh4ck00n3/image/upload/v1701895696/u8e3mzqahxlnyrxzuz8h.jpg" alt="Default Profile" class="card-img" aria-label="Default profile img">
+              <img src="https://res.cloudinary.com/dh4ck00n3/image/upload/v1701895696/u8e3mzqahxlnyrxzuz8h.jpg" alt="Default Profile" class="card-img" aria-label="Default profile img" />
             </div>
             <div class="col-md-8">
               <div class="card-body">
@@ -16,14 +24,14 @@
                   <div>
                     <strong>Name:</strong>
                     <span id="nameText">{{ user.profile.name }}</span>
-                    <input type="text" id="nameInput" value="{{ user.profile.name }}" style="display:none;">
+                    <input type="text" id="nameInput" value="{{ user.profile.name }}" style="display:none;" />
                     <i id="editNameIcon" class="bi bi-pencil-square" onclick="toggleEdit('name')"></i>
                     <i id="saveNameIcon" class="bi bi-save" onclick="saveEdit('name')" style="display:none;"></i>
                   </div>
                   <div>
                     <strong>Shipping Address:</strong>
                     <span id="shippingAddressText">{{ user.profile.shipping_address }}</span>
-                    <input type="text" id="shippingAddressInput" value="{{ user.profile.shipping_address }}" style="display:none;">
+                    <input type="text" id="shippingAddressInput" value="{{ user.profile.shipping_address }}" style="display:none;" />
                     <i id="editShippingAddressIcon" class="bi bi-pencil-square" onclick="toggleEdit('shippingAddress')"></i>
                     <i id="saveShippingAddressIcon" class="bi bi-save" onclick="saveEdit('shippingAddress')" style="display:none;"></i>
                   </div>
