@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load allauth i18n %}
 {% block title %}
   Pending Artworks
 {% endblock %}
@@ -50,7 +51,7 @@
                 </p>
               </div>
               <br />
-              <a href="{% url 'edit_artwork' artwork.id %}" class="btn btn-info" aria-label="Edit artwork button that links to edit artwork page">Edit</a>
+              <a href="{% url 'edit_artwork' {{ artwork.id }} %}" class="btn btn-info" aria-label="Edit artwork button that links to edit artwork page">Edit</a>
               <br />
             </div>
             <form action="{% url 'pending_artworks' %}" method="post">

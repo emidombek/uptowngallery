@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
+{% load allauth i18n %}
 {% block content %}
   <div class="container mt-5">
     <h1 class="text-center mb-5">Activity Dashboard</h1>
-      {% if messages %}
-    <div class="messages">
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
     <div class="accordion mb-5" id="activityAccordion">
       <div class="accordion-item">
         <h5 class="accordion-header" id="headingBidding"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding"><i class="bi bi-person-raised-hand">Bidding Activity</i></button></h5>
@@ -21,7 +22,7 @@
               <div class="mb-3">
                 <h5 class="mb-1">
                   Bid on:
-                  <a href="{% url 'auction_detail' bid.auction.artwork.id bid.auction.id %}" class="text-light hover-link" aria-label="Link to Auction Details page">{{ bid.auction.artwork.title }}</a>
+                  <a href="{% url 'auction_detail' {{ bid.auction.artwork.id }} {{ bid.auction.id }} %}" class="text-light hover-link" aria-label="Link to Auction Details page">{{ bid.auction.artwork.title }}</a>
                 </h5>
                 <p>Bid Amount: {{ bid.amount }}</p>
                 <p>Auction Status: {{ bid.auction.status }}</p>
@@ -42,7 +43,7 @@
                   {% if artwork.approval_status == 'pending' %}
                     <a href="{% url 'pending_artworks' %}" class="text-light hover-link" aria-label="Link to Pending Artworks Page">{{ artwork.title }}</a>
                   {% elif artwork.approval_status == 'approved' %}
-                    <a href="{% url 'auction_detail' artwork.id artwork.auctions.first.id %}" class="text-light hover-link" aria-label="Link to Auction Detail">{{ artwork.title }}</a>
+                    <a href="{% url 'auction_detail' {{ artwork.id }} {{ artwork.auctions.first.id }} %}" class="text-light hover-link" aria-label="Link to Auction Detail">{{ artwork.title }}</a>
                   {% else %}
                     {{ artwork.title }}
                   {% endif %}
@@ -61,7 +62,7 @@
           <div class="accordion-body">
             {% for auction in active_auctions %}
               <div class="mb-3">
-                <h5 class="mb-1">Artwork: <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link" aria-label="Link to Pending Artworks Page">{{ auction.artwork.title }}</a></h5>
+                <h5 class="mb-1">Artwork: <a href="{% url 'auction_detail' {{ auction.artwork.id }} {{ auction.id }} %}" class="text-light hover-link" aria-label="Link to Pending Artworks Page">{{ auction.artwork.title }}</a></h5>
                 <p>End Date: {{ auction.end_date|date:'F j, Y H:i' }}</p>
               </div>
               {% empty %}
@@ -77,7 +78,7 @@
             {% for auction in closed_auctions %}
               <div class="mb-3">
                 <h5 class="mb-1">
-                  <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link" aria-label="Link to Pending Artworks page">{{ auction.artwork.title }}</a>
+                  <a href="{% url 'auction_detail' {{ auction.artwork.id }} {{ auction.id }} %}" class="text-light hover-link" aria-label="Link to Pending Artworks page">{{ auction.artwork.title }}</a>
                   <form action="{% url 'activity_dashboard' %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <input type="hidden" name="auction_id" value="{{ auction.id }}" />
