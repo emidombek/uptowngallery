@@ -50,15 +50,15 @@
                   <strong class="text-light">Approval Status:</strong> {{ artwork.approval_status }}
                 </p>
               </div>
-              <br />
-              <a href="{% url 'edit_artwork' {{ artwork.id }} %}" class="btn btn-info" aria-label="Edit artwork button that links to edit artwork page">Edit</a>
-              <br />
+              <br>
+              <a href="{% url 'edit_artwork' artwork.id %}" class="btn btn-info" aria-label="Edit artwork button that links to edit artwork page">Edit</a>
+              <br>
             </div>
             <form action="{% url 'pending_artworks' %}" method="post">
               {% csrf_token %}
               <input type="hidden" name="action" value="delete" />
               <input type="hidden" name="artwork_id" value="{{ artwork.id }}" />
-              <br />
+              <br>
               <button type="submit" class="btn btn-danger mb-3" aria-label="Delete artwork button">Delete Artwork</button>
             </form>
           </div>
