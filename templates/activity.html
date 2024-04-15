@@ -22,7 +22,7 @@
               <div class="mb-3">
                 <h5 class="mb-1">
                   Bid on:
-                  <a href="{% url 'auction_detail' {{ bid.auction.artwork.id }} {{ bid.auction.id }} %}" class="text-light hover-link" aria-label="Link to Auction Details page">{{ bid.auction.artwork.title }}</a>
+                   <a href="{% url 'auction_detail' bid.auction.artwork.id bid.auction.id %}" class="text-light hover-link" aria-label="Link to Auction Details page">{{ bid.auction.artwork.title }}</a>
                 </h5>
                 <p>Bid Amount: {{ bid.amount }}</p>
                 <p>Auction Status: {{ bid.auction.status }}</p>
