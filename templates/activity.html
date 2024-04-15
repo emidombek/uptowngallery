@@ -2,6 +2,16 @@
 {% block content %}
   <div class="container mt-5">
     <h1 class="text-center mb-5">Activity Dashboard</h1>
+      {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
     <div class="accordion mb-5" id="activityAccordion">
       <div class="accordion-item">
         <h5 class="accordion-header" id="headingBidding"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding"><i class="bi bi-person-raised-hand">Bidding Activity</i></button></h5>
