@@ -5,9 +5,14 @@
     <div class="row justify-content-center">
       <div class="col-md-8 mt-3">
         {% if messages %}
-          {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-          {% endfor %}
+          <div class="messages">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
+              </div>
+            {% endfor %}
+          </div>
         {% endif %}
         <h1 class="text-center mb-5">Auction Detail</h1>
         <div class="card bg-dark text-light border-info mb-5">
@@ -29,7 +34,7 @@
                 </p>
                 {% if user.is_authenticated and auction.artwork.artist.user != user %}
                   <h3 class="ms-5 mt-3 mb-3">Place My Bid</h3>
-                  <form method="POST" action="{% url 'auction_detail' artwork.id auction.id %}" class="needs-validation ms-5" novalidate>
+                  <form method="POST" action="{% url 'auction_detail' {{ artwork.id }} {{ auction.id }} %}" class="needs-validation ms-5" novalidate>
                     {% csrf_token %}
                     <div class="form-group mb-3">
                       <label for="{{ form.amount.id_for_label }}">Bid Amount:</label>
@@ -40,7 +45,7 @@
                   </form>
                 {% else %}
                   <div class="text-center mt-2 mb-3">
-                    <a href="{% url 'account_login' %}?next={% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info">Log in to Bid</a>
+                    <a href="{% url 'account_login' %}?next={% url 'auction_detail' {{ artwork.id }} {{ auction.id }} %}" class="btn btn-info">Log in to Bid</a>
                   </div>
                 {% endif %}
               </div>
