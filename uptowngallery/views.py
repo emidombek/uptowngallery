@@ -146,9 +146,11 @@ class PendingArtworksView(LoginRequiredMixin, View):
     """
 
     def get(self, request):
-        artworks = Artwork.objects.filter(
-            artist=request.user.profile, approved=False
-        )
+        if request.user.is_superuser:
+            artworks = Artwork.objects.filter(approved=False) 
+        else:
+            artworks = Artwork.objects.filter(artist=request.user.profile, approved=False)
+
         paginator = Paginator(artworks, 10)
         page = request.GET.get("page")
         try:
@@ -157,9 +159,8 @@ class PendingArtworksView(LoginRequiredMixin, View):
             artworks = paginator.page(1)
         except EmptyPage:
             artworks = paginator.page(paginator.num_pages)
-        return render(
-            request, "pending_artworks.html", {"artworks": artworks}
-        )
+        
+        return render(request, "pending_artworks.html", {"artworks": artworks})
 
     def post(self, request, *args, **kwargs):
         action = request.POST.get("action")
