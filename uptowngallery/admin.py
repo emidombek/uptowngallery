@@ -72,3 +72,9 @@ class ArtworkAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Artwork, ArtworkAdmin)
+
+class AuctionAdmin(admin.ModelAdmin):
+    list_display = ("id", "artwork", "status", "end_date")  
+    list_editable = ("status",)  
+
+admin.site.register(Auction, AuctionAdmin)
