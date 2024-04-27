@@ -33,7 +33,7 @@
                   <strong>Number of Bids:</strong> {{ auction.bids.count }}<br /><br />
                   <strong>Current Price:</strong> {{ current_price|floatformat:'2' }}<br /><br />
                 </p>
-                {% if user.is_authenticated and auction.artwork.artist.user != user %}
+                {% if user.is_authenticated and not user.is_superuser and auction.artwork.artist.user != user %}
                   <h3 class="ms-5 mt-3 mb-3">Place My Bid</h3>
                   <form method="POST" action="{% url 'auction_detail' artwork.id auction.id %}" class="needs-validation ms-5" novalidate>
                     {% csrf_token %}
@@ -46,7 +46,7 @@
                   </form>
                 {% else %}
                   <div class="text-center mt-2 mb-3">
-                    <a href="{% url 'account_login' %}?next={% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info">Log in to Bid</a>
+                    <a href="{% url 'account_login' %}?next={% url 'auction_detail' {{ artwork.id }} {{ auction.id }} %}" class="btn btn-info">Log in to Bid</a>
                   </div>
                 {% endif %}
               </div>
