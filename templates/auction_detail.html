@@ -46,7 +46,7 @@
                   </form>
                 {% else %}
                   <div class="text-center mt-2 mb-3">
-                    <a href="{% url 'account_login' %}?next={% url 'auction_detail' {{ artwork.id }} {{ auction.id }} %}" class="btn btn-info">Log in to Bid</a>
+                    <a href="{% url 'account_login' %}?next={% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info">Log in to Bid</a>
                   </div>
                 {% endif %}
               </div>
