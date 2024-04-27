@@ -13,8 +13,7 @@ class ArtworkCreateForm(forms.ModelForm):
     ArtworkCreateForm:
     Django ModelForm for creating & validating
     artwork forms for auctions.
-    Auction Duration Choices:
-    Offers 3, 5, or 7 days as auction duration options.
+    Offers Auction Duration Choices
     Fields:
     Includes fields from Artwork model
     except 'approved', 'auction_start'.

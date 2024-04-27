@@ -136,6 +136,8 @@ class AuctionModelTests(TestCase):
             "3_days": timedelta(days=3),
             "5_days": timedelta(days=5),
             "7_days": timedelta(days=7),
+            "30_days": timedelta(days=30),
+            "60_days": timedelta(days=60),
         }
         for duration_key, duration_value in durations.items():
             self.artwork.auction_duration = duration_key
