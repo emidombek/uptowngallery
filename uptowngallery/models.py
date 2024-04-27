@@ -116,6 +116,8 @@ class Artwork(models.Model):
         ("3", "3 days"),
         ("5", "5 days"),
         ("7", "7 days"),
+        ("30", "30 days"),
+        ("60", "60 days"), 
     )
 
     auction_duration = models.CharField(
@@ -183,19 +185,21 @@ class Artwork(models.Model):
             auction.duration = auction_duration_value
             auction.save()
 
-    def calculate_auction_end_date(self, auction_start):
+    def calculate_auction_end_date(self):
+        """
+        Calculates the end date of the auction based on the start date and the selected duration.
+        """
         auction_start = timezone.now()
-        if self.auction_duration == "3_days":
-            duration = timedelta(days=3)
-        elif self.auction_duration == "5_days":
-            duration = timedelta(days=5)
-        elif self.auction_duration == "7_days":
-            duration = timedelta(days=7)
-        else:
-            duration = timedelta(days=3)
-
+        duration_days = {
+            "3": 3,
+            "5": 5,
+            "7": 7,
+            "30": 30,
+            "60": 60
+        }.get(self.auction_duration, 3)  
+        
+        duration = timedelta(days=duration_days)
         return auction_start + duration
-
 
 class Auction(models.Model):
     """

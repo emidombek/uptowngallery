@@ -44,6 +44,8 @@ class ArtworkCreateForm(forms.ModelForm):
         (3, "3 days"),
         (5, "5 days"),
         (7, "7 days"),
+        (30, "30 days"),
+        (60, "60 days"), 
     ]
 
     auction_duration = forms.ChoiceField(
