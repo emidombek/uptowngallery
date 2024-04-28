@@ -171,3 +171,8 @@ body .h12 {
   font-weight: 600 !important;
   text-decoration: none !important;
 }
+
+.artwork-image {
+  max-height: 500px;
+  object-fit: contain;
+}
