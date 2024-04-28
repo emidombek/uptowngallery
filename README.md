@@ -259,7 +259,6 @@ Please refer to the [FEATURES.md](FEATURES.md) file for all features-related doc
 | `amount`   | DecimalField  | Amount of the bid                     |
 | `bid_time` | DateTimeField | Date and time when the bid was placed |
 
-
 ## 📝 Testing
 
 Please refer to the [TESTING.md](TESTING.md) file for all test-related documentation.

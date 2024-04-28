@@ -37,6 +37,7 @@ Our footer includes links to our social media platforms, represented by Bootstra
 - Profile Customization: Once registered, users can view and update their profile information, including changing their name and address, ensuring a personalized experience.
   
 ![Profile Info Page](docs/images/profile.png)
+![Edit Profile Info Page](docs/images/editprofile.png)
 
 ## Browsing and Bidding on Artwork
 
@@ -58,11 +59,19 @@ Our footer includes links to our social media platforms, represented by Bootstra
 
 - Artwork Listing Creation: Artists and sellers on our platform can easily list their artworks for sale. This feature is designed to be intuitive, guiding sellers through the process of creating a listing.
 
+### 🍰 CRUD functionality
+
+- Sellers can create a Listing.
+
 ![Create Artwork Listing](docs/images/create.png)
 
 - Editing and Deletion of Listings: Sellers have the flexibility to edit or delete their listings while they are still pending approval, giving them control over their offerings.
 
 ![Pending Listing Edit/Delete](docs/images/pendingartworks.png)
+
+-Listings can be viewed by the Seller from their Activity Dashboard, Sellers can also delete closed auctions from the dashboard.
+
+![Closed Auction Delete](docs/images/pendingartworks.png)
   
 ## Admin Panel for Artwork Management
 
