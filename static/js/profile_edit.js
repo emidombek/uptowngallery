@@ -31,7 +31,6 @@ function getBackendFieldName(field) {
  Saves the edited value of a field to the backend. Upon successful update,
  it toggles back to display the updated text and hides the input field.
  If the update fails, it logs the error.
- @param {string} field - The field that has been edited.
  */
 function saveEdit(field) {
   let backendField = getBackendFieldName(field);
@@ -60,20 +59,14 @@ function saveEdit(field) {
     })
     .then(data => {
       if (data.status === 'success') {
-        toggleBackToText(field, newValue);
+        window.location.reload(); // Reload the whole page to reflect changes
       } else {
-        console.error('Failed to update:', data.error || 'Unknown error occurred');
+        console.error('Failed to update:', data.message || 'Unknown error occurred');
       }
     })
-    .catch(error => console.error('Fetch error:', error));
-}
-
-function getBackendFieldName(field) {
-  const fieldMapping = {
-    'name': 'name',
-    'shippingAddress': 'shipping_address'
-  };
-  return fieldMapping[field] || field;
+    .catch(error => {
+      console.error('Fetch error:', error);
+    });
 }
 /**
  Retrieves the value of a specified cookie by its name.
