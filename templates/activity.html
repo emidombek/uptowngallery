@@ -15,15 +15,15 @@
   {% endif %}
     <div class="accordion mb-5" id="activityAccordion">
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingBidding"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding"><i class="bi bi-person-raised-hand">Bidding Activity</i></button></h2>
+        <div class="accordion-header" id="headingBidding"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding"><i class="bi bi-person-raised-hand">Bidding Activity</i></button></div>
         <div id="collapseBidding" class="accordion-collapse collapse" aria-labelledby="headingBidding" data-bs-parent="#activityAccordion">
           <div class="accordion-body">
             {% for bid in bidding_activity %}
               <div class="mb-3">
-                <h3 class="mb-1">
+                <div class="mb-1">
                   Bid on:
                   <a href="{% url 'auction_detail' bid.auction.artwork.id bid.auction.id %}" class="text-light hover-link" aria-label="Link to Auction Details page">{{ bid.auction.artwork.title }}</a>
-                </h3>
+                </div>
                 <p>Bid Amount: {{ bid.amount }}</p>
                 <p>Auction Status: {{ bid.auction.status }}</p>
               </div>
@@ -34,35 +34,39 @@
         </div>
       </div>
       <div class="accordion-item">
-        <h4 class="accordion-header" id="headingSelling"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSelling" aria-expanded="false" aria-controls="collapseSelling"><i class="bi bi-person-lines-fill">Selling Activity</i></button></h4>
+        <div class="accordion-header" id="headingSelling"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSelling" aria-expanded="false" aria-controls="collapseSelling"><i class="bi bi-person-lines-fill">Selling Activity</i></button></div>
         <div id="collapseSelling" class="accordion-collapse collapse" aria-labelledby="headingSelling" data-bs-parent="#activityAccordion">
           <div class="accordion-body">
-            {% for artwork in selling_activity %}
-              <div class="mb-3">
-                <h5 class="mb-1">
-                  {% if artwork.approval_status == 'pending' %}
-                    <a href="{% url 'pending_artworks' %}" class="text-light hover-link" aria-label="Link to Pending Artworks Page">{{ artwork.title }}</a>
-                  {% elif artwork.approval_status == 'approved' %}
-                    <a href="{% url 'auction_detail' artwork.id artwork.auctions.first.id %}" class="text-light hover-link" aria-label="Link to Auction Detail">{{ artwork.title }}</a>
-                  {% else %}
-                    {{ artwork.title }}
-                  {% endif %}
-                </h5>
-                <p>Status: {{ artwork.approval_status }}</p>
-              </div>
-              {% empty %}
-              <p>No selling activity found.</p>
-            {% endfor %}
+          {% for artwork in selling_activity %}
+        <div class="mb-3">
+          <div class="mb-1">
+            {% if artwork.approval_status == 'pending' %}
+              <a href="{% url 'pending_artworks' %}" class="text-light hover-link" aria-label="Link to Pending Artworks Page">{{ artwork.title }}</a>
+            {% elif artwork.approval_status == 'approved' %}
+              {% if artwork.auctions.first %}
+                <a href="{% url 'auction_detail' artwork.id artwork.auctions.first.id %}" class="text-light hover-link" aria-label="Link to Auction Detail">{{ artwork.title }}</a>
+            {% else %}
+              {{ artwork.title }} (No active auction)
+            {% endif %}
+          {% else %}
+            {{ artwork.title }}
+          {% endif %}
+          </div>
+          <p>Status: {{ artwork.approval_status }}</p>
+          </div>
+          {% empty %}
+          <p>No selling activity found.</p>
+          {% endfor %}
           </div>
         </div>
       </div>
       <div class="accordion-item">
-        <h6 class="accordion-header" id="headingActive"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseActive" aria-expanded="false" aria-controls="collapseActive"><i class="bi bi-bag-heart">Active Auctions</i></button></h6>
+        <div class="accordion-header" id="headingActive"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseActive" aria-expanded="false" aria-controls="collapseActive"><i class="bi bi-bag-heart">Active Auctions</i></button></div>
         <div id="collapseActive" class="accordion-collapse collapse" aria-labelledby="headingActive" data-bs-parent="#activityAccordion">
           <div class="accordion-body">
             {% for auction in active_auctions %}
               <div class="mb-3">
-                <h7 class="mb-1">Artwork: <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link" aria-label="Link to Pending Artworks Page">{{ auction.artwork.title }}</a></h7>
+                <div class="mb-1">Artwork: <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link" aria-label="Link to Pending Artworks Page">{{ auction.artwork.title }}</a></div>
                 <p>End Date: {{ auction.end_date|date:'F j, Y H:i' }}</p>
               </div>
               {% empty %}
@@ -72,16 +76,16 @@
         </div>
       </div>
       <div class="accordion-item">
-        <h8 class="accordion-header" id="headingClosed"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClosed" aria-expanded="false" aria-controls="collapseClosed"><i class="bi bi-door-closed">Closed Auctions</i></button></h8>
+        <div class="accordion-header" id="headingClosed"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClosed" aria-expanded="false" aria-controls="collapseClosed"><i class="bi bi-door-closed">Closed Auctions</i></button></div>
         <div id="collapseClosed" class="accordion-collapse collapse" aria-labelledby="headingClosed" data-bs-parent="#activityAccordion">
           <div class="accordion-body">
             {% for auction in closed_auctions %}
               <div class="mb-3">
                 <div class="mb-1">
-                  <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link" aria-label="Link to Pending Artworks page">{{ auction.artwork.title }}</a>
+                  <a href="{% url 'auction_detail' auction.artwork.id auction.id %}" class="text-light hover-link" aria-label="Link to Auction Detail page">{{ auction.artwork.title }}</a>
                   <form action="{% url 'activity' %}" method="post" style="display: inline;">
                     {% csrf_token %}
-                    <input type="hidden" name="auction_id" value="{{ auction.id }}" />
+                    <input type="hidden" name="auction_id" value="{{ auction.id }}">
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this auction?');"><i class="bi bi-trash"></i></button>
                   </form>
                 </div>
