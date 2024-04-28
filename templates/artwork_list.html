@@ -26,8 +26,8 @@
         <div class="col-md-3">
           <div class="card mx-auto custom-card">
             <a href="#link{{ artwork.id }}" data-bs-toggle="modal" aria-label="Link to artwork detail popup" data-bs-target="#auctionModal" data-artwork-id="{{ artwork.id }}" data-auction-id="{{ artwork.recent_auction_id }}">
-              <div class="image-container" style="width: 100%; height: 200px; overflow: hidden;">
-                <img src="{{ artwork.image.url }}" class="card-img-top img-fluid" alt="{{ artwork.title }}" aria-label="Artwork Image" style="object-fit: cover; width: 100%; height: 100%;" >
+              <div class="image-container custom-card-image">
+                <img src="{{ artwork.image.url }}" class="card-img-top img-fluid custom-url-image" alt="{{ artwork.title }}" aria-label="Artwork Image" >
               </div>
             </a>
             <div class="card-body">

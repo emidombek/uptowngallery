@@ -76,6 +76,18 @@ body h1 {
   width: 17.5rem;
 }
 
+.custom-card-image img {
+  width: 100%;
+  height: 200px;
+  overflow: hidden
+}
+
+.custom-url-image{
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
 .card-img ajax {
   max-height: 300px;
   object-fit: contain
