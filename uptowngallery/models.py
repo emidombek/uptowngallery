@@ -161,7 +161,7 @@ class Artwork(models.Model):
         Create or update the auction details based on the start time and duration.
         """
         auction_start = timezone.now()
-        auction_end = self.calculate_auction_end_date(auction_start)  
+        auction_end = self.calculate_auction_end_date(auction_start) 
 
         auction, created = Auction.objects.get_or_create(
             artwork=self,
@@ -176,6 +176,7 @@ class Artwork(models.Model):
         )
 
         if not created:
+            # Update existing auction if necessary
             auction.create_date = auction_start
             auction.end_date = auction_end
             auction.reserve_price = self.reserve_price
@@ -184,11 +185,10 @@ class Artwork(models.Model):
             auction.duration = self.auction_duration
             auction.save()
 
-    def calculate_auction_end_date(self):
+    def calculate_auction_end_date(self,auction_start):
         """
         Calculates the end date of the auction based on the start date and the selected duration.
         """
-        auction_start = timezone.now()
         duration_days = {
             "3": 3,
             "5": 5,

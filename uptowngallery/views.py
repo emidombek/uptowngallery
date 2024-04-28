@@ -1,4 +1,3 @@
-from django.db import transaction
 from django.db.models import Q, Max, Prefetch
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -19,7 +18,6 @@ from .forms import (
     ArtworkEditForm,
 )
 from .models import Artwork, Auction, Bids
-from .signals import bid_placed, profile_updated
 from django.http import HttpResponseNotFound, HttpResponseServerError
 
 class CustomLoginRequiredMixin(AccessMixin):
@@ -245,30 +243,29 @@ class AuctionDetailView(CustomLoginRequiredMixin, View):
         else:
             return render(request, "auction_detail.html", context)
 
-def post(self, request, artwork_id, auction_id):
-    if not request.user.is_authenticated:
-        return redirect('%s?next=%s' % (reverse('login'), request.path))
-    artwork = get_object_or_404(Artwork, pk=artwork_id)
-    auction = get_object_or_404(Auction, pk=auction_id, artwork=artwork)
-    # Check if the current user is the seller of the auction
-    if request.user.profile == auction.seller:
-        messages.error(request, "You cannot bid on your own auction.")
-        return self.get(request, artwork_id, auction_id)
+    def post(self, request, artwork_id, auction_id):
+        if not request.user.is_authenticated:
+            return redirect('%s?next=%s' % (reverse('login'), request.path))
+        artwork = get_object_or_404(Artwork, pk=artwork_id)
+        auction = get_object_or_404(Auction, pk=auction_id, artwork=artwork)
 
-    form = BidForm(request.POST, auction=auction)
-    if form.is_valid():
-        bid = form.save(commit=False)
-        bid.bidder = request.user.profile
-        bid.auction = auction
-        bid.bid_time = timezone.now()
-        bid.save()
-        bid_placed.send(sender=self.__class__, bid=bid, user=request.user)
-        messages.success(request, "Your bid was submitted successfully!")
-        return redirect("auction_detail", artwork_id=artwork_id, auction_id=auction_id)
-    else:
-        for error in form.errors.values():
-            messages.error(request, error)
-        return self.get(request, artwork_id, auction_id)
+        if request.user.profile == artwork.artist:
+            messages.error(request, "You cannot bid on your own artwork.")
+            return self.get(request, artwork_id, auction_id)
+
+        form = BidForm(request.POST, auction=auction)
+        if form.is_valid():
+            bid = form.save(commit=False)
+            bid.bidder = request.user.profile
+            bid.auction = auction
+            bid.bid_time = timezone.now()
+            bid.save()
+            messages.success(request, "Your bid was submitted successfully!")
+            return redirect("auction_detail", artwork_id=artwork_id, auction_id=auction_id)
+        else:
+            for error in form.errors.values():
+                messages.error(request, error)
+            return self.get(request, artwork_id, auction_id)
 
 class ProfileInfoView(LoginRequiredMixin, View):
     """
