@@ -158,11 +158,10 @@ class Artwork(models.Model):
     def approve_and_start_auction(self):
         """
         Approve the artwork and start an auction.
-        Create or update the auction details.
+        Create or update the auction details based on the start time and duration.
         """
         auction_start = timezone.now()
-        auction_end = self.calculate_auction_end_date(auction_start)
-        auction_duration_value = self.auction_duration
+        auction_end = self.calculate_auction_end_date(auction_start)  
 
         auction, created = Auction.objects.get_or_create(
             artwork=self,
@@ -172,7 +171,7 @@ class Artwork(models.Model):
                 "reserve_price": self.reserve_price,
                 "status": "active",
                 "is_active": True,
-                "duration": auction_duration_value,
+                "duration": self.auction_duration,
             },
         )
 
@@ -182,7 +181,7 @@ class Artwork(models.Model):
             auction.reserve_price = self.reserve_price
             auction.status = "active"
             auction.is_active = True
-            auction.duration = auction_duration_value
+            auction.duration = self.auction_duration
             auction.save()
 
     def calculate_auction_end_date(self):
@@ -194,12 +193,11 @@ class Artwork(models.Model):
             "3": 3,
             "5": 5,
             "7": 7,
-            "30": 30,
-            "60": 60
+            "30": 30, 
+            "60": 60  
         }.get(self.auction_duration, 3)  
-        
-        duration = timedelta(days=duration_days)
-        return auction_start + duration
+
+        return auction_start + timedelta(days=duration_days)
 
 class Auction(models.Model):
     """
