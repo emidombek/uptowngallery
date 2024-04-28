@@ -293,7 +293,7 @@
 
 ## Lighthouse Testing 💡
 
-- [Python Coverage Report](docs/LighthouseReports.pdf)
+- [Lighthouse Testing Report](docs/LighthouseReports.pdf)
   
 ## Issues/Bugs 🐛
 
@@ -307,7 +307,9 @@
  
   - Bug 1: I was having isses with the bidding function where the amounts where not being recorded in decimal format, this was resolved by changing the data type to decimal in the Bids model for the amount field.
   
-  - Bug 2: Search works in development but not in production, likely to do with enviromental variables such as middleware or the way static files are served.
+  - Bug 2: Search works in development but not in production, likely to do with enviromental variables such as middleware or the way static files are served. This was resolved through fixing my database settings in production.
+  
+  - Bug 3: Messages to to the user are/were not being displayed without a reload of the Profile Page when editing Profile Information. This has been resolved by added a prompt in the JS to reload the page after the profile information has been edited. Further testing has revealed that this issue is still intermittent and has not been fully resolved.
 
   
 
