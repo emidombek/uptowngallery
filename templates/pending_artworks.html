@@ -26,7 +26,7 @@
       <div class="card bg-dark">
         <div class="row no-gutters">
           <div class="col-md-4">
-            <img src="{{ artwork.image.url }}" class="img-thumbnail" alt="{{ artwork.title }}" aria-label="Artwork image" />
+            <img src="{{ artwork.image.url }}" class="img-thumbnail" alt="{{ artwork.title }}" aria-label="Artwork image">
           </div>
           <div class="col-md-8">
             <div class="card-body">
@@ -56,8 +56,8 @@
             </div>
             <form action="{% url 'pending_artworks' %}" method="post">
               {% csrf_token %}
-              <input type="hidden" name="action" value="delete" />
-              <input type="hidden" name="artwork_id" value="{{ artwork.id }}" />
+              <input type="hidden" name="action" value="delete">
+              <input type="hidden" name="artwork_id" value="{{ artwork.id }}">
               <br>
               <button type="submit" class="btn btn-danger mb-3" aria-label="Delete artwork button">Delete Artwork</button>
             </form>
