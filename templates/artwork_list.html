@@ -24,7 +24,7 @@
     <div class="row justify-content-center mt-5 mb-5">
       {% for artwork in page_obj %}
         <div class="col-md-3">
-          <div class="card mx-auto custom-card" style="width: 17.5rem;">
+          <div class="card mx-auto custom-card">
             <a href="#link{{ artwork.id }}" data-bs-toggle="modal" aria-label="Link to artwork detail popup" data-bs-target="#auctionModal" data-artwork-id="{{ artwork.id }}" data-auction-id="{{ artwork.recent_auction_id }}">
               <div class="image-container" style="width: 100%; height: 200px; overflow: hidden;">
                 <img src="{{ artwork.image.url }}" class="card-img-top img-fluid" alt="{{ artwork.title }}" aria-label="Artwork Image" style="object-fit: cover; width: 100%; height: 100%;" />
@@ -51,19 +51,46 @@
       {% endfor %}
     </div>
   </div>
-  <div class="pagination mt-4">
-    <span class="step-links">
-      {% if page_obj.has_previous %}
-        <a href="?page=1" aria-label="Go to first page link">&laquo; first</a>
-        <a href="?page={{ page_obj.previous_page_number }}" aria-label="Go to previous page link">previous</a>
-      {% endif %}
-      <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
-      {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}" aria-label="Go to next page link">next</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}" aria-label="Go to last page link">last &raquo;</a>
-      {% endif %}
-    </span>
-  </div>
+<nav aria-label="Artwork page navigation">
+  <ul class="pagination justify-content-center mt-4 mb-4">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1" aria-label="First">&laquo; First</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">Previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">&laquo; First</span>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Previous</span>
+      </li>
+    {% endif %}
+    <li class="page-item active" aria-current="page">
+      <span class="page-link">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">Next</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">Last &raquo;</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Next</span>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Last &raquo;</span>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
   <div class="modal fade" id="auctionModal" tabindex="-1" aria-labelledby="auctionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
