@@ -1,9 +1,9 @@
 # Deployment 🚀
 
-- The app was deployed to [Heroku](https://heroko.com/).
+- The website was deployed to [Heroku](https://heroku.com/).
 - The database was deployed to [ElephantSQL](https://www.elephantsql.com/).
 - Images are hosted on Cloudinary[Cloudinary](https://www.cloudinary.com/). 
-- The app can be reached by the [link](https://cool-school.onrender.com).
+- The website can be reached by the [link](https://uptowngallery-c4ad28352563.herokuapp.com/).
 
 ## Local deployment
 
@@ -61,9 +61,6 @@ Create a local copy of the GitHub repository by following one of the two process
     - Enter your username and password (for the superuser that you have created before).
     - You will be redirected to the admin page.
 
-
-**The app was initially deployed to Heroku then moved to Render since Heroku has removed its free tier services from November 29 2022**
-
 ## Heroku Deployment
 
 * Set up a local workspace on your computer for Heroku:
@@ -85,9 +82,6 @@ Create a local copy of the GitHub repository by following one of the two process
         web: gunicorn <name app>.wsgi:application
     ```
 
-
-* Go to resources in Heroku and search for postgresql. Select Hobby dev - Free and click on the provision button to add it to the project.
-
 * Go to the settings app in Heroku and go to Config Vars.
 
 Click on Reveal Config Vars and add the following config variables:
@@ -103,7 +97,6 @@ Click on Reveal Config Vars and add the following config variables:
 
 
 * Copy the value of DATABASE_URL and input it into the .env file and generate a secret key (you may use [Djecrety](https://djecrety.ir/) for secret key generation).
-* Create EMAIL_HOST_PASS and EMAIL_HOST_USER with a gmail account and add values to these keys.
 * Migrate changes.
 * Set debug to False in settings.py
 * Commit and push the changes to GitHub.
@@ -112,17 +105,6 @@ Click on Reveal Config Vars and add the following config variables:
 
 - The deployment process will start.
 - Click "View build logs" to see the progress of the deployment.
-
-
-*Due to security updates, Heroku dashboard will not allow you to deploy your app from GitHub. Thus, you need to run the following commands in your terminal:*
-
-| action                              | terminal command                                        | comment                                                                                                                       |
-| ----------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| login to your heroku account        | `heroku login -i`                                       |                                                                                                                               |
-| create a new app on heroku          | `heroku create NAME-OF-YOUR-APP`                        | if you haven't created the app before, and then, you can access the app via the Heroku dashboard and set up your config vars. |
-| add remote to your local repository | `heroku git:remote -a NAME-OF-YOUR-APP`                 | if you have already created app on Heroku (before the security updates) and connected it using Heroku dashboard               |
-| deploy new version of the app       | `git push heroku main`                                  |                                                                                                                               |
-| rename app                          | `git remote rename NAME-OF-YOUR-APP NAME-OF-YOUR-APP-2` |                                                                                                                               |
 
 **Final Deployment**
 
