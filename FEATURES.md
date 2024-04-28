@@ -59,7 +59,7 @@ Our footer includes links to our social media platforms, represented by Bootstra
 
 - Artwork Listing Creation: Artists and sellers on our platform can easily list their artworks for sale. This feature is designed to be intuitive, guiding sellers through the process of creating a listing.
 
-### 🍰 CRUD functionality
+### 🍰 Seller CRUD functionality
 
 - Sellers can create a Listing.
 
@@ -68,18 +68,23 @@ Our footer includes links to our social media platforms, represented by Bootstra
 - Editing and Deletion of Listings: Sellers have the flexibility to edit or delete their listings while they are still pending approval, giving them control over their offerings.
 
 ![Pending Listing Edit/Delete](docs/images/pendingartworks.png)
+![Edit Pending Listing Edit/Delete](docs/images/editartwork.png)
 
--Listings can be viewed by the Seller from their Activity Dashboard, Sellers can also delete closed auctions from the dashboard.
+- Listings can be viewed by the Seller from their Activity Dashboard, Sellers can also delete closed auctions from the dashboard.
 
-![Closed Auction Delete](docs/images/pendingartworks.png)
+![Closed Auction Delete](docs/images/deleteauction.png)
   
-## Admin Panel for Artwork Management
+## Admin Panel for Artwork and Auction Management
 
 [Link to Admin Login Page Here](https://uptowngallery-c4ad28352563.herokuapp.com/admin/)
 
-- Admin Capabilities: Admins have the ability to view, edit, delete, approve, or reject artwork listings. This control ensures that only suitable and high-quality artworks are available on the site, maintaining the integrity and reputation of the Uptown Gallery. Note: Artwork status must be edited in the dropdown of the artwork listing itself and flagged as approved to show on the website search as an active auction as shown in the screenshots below.
+- Admin Artwork Capabilities: Admins have the ability to view, edit, delete, approve, or reject artwork listings. This control ensures that only suitable and high-quality artworks are available on the site, maintaining the integrity and reputation of the Uptown Gallery. Note: Artwork status must be edited in the dropdown of the artwork listing itself (status dropdown) and flagged as approved (action dropdown in the admin navbar) to show on the website search as an active auction as shown in the screenshots below.
 
 ![Admin View + Actions](docs/images/admin1.png)
 
 ![Admin View + Actions](docs/images/admin2.png)
+
+- Admin Auction Capabilities: Admins are able to change the auction status and well as the start and end times of auctions. Note: Admins must mark an auction as closed at this time in order to remove it from the artwork list page.
+
+![Admin View + Actions](docs/images/adminauction.png)
 
