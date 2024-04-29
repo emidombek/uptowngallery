@@ -78,7 +78,9 @@ Our footer includes links to our social media platforms, represented by Bootstra
 
 [Link to Admin Login Page Here](https://uptowngallery-c4ad28352563.herokuapp.com/admin/)
 
-- Admin Artwork Capabilities: Admins have the ability to view, edit, delete, approve, or reject artwork listings. This control ensures that only suitable and high-quality artworks are available on the site, maintaining the integrity and reputation of the Uptown Gallery. Note: Artwork status must be edited in the dropdown of the artwork listing itself (status dropdown) and flagged as approved (action dropdown in the admin navbar) to show on the website search as an active auction as shown in the screenshots below.
+- Admin Artwork Capabilities: Admins have the ability to view, edit, delete, approve, or reject artwork listings. This control ensures that only suitable and high-quality artworks are available on the site, maintaining the integrity and reputation of the Uptown Gallery. 
+
+  ***Note: Artwork status must be edited in the dropdown of the artwork listing form itself (status dropdown) and changed to approved as well as saved AND it must also be flagged as approved (action dropdown in the admin navbar) to show on the website search as an active auction as shown in the screenshots below.***
 
 ![Admin View + Actions](docs/images/admin1.png)
 
