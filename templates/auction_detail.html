@@ -3,66 +3,65 @@
 {% block content %}
 {% load widget_tweaks %}
 <div class="container">
-   <div class="row justify-content-center">
-      <div class="col-md-8 mt-3">
-         {% if messages %}
-         <div class="messages">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-               {{ message }}
-               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
+    <div class="row justify-content-center">
+        <div class="col-md-8 mt-3">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-         </div>
-         {% endif %}
-         <h1 class="text-center mb-5">Auction Detail</h1>
-         <div class="card bg-dark text-light border-info mb-5">
-         <div class="row no-gutters">
-               <div class="col-md-6 d-flex align-items-center justify-content-center">
-                  <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ms-5" aria-label="Artwork Image" style="max-height: 500px; object-fit: contain;">
-               </div>
-            </div>
-               <div class="col-md-6">
-                  <div class="card-body">
-                     <h2 class="card-title ms-5 mt-3 mb-3">{{ auction.artwork.title }}</h2>
-                     <p class="card-text mb-3 ms-5 border-dark">
-                        <strong>Description:</strong> {{ auction.artwork.description }}<br><br >
-                        <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'F j, Y H:i' }}<br><br >
-                        <strong>Auction End Date:</strong> {{ auction.end_date|date:'F j, Y H:i' }}<br ><br>
-                        <strong>Category:</strong> {{ auction.artwork.get_category_display }}<br><br>
-                        <strong>Artist:</strong> {{ auction.artwork.artist.name }}<br><br>
-                        <strong>Number of Bids:</strong> {{ auction.bids.count }}<br><br>
-                        <strong>Current Price:</strong> {{ current_price|floatformat:'2' }}<br><br>
-                     </p>
-                     {% if user.is_authenticated %}
-                     {% if not user.is_superuser %}
-                     {% if auction.artwork.artist.user != user %}
-                     <h3 class="ms-5 mt-3 mb-3">Place My Bid</h3>
-                     <form method="POST" action="{% url 'auction_detail' artwork.id auction.id %}" class="needs-validation ms-5" novalidate>
-                        {% csrf_token %}
-                        <div class="form-group mb-3">
-                           <label for="{{ form.amount.id_for_label }}">Bid Amount:</label>
-                           {{ form.amount|add_class:'form-control custom-amount' }}
-                           <div class="invalid-feedback">Please enter a valid bid amount.</div>
+            {% endif %}
+            <h1 class="text-center mb-5">Auction Detail</h1>
+            <div class="card bg-dark text-light border-info mb-5">
+                <div class="row no-gutters">
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                        <img src="{{ auction.artwork.image.url }}" alt="{{ auction.artwork.title }}" class="card-img ms-5" aria-label="Artwork Image" style="max-height: 500px; object-fit: contain;">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <h2 class="card-title ms-5 mt-3 mb-3">{{ auction.artwork.title }}</h2>
+                            <p class="card-text mb-3 ms-5 border-dark">
+                                <strong>Description:</strong> {{ auction.artwork.description }}<br><br >
+                                <strong>Auction Start:</strong> {{ auction.artwork.auction_start|date:'F j, Y H:i' }}<br><br >
+                                <strong>Auction End Date:</strong> {{ auction.end_date|date:'F j, Y H:i' }}<br ><br>
+                                <strong>Category:</strong> {{ auction.artwork.get_category_display }}<br><br>
+                                <strong>Artist:</strong> {{ auction.artwork.artist.name }}<br><br>
+                                <strong>Number of Bids:</strong> {{ auction.bids.count }}<br><br>
+                                <strong>Current Price:</strong> {{ current_price|floatformat:'2' }}<br><br>
+                            </p>
+                            {% if user.is_authenticated %}
+                            {% if not user.is_superuser %}
+                            {% if auction.artwork.artist.user != user %}
+                            <h3 class="ms-5 mt-3 mb-3">Place My Bid</h3>
+                            <form method="POST" action="{% url 'auction_detail' artwork.id auction.id %}" class="needs-validation ms-5" novalidate>
+                                {% csrf_token %}
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.amount.id_for_label }}">Bid Amount:</label>
+                                    {{ form.amount|add_class:'form-control custom-amount' }}
+                                    <div class="invalid-feedback">Please enter a valid bid amount.</div>
+                                </div>
+                                <button type="submit" class="btn btn-info mt-2 mb-3 ms-5" aria-label="Submit bid button">Submit Bid</button>
+                            </form>
+                            {% else %}
+                            <div class="text-center mt-2 mb-3">
+                                You cannot bid on your own artwork.
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                            {% else %}
+                            <div class="text-center mt-2 mb-3">
+                                <a href="{% url 'account_login' %}?next={% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info">Log in to Bid</a>
+                            </div>
+                            {% endif %}
                         </div>
-                        <button type="submit" class="btn btn-info mt-2 mb-3 ms-5" aria-label="Submit bid button">Submit Bid</button>
-                     </form>
-                     {% else %}
-                     <div class="text-center mt-2 mb-3">
-                        You cannot bid on your own artwork.
-                     </div>
-                     {% endif %}
-                     {% endif %}
-                     {% else %}
-                     <div class="text-center mt-2 mb-3">
-                        <a href="{% url 'account_login' %}?next={% url 'auction_detail' artwork.id auction.id %}" class="btn btn-info">Log in to Bid</a>
-                     </div>
-                     {% endif %}
-                  </div>
-               </div>
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-   </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
