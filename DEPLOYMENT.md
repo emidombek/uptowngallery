@@ -2,7 +2,7 @@
 
 - The website was deployed to [Heroku](https://heroku.com/).
 - The database was deployed to [ElephantSQL](https://www.elephantsql.com/).
-- Images are hosted on Cloudinary[Cloudinary](https://www.cloudinary.com/). 
+- Images are hosted on [Cloudinary](https://www.cloudinary.com/). 
 - The website can be reached by the [link](https://uptowngallery-c4ad28352563.herokuapp.com/).
 
 ## Local deployment
