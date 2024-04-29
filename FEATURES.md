@@ -86,7 +86,9 @@ Our footer includes links to our social media platforms, represented by Bootstra
 
 ![Admin View + Actions](docs/images/admin2.png)
 
-- Admin Auction Capabilities: Admins are able to change the auction status and well as the start and end times of auctions. Note: Admins must mark an auction as closed at this time in order to remove it from the artwork list page.
+- Admin Auction Capabilities: Admins are able to change the auction status and well as the start and end times of auctions. They can also change the duration of auctions and other attributes.
+  
+  ***Note: Admins must mark an auction as closed once the auction time is up in order to remove it from the artwork list page.***
 
 ![Admin View + Actions](docs/images/adminauction.png)
 
